@@ -47,7 +47,7 @@ jobs:
           role-session-name: SREBotGitHubActions
           aws-region: "ca-central-1"
 
-      - name: Terraform Apply
-        working-directory: terraform
+      - name: Terraform apply main
+        working-directory: terragrunt/main
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve

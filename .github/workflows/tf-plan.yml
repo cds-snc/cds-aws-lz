@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - module: terraform
+          - module: main
 
     runs-on: ubuntu-latest
     steps:
@@ -66,6 +66,6 @@ jobs:
         with:
           comment-delete: true
           comment-title: Plan for ${{ matrix.module }}
-          directory: ./${{ matrix.module }}
+          directory: ./terragrunt/${{ matrix.module }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           terragrunt: true
