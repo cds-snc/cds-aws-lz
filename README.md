@@ -1,10 +1,11 @@
-# Generic Project Template
+# CDS AWS LandingZone
 
-This repository provides some base files for setting up a repository at
-CDS. Plan is to create more project template for specific technologies:
+This repo is meant to be used in co-ordination with AWS Control Tower to manage and configure an AWS Organization.
 
-- project-template-terraform
-- project-template-python
-- project-template-nodejs
+While we do try to manage as much of this as possible using infrastructure as code there are unfortunately some aspects that have to be managed through click-ops.
 
-Note that default community health files are maintained at https://github.com/cds-snc/.github 
+## Click Ops
+
+The following is a non-exhaustive list of functions that have to be managed manually. 
+
+ - Organization Creation
