@@ -8,7 +8,6 @@ resource "aws_iam_account_password_policy" "goc" {
   require_lowercase_characters   = true
   require_uppercase_characters   = true
   allow_users_to_change_password = true
-  expire_passwords               = false
   hard_expiry                    = false
   password_reuse_prevention      = 24
 }
