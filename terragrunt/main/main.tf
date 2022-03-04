@@ -1,3 +1,3 @@
-module "password_policy" { 
+module "password_policy" {
   source = "../modules/password_policy"
 }
