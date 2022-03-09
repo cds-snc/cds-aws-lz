@@ -3,5 +3,6 @@
 # Prevent the auto generated files from being synced except for the ones we want.
 backend.tf
 common_variables.tf
-!terragrunt/common/backend.tf
+provider.tf
+!terragrunt/common/provider.tf
 !terragrunt/common/common_variables.tf
