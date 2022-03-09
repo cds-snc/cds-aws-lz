@@ -20,7 +20,7 @@ permissions:
   statuses: write
 
 jobs:
-  terraform-plan:
+  terraform-plan-org-account:
     strategy:
       fail-fast: false
       matrix:
@@ -61,11 +61,11 @@ jobs:
           role-session-name: CDSAWSLZGitHubActions
           aws-region: "ca-central-1"
 
-      - name: Terraform Plan ${{ matrix.module }}
+      - name: Terraform Plan for org_account/${{ matrix.module }}
         uses: cds-snc/terraform-plan@v2
         with:
           comment-delete: true
           comment-title: Plan for ${{ matrix.module }}
-          directory: ./terragrunt/${{ matrix.module }}
+          directory: ./terragrunt/org_account/${{ matrix.module }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           terragrunt: true

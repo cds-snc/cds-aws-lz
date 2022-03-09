@@ -18,7 +18,7 @@ permissions:
   statuses: write
 
 jobs:
-  terragrunt-apply:
+  terragrunt-apply-org-account:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     env:
@@ -48,6 +48,6 @@ jobs:
           aws-region: "ca-central-1"
 
       - name: Terraform apply main
-        working-directory: terragrunt/main
+        working-directory: terragrunt/org_account/main
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve
