@@ -17,9 +17,9 @@ module "account_factory_for_terraform" {
   ct_home_region              = var.region
   tf_backend_secondary_region = "us-east-1"
 
-  aft_management_account_id = var.account_id
+  aft_management_account_id = "137554749751"
   audit_account_id          = "886481071419"
-  ct_management_account_id  = "659087519042"
+  ct_management_account_id  = var.account_id
   log_archive_account_id    = "274536870005"
 
   aft_feature_cloudtrail_data_events      = true
