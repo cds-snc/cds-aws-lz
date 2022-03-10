@@ -81,5 +81,3 @@ jobs:
           directory: ./terragrunt/aft/${{ matrix.module }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           terragrunt: true
-
-  terraform-plan
