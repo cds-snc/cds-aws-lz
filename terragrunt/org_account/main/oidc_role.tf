@@ -57,7 +57,7 @@ resource "aws_iam_role_policy_attachment" "admin" {
   ]
 }
 
-resource "aws_iam_role_policy_attachment" "admin" {
+resource "aws_iam_role_policy_attachment" "admin_plan" {
   role       = local.admin_plan_role
   policy_arn = data.aws_iam_policy.admin.arn
   depends_on = [
