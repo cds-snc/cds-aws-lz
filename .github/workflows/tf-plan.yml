@@ -6,10 +6,10 @@ on:
       - "terragrunt/**"
       - ".github/workflows/**"
 env:
-  AWS_REGION: ca-central-1
-  TERRAFORM_VERSION: 1.1.6
-  TERRAGRUNT_VERSION: v0.36.2
-  CONFTEST_VERSION: 0.27.0
+  AWS_REGION: "ca-central-1"
+  TERRAFORM_VERSION: 1.1.7
+  TERRAGRUNT_VERSION: 0.36.3
+  CONFTEST_VERSION: 0.30.0
 
 permissions:
   id-token: write
@@ -32,34 +32,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1.2.1
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-          terraform_wrapper: false
-
-      - name: Setup Terragrunt
-        run: |
-          mkdir -p bin
-          wget -O bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/$TERRAGRUNT_VERSION/terragrunt_linux_amd64
-          chmod +x bin/*
-          echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
-
-      - name: Install Conftest
-        run: |
-          wget "https://github.com/open-policy-agent/conftest/releases/download/v${{ env.CONFTEST_VERSION }}/conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" \
-          && wget "https://github.com/open-policy-agent/conftest/releases/download/v${{ env.CONFTEST_VERSION }}/checksums.txt" \
-          && grep 'Linux_x86_64.tar.gz' < checksums.txt | sha256sum --check  --status \
-          && tar -zxvf "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" conftest \
-          && mv conftest /usr/local/bin \
-          && rm "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" checksums.txt
+      - name: setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
 
       - name: Configure aws credentials using OIDC
         uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: arn:aws:iam::659087519042:role/CDSLZTerraformReadOnlyRole
           role-session-name: CDSAWSLZGitHubActions
-          aws-region: "ca-central-1"
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Plan for org_account/${{ matrix.module }}
         uses: cds-snc/terraform-plan@v2
@@ -82,34 +63,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1.2.1
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-          terraform_wrapper: false
-
-      - name: Setup Terragrunt
-        run: |
-          mkdir -p bin
-          wget -O bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/$TERRAGRUNT_VERSION/terragrunt_linux_amd64
-          chmod +x bin/*
-          echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
-
-      - name: Install Conftest
-        run: |
-          wget "https://github.com/open-policy-agent/conftest/releases/download/v${{ env.CONFTEST_VERSION }}/conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" \
-          && wget "https://github.com/open-policy-agent/conftest/releases/download/v${{ env.CONFTEST_VERSION }}/checksums.txt" \
-          && grep 'Linux_x86_64.tar.gz' < checksums.txt | sha256sum --check  --status \
-          && tar -zxvf "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" conftest \
-          && mv conftest /usr/local/bin \
-          && rm "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" checksums.txt
+      - name: setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
 
       - name: Configure aws credentials using OIDC
         uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: arn:aws:iam::137554749751:role/CDSLZTerraformReadOnlyRole
           role-session-name: CDSAWSLZGitHubActions
-          aws-region: "ca-central-1"
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Plan for aft/${{ matrix.module }}
         uses: cds-snc/terraform-plan@v2
@@ -119,3 +81,5 @@ jobs:
           directory: ./terragrunt/aft/${{ matrix.module }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           terragrunt: true
+
+  terraform-plan
