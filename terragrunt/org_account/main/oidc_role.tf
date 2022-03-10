@@ -1,6 +1,7 @@
 locals {
-  plan_name  = "CDSLZTerraformReadOnlyRole"
-  admin_name = "CDSLZTerraformAdministratorRole"
+  plan_name       = "CDSLZTerraformReadOnlyRole"
+  admin_name      = "CDSLZTerraformAdministratorRole"
+  admin_plan_role = "CDSLZTerraformAdminPlanRole"
 }
 
 data "aws_caller_identity" "current" {}
@@ -17,6 +18,11 @@ module "gh_oidc_roles" {
       name      = local.admin_name
       repo_name = "cds-aws-lz"
       claim     = "ref:refs/heads/main"
+    },
+    {
+      name      = local.admin_plan_role
+      repo_name = "cds-aws-lz"
+      claim     = "*"
     }
   ]
 
@@ -45,6 +51,14 @@ data "aws_iam_policy" "admin" {
 
 resource "aws_iam_role_policy_attachment" "admin" {
   role       = local.admin_name
+  policy_arn = data.aws_iam_policy.admin.arn
+  depends_on = [
+    module.gh_oidc_roles
+  ]
+}
+
+resource "aws_iam_role_policy_attachment" "admin_plan" {
+  role       = local.admin_plan_role
   policy_arn = data.aws_iam_policy.admin.arn
   depends_on = [
     module.gh_oidc_roles
