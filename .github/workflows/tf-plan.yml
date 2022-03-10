@@ -84,6 +84,7 @@ jobs:
 
 
   terraform-plan-admin-aft-module:
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -95,7 +96,7 @@ jobs:
       - name: Configure aws credentials using OIDC
         uses: aws-actions/configure-aws-credentials@master
         with:
-          role-to-assume: arn:aws:iam::137554749751:role/CDSLZTerraformAdminPlanRole
+          role-to-assume: arn:aws:iam::659087519042:role/CDSLZTerraformAdminPlanRole
           role-session-name: CDSAWSLZAdminPlanGitHubActions
           aws-region: ${{ env.AWS_REGION }}
 
