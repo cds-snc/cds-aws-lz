@@ -24,8 +24,9 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-       - module: main
-       - module: aft
+        include:
+        - module: main
+        - module: aft
 
     steps:
       - name: Checkout
@@ -52,7 +53,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-       - module: main
+        include:
+        - module: main
 
     steps:
       - name: Checkout
