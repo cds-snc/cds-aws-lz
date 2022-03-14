@@ -108,3 +108,4 @@ jobs:
           directory: ./terragrunt/org_account/aft
           github-token: ${{ secrets.GITHUB_TOKEN }}
           terragrunt: true
+          plan-character-limit: 60000
