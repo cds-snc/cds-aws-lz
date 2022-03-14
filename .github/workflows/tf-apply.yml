@@ -21,6 +21,12 @@ jobs:
   terragrunt-apply-org-account:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+       - module: main
+       - module: aft
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -35,17 +41,25 @@ jobs:
           role-session-name: SREBotGitHubActions
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform apply main
-        working-directory: terragrunt/org_account/main
+      - name: Terraform apply aft ${{ matrix.module }}
+        working-directory: terragrunt/org_account/${{ matrix.module }}
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve
 
   terragrunt-apply-aft-account:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+       - module: main
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
 
       - name: Configure aws credentials using OIDC
         uses: aws-actions/configure-aws-credentials@master
@@ -54,7 +68,7 @@ jobs:
           role-session-name: SREBotGitHubActions
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform apply aft
-        working-directory: terragrunt/org_account/main
+      - name: Terraform apply aft ${{ matrix.module }}
+        working-directory: terragrunt/aft/${{ matrix.module }}
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve
