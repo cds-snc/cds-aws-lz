@@ -59,6 +59,8 @@ jobs:
           - module: main
 
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_aft_slack_webhook: ${{ secrets.LZ_CHANNEL_WEBHOOK }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
