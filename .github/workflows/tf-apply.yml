@@ -50,6 +50,9 @@ jobs:
   terragrunt-apply-aft-account:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_aft_slack_webhook: ${{ secrets.LZ_CHANNEL_WEBHOOK }}
+
     strategy:
       fail-fast: true
       matrix:
