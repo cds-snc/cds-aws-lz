@@ -71,7 +71,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform apply log-archive ${{ matrix.module }}
-        working-directory: terragrunt/audit/${{ matrix.module }}
+        working-directory: terragrunt/log_archive/${{ matrix.module }}
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve
 

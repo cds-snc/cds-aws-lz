@@ -77,8 +77,8 @@ jobs:
         uses: cds-snc/terraform-plan@v2
         with:
           comment-delete: true
-          comment-title: Plan for Audit ${{ matrix.module }}
-          directory: ./terragrunt/audit/${{ matrix.module }}
+          comment-title: Plan for log_archive/${{ matrix.module }}
+          directory: ./terragrunt/log_archive/${{ matrix.module }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           terragrunt: true
 
