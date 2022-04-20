@@ -1,7 +1,7 @@
 locals {
-  plan_name  = "CDSLZTerraformReadOnlyRole"
-  admin_name = "CDSLZTerraformAdministratorRole"
-  sc_plan_name = "SCCDSLZTerraformReadOnlyRole"
+  plan_name     = "CDSLZTerraformReadOnlyRole"
+  admin_name    = "CDSLZTerraformAdministratorRole"
+  sc_plan_name  = "SCCDSLZTerraformReadOnlyRole"
   sc_admin_name = "SCCDSLZTerraformAdministratorRole"
 }
 
