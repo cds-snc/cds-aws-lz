@@ -70,7 +70,7 @@ jobs:
           role-session-name: SREBotGitHubActions
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform apply audit ${{ matrix.module }}
+      - name: Terraform apply log-archive ${{ matrix.module }}
         working-directory: terragrunt/audit/${{ matrix.module }}
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve
