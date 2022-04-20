@@ -51,6 +51,37 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           terragrunt: true
 
+  terraform-plan-audit-account:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - module: main
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
+
+      - name: Configure aws credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          role-to-assume: arn:aws:iam::659087519042:role/CDSLZTerraformReadOnlyRole
+          role-session-name: CDSAWSLZGitHubActions
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Plan for audit/${{ matrix.module }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          comment-delete: true
+          comment-title: Plan for Audit ${{ matrix.module }}
+          directory: ./terragrunt/audit/${{ matrix.module }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          terragrunt: true
+
   terraform-plan-aft-account:
     strategy:
       fail-fast: false
@@ -84,7 +115,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           terragrunt: true
 
-
   terraform-plan-admin-aft-module:
 
     runs-on: ubuntu-latest
@@ -102,7 +132,7 @@ jobs:
           role-session-name: CDSAWSLZAdminPlanGitHubActions
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform Plan for aft/${{ matrix.module }}
+      - name: Terraform Plan for aft admin/${{ matrix.module }}
         uses: cds-snc/terraform-plan@v2
         with:
           comment-delete: true
