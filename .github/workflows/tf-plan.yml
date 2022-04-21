@@ -41,11 +41,6 @@ jobs:
             account: 886481071419
             role: CDSLZTerraformReadOnlyRole
 
-          - account_folder: org_account
-            module: main
-            account: 137554749751
-            role: CDSLZTerraformReadOnlyRole
-
           - account_folder: aft
             module: main
             account: 137554749751
@@ -83,4 +78,3 @@ jobs:
           directory: ./terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           terragrunt: true
-          plan-character-limit: 60000
