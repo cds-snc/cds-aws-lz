@@ -1,6 +1,6 @@
 locals {
-  plan_name     = "CDSLZTerraformReadOnlyRole"
-  admin_name    = "CDSLZTerraformAdministratorRole"
+  plan_name  = "CDSLZTerraformReadOnlyRole"
+  admin_name = "CDSLZTerraformAdministratorRole"
 }
 
 data "aws_caller_identity" "current" {}
