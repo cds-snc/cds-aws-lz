@@ -20,12 +20,37 @@ permissions:
   statuses: write
 
 jobs:
-  terraform-plan-org-account:
+
+  terraform-plan-account:
     strategy:
       fail-fast: false
       matrix:
         include:
-          - module: main
+          - account_folder: org_account
+            module: main
+            account: 659087519042
+            role: CDSLZTerraformReadOnlyRole
+
+          - account_folder: log_archive
+            module: main
+            account: 274536870005
+            role: CDSLZTerraformReadOnlyRole
+
+          - account_folder: audit
+            module: main
+            account: 886481071419
+            role: CDSLZTerraformReadOnlyRole
+
+          - account_folder: aft
+            module: main
+            account: 137554749751
+            role: CDSLZTerraformReadOnlyRole
+            lz_webhook_key: LZ_CHANNEL_WEBHOOK
+
+          - account_folder: org_account
+            module: aft
+            account: 659087519042
+            role: CDSLZTerraformAdminPlanRole
 
     runs-on: ubuntu-latest
     steps:
@@ -38,106 +63,18 @@ jobs:
       - name: Configure aws credentials using OIDC
         uses: aws-actions/configure-aws-credentials@master
         with:
-          role-to-assume: arn:aws:iam::659087519042:role/CDSLZTerraformReadOnlyRole
-          role-session-name: CDSAWSLZGitHubActions
+          role-to-assume: arn:aws:iam::${{ matrix.account }}:role/${{ matrix.role }}
+          role-session-name: ${{matrix.account}}-${{matrix.module}}-${{matrix.role}}-plan
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform Plan for org_account/${{ matrix.module }}
+      - name: Terraform Plan for ${{matrix.module }}/${{ matrix.module }}
+        # I have no idea if this will work.
+        env:
+          TF_VAR_aft_slack_webhook: ${{ secrets[matrix.lz_webhook_key] }}
         uses: cds-snc/terraform-plan@v2
         with:
           comment-delete: true
-          comment-title: Plan for ${{ matrix.module }}
-          directory: ./terragrunt/org_account/${{ matrix.module }}
+          comment-title: Plan for ${{matrix.account_folder}}/${{ matrix.module }}
+          directory: ./terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           terragrunt: true
-
-  terraform-plan-audit-account:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - module: main
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: setup terraform tools
-        uses: cds-snc/terraform-tools-setup@v1
-
-      - name: Configure aws credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@master
-        with:
-          role-to-assume: arn:aws:iam::886481071419:role/CDSLZTerraformReadOnlyRole
-          role-session-name: CDSAWSLZGitHubActions
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terraform Plan for audit/${{ matrix.module }}
-        uses: cds-snc/terraform-plan@v2
-        with:
-          comment-delete: true
-          comment-title: Plan for Audit ${{ matrix.module }}
-          directory: ./terragrunt/audit/${{ matrix.module }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          terragrunt: true
-
-  terraform-plan-aft-account:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - module: main
-
-    runs-on: ubuntu-latest
-    env:
-      TF_VAR_aft_slack_webhook: ${{ secrets.LZ_CHANNEL_WEBHOOK }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: setup terraform tools
-        uses: cds-snc/terraform-tools-setup@v1
-
-      - name: Configure aws credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@master
-        with:
-          role-to-assume: arn:aws:iam::137554749751:role/CDSLZTerraformReadOnlyRole
-          role-session-name: CDSAWSLZGitHubActions
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terraform Plan for aft/${{ matrix.module }}
-        uses: cds-snc/terraform-plan@v2
-        with:
-          comment-delete: true
-          comment-title: Plan for ${{ matrix.module }}
-          directory: ./terragrunt/aft/${{ matrix.module }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          terragrunt: true
-
-  terraform-plan-admin-aft-module:
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: setup terraform tools
-        uses: cds-snc/terraform-tools-setup@v1
-
-      - name: Configure aws credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@master
-        with:
-          role-to-assume: arn:aws:iam::659087519042:role/CDSLZTerraformAdminPlanRole
-          role-session-name: CDSAWSLZAdminPlanGitHubActions
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terraform Plan for aft admin/${{ matrix.module }}
-        uses: cds-snc/terraform-plan@v2
-        with:
-          comment-delete: true
-          comment-title: Plan for AFT Root Module
-          directory: ./terragrunt/org_account/aft
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          terragrunt: true
-          plan-character-limit: 60000

@@ -12,21 +12,35 @@ env:
 permissions:
   id-token: write
   contents: read
-  pull-requests: write
-  actions: write
-  checks: write
-  statuses: write
 
 jobs:
-  terragrunt-apply-org-account:
+  terragrunt-apply-account:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:
         include:
-        - module: main
-        - module: aft
+
+        - account_folder: org_account
+          module: main
+          account: 659087519042
+
+        - account_folder: org_account
+          module: aft
+          account: 659087519042
+
+        - account_folder: log_archive
+          module: main
+          account: 274536870005
+
+        - account_folder: audit
+          module: main
+          account: 886481071419
+
+        - account_folder: aft
+          module: main
+          account: 137554749751
 
     steps:
       - name: Checkout
@@ -38,70 +52,11 @@ jobs:
       - name: Configure aws credentials using OIDC
         uses: aws-actions/configure-aws-credentials@master
         with:
-          role-to-assume: arn:aws:iam::659087519042:role/CDSLZTerraformAdministratorRole
-          role-session-name: SREBotGitHubActions
+          role-to-assume: arn:aws:iam::${{ matrix.account }}:role/CDSLZTerraformAdministratorRole
+          role-session-name: ${{matrix.account}}-${{matrix.module}}-apply
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform apply aft ${{ matrix.module }}
-        working-directory: terragrunt/org_account/${{ matrix.module }}
-        run: |
-          terragrunt apply --terragrunt-non-interactive -auto-approve
-
-  terragrunt-apply-audit-account:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        include:
-        - module: main
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: setup terraform tools
-        uses: cds-snc/terraform-tools-setup@v1
-
-      - name: Configure aws credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@master
-        with:
-          role-to-assume: arn:aws:iam::886481071419:role/CDSLZTerraformAdministratorRole
-          role-session-name: SREBotGitHubActions
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terraform apply audit ${{ matrix.module }}
-        working-directory: terragrunt/audit/${{ matrix.module }}
-        run: |
-          terragrunt apply --terragrunt-non-interactive -auto-approve
-
-  terragrunt-apply-aft-account:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    env:
-      TF_VAR_aft_slack_webhook: ${{ secrets.LZ_CHANNEL_WEBHOOK }}
-
-    strategy:
-      fail-fast: true
-      matrix:
-        include:
-        - module: main
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: setup terraform tools
-        uses: cds-snc/terraform-tools-setup@v1
-
-      - name: Configure aws credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@master
-        with:
-          role-to-assume: arn:aws:iam::137554749751:role/CDSLZTerraformAdministratorRole
-          role-session-name: SREBotGitHubActions
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terraform apply aft ${{ matrix.module }}
-        working-directory: terragrunt/aft/${{ matrix.module }}
+      - name: Terraform apply ${{matrix.account_folder}}/${{ matrix.module }}
+        working-directory: terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve
