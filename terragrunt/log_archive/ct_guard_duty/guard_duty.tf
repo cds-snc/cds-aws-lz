@@ -1,4 +1,4 @@
-data "aws_guardduty_detector" "guard_duty" { }
+data "aws_guardduty_detector" "guard_duty" {}
 
 resource "aws_guardduty_publishing_destination" "cds_sentinel_guard_duty_destination" {
   detector_id     = data.aws_guardduty_detector.guard_duty.id
