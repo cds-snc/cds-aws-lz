@@ -41,6 +41,7 @@ jobs:
         - account_folder: aft
           module: main
           account: 137554749751
+          lz_webhook_key: LZ_CHANNEL_WEBHOOK
 
     steps:
       - name: Checkout
@@ -58,5 +59,7 @@ jobs:
 
       - name: Terraform apply ${{matrix.account_folder}}/${{ matrix.module }}
         working-directory: terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}
+        env:
+          TF_VAR_aft_slack_webhook: ${{ secrets[matrix.lz_webhook_key] }}
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve
