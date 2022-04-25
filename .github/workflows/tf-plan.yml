@@ -52,6 +52,13 @@ jobs:
             account: 659087519042
             role: CDSLZTerraformAdminPlanRole
 
+          - account_folder: log_archive
+            module: ct_guard_duty
+            account: 274536870005
+            role: CDSLZTerraformReadOnlyRole
+            lacid: LA_CUSTOMER_ID
+            lask: LA_SHARED_KEY
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -71,6 +78,8 @@ jobs:
         # I have no idea if this will work.
         env:
           TF_VAR_aft_slack_webhook: ${{ secrets[matrix.lz_webhook_key] }}
+          TF_VAR_customer_id: ${{ secrets[matrix.lacid] }}
+          TF_VAR_shared_key: ${{ secrets[matrix.lask] }}
         uses: cds-snc/terraform-plan@v2
         with:
           comment-delete: true
