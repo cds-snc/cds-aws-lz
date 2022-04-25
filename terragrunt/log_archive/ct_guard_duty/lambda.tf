@@ -1,7 +1,7 @@
 module "forwarder" {
   source            = "github.com/cds-snc/terraform-modules?ref=v1.0.12//sentinel_forwarder"
   function_name     = "sentinel-guard-duty-forwarder"
-  billing_tag_value = var.cost_center_code
+  billing_tag_value = var.billing_code
 
   customer_id = var.customer_id
   shared_key  = var.shared_key

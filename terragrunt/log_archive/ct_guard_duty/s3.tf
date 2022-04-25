@@ -14,7 +14,7 @@ module "guard_duty" {
       days = 14
     }
   }]
-  billing_tag_value = var.cost_center_code
+  billing_tag_value = var.billing_code
 }
 
 data "aws_iam_policy_document" "cds_sentinel_guard_duty_policy" {
