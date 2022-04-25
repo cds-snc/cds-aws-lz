@@ -47,11 +47,6 @@ jobs:
             role: CDSLZTerraformReadOnlyRole
             lz_webhook_key: LZ_CHANNEL_WEBHOOK
 
-          - account_folder: org_account
-            module: aft
-            account: 659087519042
-            role: CDSLZTerraformAdminPlanRole
-
           - account_folder: log_archive
             module: ct_guard_duty
             account: 274536870005
