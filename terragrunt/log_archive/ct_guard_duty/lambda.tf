@@ -1,5 +1,5 @@
 module "forwarder" {
-  source            = "github.com/cds-snc/terraform-modules?ref=v1.0.12//sentinel_forwarder"
+  source            = "github.com/cds-snc/terraform-modules?ref=v2.0.3//sentinel_forwarder"
   function_name     = "sentinel-guard-duty-forwarder"
   billing_tag_value = var.billing_code
 

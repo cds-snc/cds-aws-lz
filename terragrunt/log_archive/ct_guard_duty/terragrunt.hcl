@@ -1,5 +1,5 @@
 terraform {
-  source = "."
+  source = ".//"
 }
 
 include {

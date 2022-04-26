@@ -3,7 +3,7 @@
 ###
 
 module "guard_duty" {
-  source      = "github.com/cds-snc/terraform-modules?ref=v0.0.45//S3"
+  source      = "github.com/cds-snc/terraform-modules?ref=v2.0.3//S3"
   bucket_name = "cds-sentinel-283582579564-guard-duty"
   versioning = {
     enabled = true
