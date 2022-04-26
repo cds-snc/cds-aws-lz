@@ -22,9 +22,9 @@ resource "aws_servicecatalog_principal_portfolio_association" "aft_role_account_
 resource "aws_organizations_organization" "org_config" {
 
   aws_service_access_principals = [
-    "cloudtrail.amazonaws.com", # Enabled by Control Tower
-    "config.amazonaws.com", # Enabled by Control Tower
-    "sso.amazonaws.com", # Enabled by Control Tower
+    "cloudtrail.amazonaws.com",   # Enabled by Control Tower
+    "config.amazonaws.com",       # Enabled by Control Tower
+    "sso.amazonaws.com",          # Enabled by Control Tower
     "controltower.amazonaws.com", # Enabled by Control Tower
     "guardduty.amazonaws.com",
     "securityhub.amazonaws.com"
