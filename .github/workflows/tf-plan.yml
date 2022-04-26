@@ -47,11 +47,6 @@ jobs:
             role: CDSLZTerraformReadOnlyRole
             lz_webhook_key: LZ_CHANNEL_WEBHOOK
 
-          - account_folder: org_account
-            module: aft
-            account: 659087519042
-            role: CDSLZTerraformAdminPlanRole
-
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
