@@ -38,7 +38,7 @@ module "guardduty_ca_central_1" {
 }
 
 module "publishing_bucket" {
-  source = "github.com/cds-snc/terraform-modules?v2.0.4//S3"
+  source = "github.com/cds-snc/terraform-modules?ref=v2.0.4//S3"
 
 
   logging = {
@@ -49,7 +49,7 @@ module "publishing_bucket" {
 }
 
 module "publishing_log_bucket" {
-  source = "github.com/cds-snc/terraform-modules?v2.0.4//S3_log_bucket"
+  source = "github.com/cds-snc/terraform-modules?ref=v2.0.4//S3_log_bucket"
 
   billing_tag_value = var.billing_code
 }
