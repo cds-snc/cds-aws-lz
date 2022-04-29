@@ -9,7 +9,7 @@ module "guardduty_ca_central_1" {
 
 module "guardduty_us_east_1" {
   source   = "../modules/guardduty"
-  provider = {
+  providers = {
     aws = aws.us-east-1
   }
 
@@ -21,7 +21,7 @@ module "guardduty_us_east_1" {
 
 module "guardduty_us_west_2" {
   source   = "../modules/guardduty"
-  provider = { 
+  providers = {
     aws = aws.us-west-2
   }
 
