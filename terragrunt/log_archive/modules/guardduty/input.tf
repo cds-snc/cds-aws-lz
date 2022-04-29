@@ -15,12 +15,6 @@ variable "publishing_frequency" {
   default     = "FIFTEEN_MINUTES"
 }
 
-variable "tags" {
-  description = "Specifies object tags key and value. This applies to all resources created by this module."
-  type        = map(string)
-  default     = {}
-}
-
 variable "publishing_bucket_arn" {
   description = "(Required) The ARN of the S3 bucket to publish findings to"
   type        = string
