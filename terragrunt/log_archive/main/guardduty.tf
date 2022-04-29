@@ -9,7 +9,9 @@ module "guardduty_ca_central_1" {
 
 module "guardduty_us_east_1" {
   source   = "../modules/guardduty"
-  provider = aws.us-east-1
+  provider = {
+    aws = aws.us-east-1
+  }
 
   publishing_bucket_arn = module.publishing_bucket.s3_bucket_arn
   kms_key_arn           = aws_kms_key.cds_sentinel_guard_duty_key.arn
@@ -19,7 +21,10 @@ module "guardduty_us_east_1" {
 
 module "guardduty_us_west_2" {
   source   = "../modules/guardduty"
-  provider = aws.us-west-2
+  provider = { 
+    aws = aws.us-west-2
+  }
+
 
   publishing_bucket_arn = module.publishing_bucket.s3_bucket_arn
   kms_key_arn           = aws_kms_key.cds_sentinel_guard_duty_key.arn
