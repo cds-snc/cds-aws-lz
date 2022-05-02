@@ -50,8 +50,8 @@ data "aws_iam_policy_document" "cds_sentinel_guard_duty_policy" {
 }
 
 resource "aws_s3_bucket_policy" "cds_sentinel_guard_duty_policy" {
-  bucket     = module.publishing_bucket.s3_bucket_id
-  policy     = data.aws_iam_policy_document.cds_sentinel_guard_duty_policy.json
+  bucket = module.publishing_bucket.s3_bucket_id
+  policy = data.aws_iam_policy_document.cds_sentinel_guard_duty_policy.json
 }
 
 
@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "cds_sentinel_guard_duty_logs_kms_inline" {
   }
 
   statement {
-    sid = "2"
+    sid       = "2"
     actions   = ["kms:*"]
     resources = ["*"]
     principals {
