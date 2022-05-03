@@ -132,7 +132,7 @@ locals {
     "137554749751", # AFT-Manamgement
     "886481071419", # Audit
     "034163289675", # ct-test-account
-    "274536870005"  # Log Archive
+    "659087519042", # Org Account
   ]
 }
 
