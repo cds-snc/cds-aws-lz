@@ -125,3 +125,31 @@ resource "aws_guardduty_publishing_destination" "pub_dest" {
   destination_arn = module.publishing_bucket.s3_bucket_arn
   kms_key_arn     = aws_kms_key.cds_sentinel_guard_duty_key.arn
 }
+
+
+locals {
+  account_ids = [
+    "137554749751", # AFT-Manamgement
+    "886481071419", # Audit
+    "034163289675", # ct-test-account
+    "274536870005"  # Log Archive
+  ]
+}
+
+resource "aws_guardduty_member" "members" {
+
+  count = length(local.account_ids)
+
+  detector_id = aws_guardduty_detector.detector.id
+  invite      = true
+
+  account_id                 = local.account_ids[count.index]
+  disable_email_notification = true
+  email                      = "aws-cloud-pb-ct+tf@cds-snc.ca"
+
+  lifecycle {
+    ignore_changes = [
+      email
+    ]
+  }
+}
