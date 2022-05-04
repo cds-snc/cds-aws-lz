@@ -104,8 +104,71 @@ resource "aws_guardduty_detector" "detector" {
     }
   }
 }
+
+resource "aws_guardduty_detector" "detector_us_east_1" {
+  provider = aws.us-east-1
+
+  enable                       = true
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+
+  # Additional setting to turn on S3 Protection
+  datasources {
+    s3_logs {
+      enable = true
+    }
+  }
+}
+
+resource "aws_guardduty_detector" "detector_us_west_2" {
+
+  provider = aws.us-west-2
+
+  enable                       = true
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+
+  # Additional setting to turn on S3 Protection
+  datasources {
+    s3_logs {
+      enable = true
+    }
+  }
+}
+
+
+
 # Organization GuardDuty configuration in the Delegated admin account
 resource "aws_guardduty_organization_configuration" "config" {
+
+  auto_enable = true
+  detector_id = aws_guardduty_detector.detector.id
+
+  # Additional setting to turn on S3 Protection
+  datasources {
+    s3_logs {
+      auto_enable = true
+    }
+  }
+}
+
+# Organization GuardDuty configuration in the Delegated admin account
+resource "aws_guardduty_organization_configuration" "config_us_east_1" {
+
+  provider = aws.us-east-1
+
+  auto_enable = true
+  detector_id = aws_guardduty_detector.detector.id
+
+  # Additional setting to turn on S3 Protection
+  datasources {
+    s3_logs {
+      auto_enable = true
+    }
+  }
+}
+# Organization GuardDuty configuration in the Delegated admin account
+resource "aws_guardduty_organization_configuration" "config_us_west_2" {
+
+  provider = aws.us-west-2
 
   auto_enable = true
   detector_id = aws_guardduty_detector.detector.id
@@ -126,13 +189,12 @@ resource "aws_guardduty_publishing_destination" "pub_dest" {
   kms_key_arn     = aws_kms_key.cds_sentinel_guard_duty_key.arn
 }
 
-
 locals {
   account_ids = [
     "137554749751", # AFT-Manamgement
     "886481071419", # Audit
-    "034163289675", # ct-test-account
-    "659087519042", # Org Account
+    "034163289675"  # ct-test-account
+    # "659087519042", # Org Account must be enabled in master account first
   ]
 }
 
