@@ -215,3 +215,45 @@ resource "aws_guardduty_member" "members" {
     ]
   }
 }
+
+
+resource "aws_guardduty_member" "members_us_east_1" {
+
+  count = length(local.account_ids)
+
+  provider = aws.us-east-1
+
+  detector_id = aws_guardduty_detector.detector_us_east_1.id
+  invite      = true
+
+  account_id                 = local.account_ids[count.index]
+  disable_email_notification = true
+  email                      = "aws-cloud-pb-ct+tf@cds-snc.ca"
+
+  lifecycle {
+    ignore_changes = [
+      email
+    ]
+  }
+}
+
+
+resource "aws_guardduty_member" "members_us_west_2" {
+
+  count = length(local.account_ids)
+
+  provider = aws.us-east-2
+
+  detector_id = aws_guardduty_detector.detector_us_east_1.id
+  invite      = true
+
+  account_id                 = local.account_ids[count.index]
+  disable_email_notification = true
+  email                      = "aws-cloud-pb-ct+tf@cds-snc.ca"
+
+  lifecycle {
+    ignore_changes = [
+      email
+    ]
+  }
+}
