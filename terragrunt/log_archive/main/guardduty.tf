@@ -242,7 +242,7 @@ resource "aws_guardduty_member" "members_us_west_2" {
 
   count = length(local.account_ids)
 
-  provider = aws.us-east-2
+  provider = aws.us-west-2
 
   detector_id = aws_guardduty_detector.detector_us_east_1.id
   invite      = true
