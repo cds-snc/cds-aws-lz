@@ -193,8 +193,8 @@ locals {
   account_ids = [
     "137554749751", # AFT-Manamgement
     "886481071419", # Audit
-    "034163289675",  # ct-test-account
-    "659087519042" # Org Account must be enabled in master account first
+    "034163289675", # ct-test-account
+    "659087519042"  # Org Account must be enabled in master account first
   ]
 }
 
