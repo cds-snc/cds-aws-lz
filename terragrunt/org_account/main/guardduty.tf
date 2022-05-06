@@ -19,3 +19,46 @@ resource "aws_guardduty_organization_admin_account" "gd_admin_us_west_2" {
   depends_on       = [aws_organizations_organization.org_config]
   admin_account_id = local.admin_account
 }
+
+# GuardDuty Detector in the org admin account
+resource "aws_guardduty_detector" "detector_ca_central_1" {
+
+  enable                       = true
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+
+  # Additional setting to turn on S3 Protection
+  datasources {
+    s3_logs {
+      enable = true
+    }
+  }
+}
+
+resource "aws_guardduty_detector" "detector_us_east_1" {
+  provider = aws.us-east-1
+
+  enable                       = true
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+
+  # Additional setting to turn on S3 Protection
+  datasources {
+    s3_logs {
+      enable = true
+    }
+  }
+}
+
+resource "aws_guardduty_detector" "detector_us_west_2" {
+
+  provider = aws.us-west-2
+
+  enable                       = true
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
+
+  # Additional setting to turn on S3 Protection
+  datasources {
+    s3_logs {
+      enable = true
+    }
+  }
+}
