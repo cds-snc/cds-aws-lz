@@ -156,7 +156,7 @@ resource "aws_guardduty_organization_configuration" "config_us_east_1" {
   provider = aws.us-east-1
 
   auto_enable = true
-  detector_id = aws_guardduty_detector.detector.id
+  detector_id = aws_guardduty_detector.detector_us_east_1.id
 
   # Additional setting to turn on S3 Protection
   datasources {
@@ -171,7 +171,7 @@ resource "aws_guardduty_organization_configuration" "config_us_west_2" {
   provider = aws.us-west-2
 
   auto_enable = true
-  detector_id = aws_guardduty_detector.detector.id
+  detector_id = aws_guardduty_detector.detector_us_west_2.id
 
   # Additional setting to turn on S3 Protection
   datasources {
@@ -193,8 +193,8 @@ locals {
   account_ids = [
     "137554749751", # AFT-Manamgement
     "886481071419", # Audit
-    "034163289675"  # ct-test-account
-    # "659087519042", # Org Account must be enabled in master account first
+    "034163289675",  # ct-test-account
+    "659087519042" # Org Account must be enabled in master account first
   ]
 }
 
