@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "this" {
     actions = ["sts:AssumeRole"]
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::${var.assume_account_id}:${var.role_name_to_assume}"]
+      identifiers = ["arn:aws:iam::${var.assume_account_id}:role/${var.role_name_to_assume}"]
     }
   }
 }
