@@ -1,6 +1,6 @@
 resource "aws_iam_role" "this" {
-  name = "${var.assume_account_id}_${var.role_suffix}"
-  tags = local.common_tags
+  name               = "${var.assume_account_id}_${var.role_suffix}"
+  tags               = local.common_tags
   assume_role_policy = data.aws_iam_policy_document.this.json
 }
 
