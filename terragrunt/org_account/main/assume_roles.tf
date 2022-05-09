@@ -3,7 +3,7 @@ module "audit_plan_role" {
   assume_account_id   = "886481071419"
   role_name_to_assume = "CDSLZTerraformReadOnlyRole"
   billing_tag_value   = var.billing_code
-  suffix              = "plan"
+  role_suffix         = "plan"
 }
 
 module "audit_apply_role" {
@@ -11,5 +11,5 @@ module "audit_apply_role" {
   assume_account_id   = "886481071419"
   role_name_to_assume = "CDSLZTerraformAdministratorRole"
   billing_tag_value   = var.billing_code
-  suffix              = "apply"
+  role_suffix         = "apply"
 }
