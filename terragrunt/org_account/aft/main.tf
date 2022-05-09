@@ -19,7 +19,7 @@ module "account_factory_for_terraform" {
 
   aft_feature_cloudtrail_data_events      = true
   aft_feature_delete_default_vpcs_enabled = true
-  aft_feature_enterprise_support          = false
+  aft_feature_enterprise_support          = true
   cloudwatch_log_group_retention          = 90
 
 }
