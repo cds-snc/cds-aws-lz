@@ -1,5 +1,5 @@
 locals {
-  role_name = "assume_plan"
+  role_name = var.assume_role_name
 }
 
 provider "aws" {
