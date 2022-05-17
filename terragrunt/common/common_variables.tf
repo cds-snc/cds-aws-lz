@@ -22,3 +22,7 @@ variable "billing_code" {
   description = "The billing code to tag our resources with"
   type        = string
 }
+
+variable "org_account" {
+  description = "The account ID of the main organization account"
+}
