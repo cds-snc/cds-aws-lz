@@ -14,6 +14,7 @@ inputs = {
   product_name = local.product_name
   region       = "ca-central-1"
   billing_code = local.cost_center_code
+  org_account  = "659087519042"
 }
 
 generate "provider" {
