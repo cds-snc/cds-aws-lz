@@ -1,9 +1,9 @@
-locals { 
+locals {
   role_name = "assume_plan"
 }
 
 provider "aws" {
-  alias = "audit_log"
+  alias  = "audit_log"
   region = "ca-central-1"
   assume_role {
     role_arn = "arn:aws:iam::886481071419:role/${local.role_name}"

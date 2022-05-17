@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "this" {
 resource "aws_iam_policy" "this" {
   name   = "Allow${var.name_of_role_to_assume}From${var.account_id}"
   policy = data.aws_iam_policy_document.this.json
-  tags   = {
+  tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
