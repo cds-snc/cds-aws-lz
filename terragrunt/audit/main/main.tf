@@ -52,6 +52,7 @@ resource "aws_iam_role_policy_attachment" "admin" {
     module.gh_oidc_roles
   ]
 }
+<<<<<<< HEAD
 
 # Plan Assume Role
 module "assume_plan_role" {
@@ -92,3 +93,5 @@ module "attach_tf_plan_policy_assume" {
     module.gh_oidc_roles
   ]
 }
+=======
+>>>>>>> d341ee2 (feat: add roles to assume into in child accounts)
