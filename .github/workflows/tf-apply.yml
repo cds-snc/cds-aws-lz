@@ -25,6 +25,7 @@ jobs:
         - account_folder: org_account
           module: main
           account: 659087519042
+          assume_role_name: "assume_apply"
 
         - account_folder: org_account
           module: aft
@@ -61,5 +62,6 @@ jobs:
         working-directory: terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}
         env:
           TF_VAR_aft_slack_webhook: ${{ secrets[matrix.lz_webhook_key] }}
+          TF_VAR_assume_role_name: ${{ matrix.assume_role_name }}
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve
