@@ -83,7 +83,7 @@ module "assume_apply_role" {
 module "attach_tf_plan_policy_assume" {
   source            = "github.com/cds-snc/terraform-modules?ref=v2.0.2//attach_tf_plan_policy"
   account_id        = data.aws_caller_identity.current.account_id
-  role_name         = local.plan_name
+  role_name         = "assume_plan"
   bucket_name       = "${var.billing_code}-tf"
   lock_table_name   = "terraform-state-lock-dynamo"
   billing_tag_value = var.billing_code
