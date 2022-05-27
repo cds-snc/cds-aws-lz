@@ -27,52 +27,11 @@ resource "aws_securityhub_account" "audit" {
   provider = aws.audit_log
 }
 
-resource "aws_securityhub_member" "audit" {
-  account_id = "886481071419"
-  email      = "aws-cloud-pb-ct+sh@cds-snc.ca"
-  invite     = true
-
-  depends_on = [aws_securityhub_account.audit]
-}
-
-resource "aws_securityhub_invite_accepter" "audit" {
-  provider   = aws.audit_log
-  depends_on = [aws_securityhub_member.audit]
-  master_id  = aws_securityhub_member.audit.master_id
-}
 
 resource "aws_securityhub_account" "log_archive" {
   provider = aws.log_archive
 }
 
-resource "aws_securityhub_member" "log_archive" {
-  account_id = "274536870005"
-  email      = "aws-cloud-pb-ct+sh@cds-snc.ca"
-  invite     = true
-
-  depends_on = [aws_securityhub_account.log_archive]
-}
-
-resource "aws_securityhub_invite_accepter" "log_archive" {
-  provider   = aws.log_archive
-  depends_on = [aws_securityhub_member.log_archive]
-  master_id  = aws_securityhub_member.log_archive.master_id
-}
-
 resource "aws_securityhub_account" "aft_management" {
   provider = aws.aft_management
-}
-
-resource "aws_securityhub_member" "aft_management" {
-  account_id = "137554749751"
-  email      = "aws-cloud-pb-ct+sh@cds-snc.ca"
-  invite     = true
-
-  depends_on = [aws_securityhub_account.aft_management]
-}
-
-resource "aws_securityhub_invite_accepter" "aft_management" {
-  provider   = aws.aft_management
-  depends_on = [aws_securityhub_member.aft_management]
-  master_id  = aws_securityhub_member.aft_management.master_id
 }
