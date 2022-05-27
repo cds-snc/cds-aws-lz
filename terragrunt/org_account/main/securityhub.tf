@@ -23,7 +23,7 @@ resource "aws_securityhub_standards_subscription" "cis_aws_foundations_benchmark
 
 # invites
 
-resource "aws_securityhub_acocunt" "org" {}
+resource "aws_securityhub_account" "org" {}
 
 resource "aws_securityhub_member" "org" {
   provider = aws.log_archive
