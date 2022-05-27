@@ -1,6 +1,3 @@
-locals {
-  admin_account = "274536870005"
-}
 
 
 resource "aws_guardduty_organization_admin_account" "gd_admin_ca_central_1" {
