@@ -20,10 +20,41 @@ resource "aws_securityhub_standards_subscription" "cis_aws_foundations_benchmark
 }
 
 
-resource "aws_securityhub_standards_subscription" "aws_foundational_security_best_practices" {
-  provider = aws.log_archive
 
-  standards_arn = "arn:aws:securityhub:us-east-1::standards/aws-foundational-security-best-practices/v/1.0.0"
+# invites
 
-  depends_on = [aws_securityhub_organization_admin_account.admin_account]
+resource "aws_securityhub_member" "audit" {
+  account_id = "886481071419"
+  email      = "aws-cloud-pb-ct+sh@cds-snc.ca"
+  invite     = true
+}
+
+resource "aws_securityhub_invite_accepter" "audit" {
+  provider   = aws.audit_log
+  depends_on = [aws_securityhub_member.audit]
+  master_id  = aws_securityhub_member.audit.master_id
+}
+
+resource "aws_securityhub_member" "log_archive" {
+  account_id = "274536870005"
+  email      = "aws-cloud-pb-ct+sh@cds-snc.ca"
+  invite     = true
+}
+
+resource "aws_securityhub_invite_accepter" "log_archive" {
+  provider   = aws.log_archive
+  depends_on = [aws_securityhub_member.log_archive]
+  master_id  = aws_securityhub_member.log_archive.master_id
+}
+
+resource "aws_securityhub_member" "aft_management" {
+  account_id = "137554749751"
+  email      = "aws-cloud-pb-ct+sh@cds-snc.ca"
+  invite     = true
+}
+
+resource "aws_securityhub_invite_accepter" "aft_management" {
+  provider   = aws.aft_management
+  depends_on = [aws_securityhub_member.aft_management]
+  master_id  = aws_securityhub_member.aft_management.master_id
 }
