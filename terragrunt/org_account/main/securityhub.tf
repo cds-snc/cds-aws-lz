@@ -19,70 +19,32 @@ resource "aws_securityhub_standards_subscription" "cis_aws_foundations_benchmark
   depends_on = [aws_securityhub_organization_admin_account.admin_account]
 }
 
-
-
-# invites
-
-resource "aws_securityhub_account" "org" {}
-
-resource "aws_securityhub_member" "org" {
-  provider = aws.log_archive
-
-  account_id = var.org_account
+module "org" {
+  source = "../../modules/existing_security_hub_member"
+  providers = {
+    aws.admin = aws.log_archive
+    aws.member = aws
+  }
 
   email  = "aws-cloud-pb-ct+sh@cds-snc.ca"
-  invite = true
-
-  depends_on = [aws_securityhub_account.org]
-
 }
 
-resource "aws_securityhub_invite_accepter" "org" {
-  master_id  = aws_securityhub_member.org.master_id
-  depends_on = [aws_securityhub_member.org]
+module "audit" {
+  source = "../../modules/existing_security_hub_member"
+  providers = {
+    aws.admin = aws.log_archive
+    aws.member = aws.audit_log
+  }
+
+  email  = "aws-cloud-pb-ct+sh@cds-snc.ca"
 }
 
-# audit 
-resource "aws_securityhub_account" "audit" {
-  provider = aws.audit_log
+module "aft_managment" {
+  source = "../../modules/existing_security_hub_member"
+  providers = {
+    aws.admin = aws.log_archive
+    aws.member = aws.aft_management
+  }
+
+  email  = "aws-cloud-pb-ct+sh@cds-snc.ca"
 }
-
-resource "aws_securityhub_member" "audit" {
-  provider = aws.log_archive
-
-  account_id = "886481071419"
-  email      = "aws-cloud-pb-ct+sh@cds-snc.ca"
-  invite     = true
-
-  depends_on = [aws_securityhub_account.audit]
-}
-
-resource "aws_securityhub_invite_accepter" "audit" {
-  provider   = aws.audit_log
-  master_id  = aws_securityhub_member.audit.master_id
-  depends_on = [aws_securityhub_member.audit]
-}
-
-# aft_management
-
-
-resource "aws_securityhub_account" "aft_management" {
-  provider = aws.aft_management
-}
-
-resource "aws_securityhub_member" "aft_management" {
-  provider = aws.log_archive
-
-  account_id = "137554749751"
-  email      = "aws-cloud-pb-ct+sh@cds-snc.ca"
-  invite     = true
-
-  depends_on = [aws_securityhub_account.aft_management]
-}
-
-resource "aws_securityhub_invite_accepter" "aft_management" {
-  provider   = aws.aft_management
-  master_id  = aws_securityhub_member.aft_management.master_id
-  depends_on = [aws_securityhub_member.aft_management]
-}
-
