@@ -22,29 +22,29 @@ resource "aws_securityhub_standards_subscription" "cis_aws_foundations_benchmark
 module "org" {
   source = "../../modules/existing_security_hub_member"
   providers = {
-    aws.admin = aws.log_archive
+    aws.admin  = aws.log_archive
     aws.member = aws
   }
 
-  email  = "aws-cloud-pb-ct+sh@cds-snc.ca"
+  email = "aws-cloud-pb-ct+sh@cds-snc.ca"
 }
 
 module "audit" {
   source = "../../modules/existing_security_hub_member"
   providers = {
-    aws.admin = aws.log_archive
+    aws.admin  = aws.log_archive
     aws.member = aws.audit_log
   }
 
-  email  = "aws-cloud-pb-ct+sh@cds-snc.ca"
+  email = "aws-cloud-pb-ct+sh@cds-snc.ca"
 }
 
 module "aft_managment" {
   source = "../../modules/existing_security_hub_member"
   providers = {
-    aws.admin = aws.log_archive
+    aws.admin  = aws.log_archive
     aws.member = aws.aft_management
   }
 
-  email  = "aws-cloud-pb-ct+sh@cds-snc.ca"
+  email = "aws-cloud-pb-ct+sh@cds-snc.ca"
 }

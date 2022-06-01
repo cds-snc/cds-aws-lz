@@ -14,13 +14,13 @@ resource "aws_securityhub_member" "this" {
 
   account_id = data.aws_caller_identity.member.account_id
 
-  email      = var.email
-  invite     = true
+  email  = var.email
+  invite = true
 
   depends_on = [aws_securityhub_account.this]
 
   lifecycle { # Known bug https://github.com/hashicorp/terraform-provider-aws/issues/24320
-      ignore_changes = [email]
+    ignore_changes = [email]
   }
 }
 

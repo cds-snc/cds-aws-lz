@@ -1,7 +1,7 @@
 terraform {
-  required_providers  {
-    aws = { 
-      source = "hashicorp/aws"
+  required_providers {
+    aws = {
+      source                = "hashicorp/aws"
       configuration_aliases = [aws.admin, aws.member]
     }
   }

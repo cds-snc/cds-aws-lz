@@ -1,4 +1,4 @@
 variable "email" {
-  type = string
+  type        = string
   description = "email to send invitation to"
 }
