@@ -237,7 +237,7 @@ resource "aws_guardduty_publishing_destination" "pub_dest_us_west_2" {
 
   provider = aws.log_archive_us_west_2
 
-  detector_id     = module.gd_log_archive_detector.us_east_1_detector_id
+  detector_id     = module.gd_log_archive_detector.us_west_2_detector_id
   destination_arn = module.publishing_bucket.s3_bucket_arn
   kms_key_arn     = aws_kms_key.cds_sentinel_guard_duty_key.arn
 }
