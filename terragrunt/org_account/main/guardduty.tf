@@ -177,7 +177,11 @@ data "aws_iam_policy_document" "cds_sentinel_guard_duty_logs_kms_inline" {
     sid = "1"
 
     actions   = ["kms:GenerateDataKey"]
-    resources = ["arn:aws:kms:ca-central-1:${var.account_id}:key/*"]
+    resources = [
+      "arn:aws:kms:ca-central-1:${data.aws_caller_identity.log_archive.account_id}:key/*",
+      "arn:aws:kms:us-east-1:${data.aws_caller_identity.log_archive.account_id}:key/*",
+      "arn:aws:kms:us-west-2:${data.aws_caller_identity.log_archive.account_id}:key/*"
+      ]
     principals {
       type        = "Service"
       identifiers = ["guardduty.amazonaws.com"]
