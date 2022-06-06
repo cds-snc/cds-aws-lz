@@ -31,6 +31,8 @@ jobs:
             account: 659087519042
             role: CDSLZTerraformReadOnlyRole
             assume_role_name: "assume_plan"
+            lz_customer_id: LZ_CUSTOMER_ID
+            lz_shared_key: LZ_SHARED_KEY
 
           - account_folder: log_archive
             module: main
@@ -68,6 +70,8 @@ jobs:
         env:
           TF_VAR_aft_slack_webhook: ${{ secrets[matrix.lz_webhook_key] }}
           TF_VAR_assume_role_name: ${{ matrix.assume_role_name }}
+          TF_VAR_lw_customer_id: ${{ secrets[matrix.lz_customer_id] }}
+          TF_VAR_lw_shared_key: ${{ secrets[matrix.lz_shared_key] }}
         uses: cds-snc/terraform-plan@v2
         with:
           comment-delete: true
