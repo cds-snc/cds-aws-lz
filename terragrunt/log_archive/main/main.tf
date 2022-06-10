@@ -8,7 +8,7 @@ locals {
 data "aws_caller_identity" "current" {}
 
 module "gh_oidc_roles" {
-  source = "github.com/cds-snc/terraform-modules?ref=v2.0.2//gh_oidc_role"
+  source = "github.com/cds-snc/terraform-modules?ref=v3.0.2//gh_oidc_role"
   roles = [
     {
       name      = local.plan_name
@@ -36,7 +36,7 @@ module "gh_oidc_roles" {
 }
 
 module "attach_tf_plan_policy" {
-  source            = "github.com/cds-snc/terraform-modules?ref=v2.0.2//attach_tf_plan_policy"
+  source            = "github.com/cds-snc/terraform-modules?ref=v3.0.2//attach_tf_plan_policy"
   account_id        = data.aws_caller_identity.current.account_id
   role_name         = local.plan_name
   bucket_name       = "${var.billing_code}-tf"
@@ -49,7 +49,7 @@ module "attach_tf_plan_policy" {
 }
 
 module "attach_tf_plan_policy_sc" {
-  source            = "github.com/cds-snc/terraform-modules?ref=v2.0.2//attach_tf_plan_policy"
+  source            = "github.com/cds-snc/terraform-modules?ref=v3.0.2//attach_tf_plan_policy"
   account_id        = data.aws_caller_identity.current.account_id
   role_name         = local.sc_plan_name
   bucket_name       = "${var.billing_code}-tf"
