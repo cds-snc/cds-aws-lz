@@ -30,7 +30,7 @@ module "guardduty_forwarder" {
   }
 
   source            = "github.com/cds-snc/terraform-modules?ref=v3.0.2//sentinel_forwarder"
-  function_name     = "sentinal-guard-duty-forwarder"
+  function_name     = "sentinel-guard-duty-forwarder"
   billing_tag_value = var.billing_code
 
   customer_id = var.lw_customer_id
