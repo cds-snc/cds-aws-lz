@@ -62,6 +62,6 @@ module "securityhub_forwarder" {
   customer_id = var.lw_customer_id
   shared_key  = var.lw_shared_key
 
-  event_rule_name = [aws_cloudwatch_event_rule.cds_sentinel_securityhub_rule.name]
+  event_rule_names = [aws_cloudwatch_event_rule.cds_sentinel_securityhub_rule.name]
 
 }
