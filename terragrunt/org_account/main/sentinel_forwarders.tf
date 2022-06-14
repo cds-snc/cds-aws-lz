@@ -57,7 +57,7 @@ module "securityhub_forwarder" {
 
   source            = "github.com/cds-snc/terraform-modules?ref=v3.0.2//sentinel_forwarder"
   function_name     = "sentinel-securityhub-forwarder"
-  billing_tag_value = var.billling_code
+  billing_tag_value = var.billing_code
 
   customer_id = var.lw_customer_id
   shared_key  = var.lw_shared_key
