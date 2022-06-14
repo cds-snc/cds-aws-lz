@@ -45,3 +45,23 @@ module "guardduty_forwarder" {
     }
   ]
 }
+
+
+
+# Security Hub
+
+module "securityhub_forwarder" {
+  providers = {
+    aws = aws.log_archive
+  }
+
+  source            = "github.com/cds-snc/terraform-modules?ref=v3.0.2//sentinel_forwarder"
+  function_name     = "sentinel-securityhub-forwarder"
+  billing_tag_value = var.billling_code
+
+  customer_id = var.lw_customer_id
+  shared_key  = var.lw_shared_key
+
+  event_rule_name = [aws_cloudwatch_event_rule.cds_sentinel_securityhub_rule.name]
+
+}
