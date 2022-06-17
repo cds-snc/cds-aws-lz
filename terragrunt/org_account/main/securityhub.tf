@@ -48,3 +48,14 @@ module "aft_managment" {
 
   email = "aws-cloud-pb-ct+sh@cds-snc.ca"
 }
+
+resource "aws_securityhub_account" "log_archive" {
+  provider = aws.log_archive
+}
+
+resource "aws_securityhub_finding_aggregator" "example" {
+  provider = aws.log_archive
+  linking_mode      = "ALL_REGIONS"
+
+  depends_on = [aws_securityhub_account.log_archive]
+}
