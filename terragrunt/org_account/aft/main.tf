@@ -1,5 +1,5 @@
 module "account_factory_for_terraform" {
-  source = "github.com/aws-ia/terraform-aws-control_tower_account_factory?ref=1.4.2"
+  source = "github.com/aws-ia/terraform-aws-control_tower_account_factory?ref=1.5.1"
 
   terraform_version = "1.1.7"
 
