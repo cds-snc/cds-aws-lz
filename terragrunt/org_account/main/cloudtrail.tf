@@ -36,7 +36,7 @@ resource "aws_iam_policy" "replication" {
 data "aws_iam_policy_document" "ct_replication" {
 
   statement {
-    effect    = "Allow"
+    effect = "Allow"
 
     actions = [
       "s3:GetReplicationConfiguration",
