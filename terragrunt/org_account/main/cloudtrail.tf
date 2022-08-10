@@ -37,24 +37,30 @@ data "aws_iam_policy_document" "ct_replication" {
 
   statement {
     effect    = "Allow"
-    resources = [data.aws_s3_bucket.org_logging.arn]
+
     actions = [
       "s3:GetReplicationConfiguration",
       "s3:ListBucket"
     ]
+
+    resources = [data.aws_s3_bucket.org_logging.arn]
   }
 
   statement {
     effect = "Allow"
+
     actions = [
       "s3:GetObjectVersionForReplication",
       "s3:GetObjectVersionAcl",
       "s3:GetObjectVersionTagging"
     ]
+
     resources = ["${data.aws_s3_bucket.org_logging.arn}/*"]
   }
 
   statement {
+
+    effect = "Allow"
 
     actions = [
       "s3:ReplicateObject",
@@ -62,7 +68,7 @@ data "aws_iam_policy_document" "ct_replication" {
       "s3:ReplicateTags"
     ]
 
-    resource = ["${local.destination_bucket_arn}/*"]
+    resources = ["${local.destination_bucket_arn}/*"]
   }
 }
 
@@ -79,7 +85,7 @@ resource "aws_s3_bucket_replication_configuration" "replication" {
       bucket                     = local.destination_bucket_arn
       account_id                 = local.destination_account_id
       encryption_configuration {
-        replica_kms_key_id = local.destination_kms_key_id
+        replica_kms_key_id = local.destination_kms_key_arn
       }
     }
 
