@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "ct_replication" {
       "s3:GetObjectVersionAcl",
       "s3:GetObjectVersionTagging"
     ]
-    resources = ["${aws_s3_bucket.source.arn}/*"]
+    resources = ["${data.aws_s3_bucket.org_logging.arn}/*"]
   }
 
   statement {
@@ -94,5 +94,5 @@ resource "aws_s3_bucket_replication_configuration" "replication" {
 locals {
   destination_bucket_arn  = "arn:aws:s3:::cbs-log-archive-871282759583"
   destination_kms_key_arn = "arn:aws:kms:ca-central-1:871282759583:key/c4591f87-9445-4840-acb6-a5569e703c93"
-  destination_account_id  = ""
+  destination_account_id  = "871282759583"
 }
