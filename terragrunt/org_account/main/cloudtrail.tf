@@ -76,7 +76,7 @@ resource "aws_s3_bucket_replication_configuration" "replication" {
   provider = aws.log_archive
 
   bucket = data.aws_s3_bucket.org_logging.id
-  role   = aws.aws_iam_role.replication.arn
+  role   = aws_iam_role.replication.arn
 
   rule {
     id = "cbs_cloudtrail_logs"
