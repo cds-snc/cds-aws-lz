@@ -81,6 +81,8 @@ resource "aws_s3_bucket_replication_configuration" "replication" {
   rule {
     id = "cbs_cloudtrail_logs"
 
+    status = "Enabled"
+
     destination {
       bucket  = local.destination_bucket_arn
       account = local.destination_account_id
