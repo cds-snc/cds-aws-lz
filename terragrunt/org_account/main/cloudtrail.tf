@@ -76,18 +76,22 @@ resource "aws_s3_bucket_replication_configuration" "replication" {
   provider = aws.log_archive
 
   bucket = data.aws_s3_bucket.org_logging.id
+  role   = aws.aws_iam_role.replication.arn
 
   rule {
     id = "cbs_cloudtrail_logs"
 
     destination {
-      access_control_translation = "Destination"
-      bucket                     = local.destination_bucket_arn
-      account_id                 = local.destination_account_id
+      bucket  = local.destination_bucket_arn
+      account = local.destination_account_id
       encryption_configuration {
         replica_kms_key_id = local.destination_kms_key_arn
       }
+      access_control_translation {
+        owner = "Destination"
+      }
     }
+
 
     filter {
       prefix = ""
