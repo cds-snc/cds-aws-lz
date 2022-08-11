@@ -83,12 +83,18 @@ resource "aws_s3_bucket_replication_configuration" "replication" {
 
     status = "Enabled"
 
+    delete_marker_replication {
+      status = "Enabled"
+    }
+
     destination {
       bucket  = local.destination_bucket_arn
       account = local.destination_account_id
+
       encryption_configuration {
         replica_kms_key_id = local.destination_kms_key_arn
       }
+
       access_control_translation {
         owner = "Destination"
       }
