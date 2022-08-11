@@ -98,7 +98,15 @@ resource "aws_s3_bucket_replication_configuration" "replication" {
     filter {
       prefix = ""
     }
+
+    source_selection_criteria {
+      sse_kms_encrypted_objects {
+        status = "Enabled"
+      }
+
+    }
   }
+
 
 }
 
