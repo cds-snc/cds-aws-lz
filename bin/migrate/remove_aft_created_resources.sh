@@ -21,9 +21,9 @@ if [ "$RESPONSE" == "REMOVE" ]; then
   aws iam delete-role --role-name ConfigTerraformAdminExecutionRole
 
   echo "Removing CbsSatelliteReplicateToLogArchive"
-  aws iam detach-role-policy --policy-arn arn:aws:iam::806545929748:policy/CbsSatelliteReplicateToLogArchive --role-name CbsSatelliteReplicateToLogArchive
+  aws iam detach-role-policy --policy-arn "arn:aws:iam::$ACCOUNT_ID:policy/CbsSatelliteReplicateToLogArchive" --role-name CbsSatelliteReplicateToLogArchive
   aws iam delete-role --role-name CbsSatelliteReplicateToLogArchive
-  aws iam delete-policy --policy-arn arn:aws:iam::806545929748:policy/CbsSatelliteReplicateToLogArchive
+  aws iam delete-policy --policy-arn "arn:aws:iam::$ACCOUNT_ID:policy/CbsSatelliteReplicateToLogArchive"
 
 else
   echo "Aborting"
