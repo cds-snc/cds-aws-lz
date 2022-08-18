@@ -1,6 +1,6 @@
 #!/bin/bash
 
-POLICY_NAME="AWSControlTowerExection"
+POLICY_NAME="AWSControlTowerExecution"
 
 read -r -d '' INPUT <<EOF
 
