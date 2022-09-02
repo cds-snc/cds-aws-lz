@@ -2,11 +2,10 @@
 
 ACCOUNT_LIST="$(aws configure list-profiles)"
 
-
 while IFS= read -r AWS_PROFILE
 do
 
-  if [[ "$AWS_PROFILE" != *".AdministratorAccess"* ]]; then
+  if [[ "$AWS_PROFILE" != *".AWSAdministratorAccess"* ]]; then
     continue
   fi
 
@@ -20,4 +19,4 @@ do
 
     sleep 1
 
-done < <(printf'%s\n' "$ACCOUNT_LIST")
+done < <(printf '%s\n' "$ACCOUNT_LIST")
