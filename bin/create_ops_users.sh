@@ -2,6 +2,7 @@
 
 ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
 aws iam create-group --group-name admins
+aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AdministratorAccess --group-name admins
 
 aws iam create-user --user-name ops1
 aws iam add-user-to-group --user-name ops1 --group-name admins
