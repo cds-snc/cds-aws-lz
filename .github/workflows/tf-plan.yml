@@ -33,6 +33,7 @@ jobs:
             assume_role_name: "assume_plan"
             la_customer_id: LA_CUSTOMER_ID
             la_shared_key: LA_SHARED_KEY
+            spend_notifier_hook: SPEND_NOTIFIER_HOOK
 
           - account_folder: log_archive
             module: main
@@ -72,6 +73,7 @@ jobs:
           TF_VAR_assume_role_name: ${{ matrix.assume_role_name }}
           TF_VAR_lw_customer_id: ${{ secrets[matrix.la_customer_id] }}
           TF_VAR_lw_shared_key: ${{ secrets[matrix.la_shared_key] }}
+          TF_VAR_spend_notifier_hook: ${{ secrets[matrix.spend_notifier_hook] }}
         uses: cds-snc/terraform-plan@v2
         with:
           comment-delete: true
