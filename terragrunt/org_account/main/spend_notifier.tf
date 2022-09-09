@@ -82,7 +82,7 @@ resource "aws_lambda_function" "spend_notifier" {
   filename         = data.archive_file.spend_notifier.output_path
   source_code_hash = filebase64sha256(data.archive_file.spend_notifier.output_path)
 
-  reserved_concurrent_executions = var.reserved_concurrent_executions
+  reserved_concurrent_executions = 0
 
 
   tracing_config {
