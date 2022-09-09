@@ -42,7 +42,7 @@ resource "aws_iam_policy" "spend_notifier" {
 
 data "aws_iam_policy_document" "spend_notifier_role" {
   statement {
-    effect  = "allow"
+    effect  = "Allow"
     actions = ["sts:AssumeRole"]
     principals {
       type = "Service"
