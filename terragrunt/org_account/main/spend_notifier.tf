@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "spend_notifier" {
       "logs:PutLogEvents"
     ]
     resources = [
-      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity_current.account_id}:log-group:/aws/lambda/daily-spend-monitor:*"
+      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/daily-spend-monitor:*"
     ]
 
   }
