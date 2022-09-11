@@ -33,6 +33,11 @@ jobs:
             assume_role_name: "assume_plan"
             la_customer_id: LA_CUSTOMER_ID
             la_shared_key: LA_SHARED_KEY
+
+          - account_folder: org_account
+            module: spend_notifier
+            account: 659087519042
+            role: CDSLZTerraformReadOnlyRole
             spend_notifier_hook: SPEND_NOTIFIER_HOOK
 
           - account_folder: log_archive
@@ -68,6 +73,8 @@ jobs:
 
       - name: Terraform Plan for ${{matrix.module }}/${{ matrix.module }}
         # I have no idea if this will work.
+        # It does!
+        # I'll remove this later
         env:
           TF_VAR_aft_slack_webhook: ${{ secrets[matrix.lz_webhook_key] }}
           TF_VAR_assume_role_name: ${{ matrix.assume_role_name }}

@@ -31,6 +31,12 @@ jobs:
           spend_notifier_hook: SPEND_NOTIFIER_HOOK
 
         - account_folder: org_account
+          module: main
+          account: 659087519042
+          assume_role_name: "assume_apply"
+          spend_notifier_hook: SPEND_NOTIFIER_HOOK
+
+        - account_folder: org_account
           module: aft
           account: 659087519042
 
