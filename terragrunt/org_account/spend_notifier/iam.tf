@@ -13,6 +13,8 @@ data "aws_iam_policy_document" "spend_notifier_role" {
 resource "aws_iam_role" "spend_notifier" {
   name               = "spend_notifier_lambda"
   assume_role_policy = data.aws_iam_policy_document.spend_notifier_role.json
+
+  tags = local.common_tags
 }
 
 data "aws_iam_policy_document" "spend_notifier" {
@@ -46,6 +48,8 @@ data "aws_iam_policy_document" "spend_notifier" {
 resource "aws_iam_policy" "spend_notifier" {
   name   = "spend_notifier"
   policy = data.aws_iam_policy_document.spend_notifier.json
+
+  tags = local.common_tags
 }
 
 resource "aws_iam_role_policy_attachment" "spend_notifier" {

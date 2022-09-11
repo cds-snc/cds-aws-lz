@@ -24,6 +24,7 @@ resource "aws_lambda_function" "spend_notifier" {
     mode = "PassThrough"
   }
 
+  tags = local.common_tags
 }
 
 
