@@ -1,6 +1,6 @@
 locals {
   common_tags = {
-    CostCentre = var.billing_tag_value
+    CostCentre = var.billing_code
     Terraform             = "true"
   }
 }
