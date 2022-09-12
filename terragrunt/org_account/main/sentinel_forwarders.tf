@@ -13,9 +13,9 @@ module "cloudtrail_forwarder" {
 
   s3_sources = [
     {
-      bucket_arn    = "arn:aws:s3:::aws-aft-logs-${data.aws_caller_identity.log_archive.account_id}-${var.region}"
-      bucket_id     = "aws-aft-logs-${data.aws_caller_identity.log_archive.account_id}-${var.region}"
-      filter_prefix = "AWSLogs/o-625no8z3dd/"
+      bucket_arn    = "arn:aws:s3:::aws-controltower-logs-${data.aws_caller_identity.log_archive.account_id}-${var.region}"
+      bucket_id     = "aws-controltower-logs-${data.aws_caller_identity.log_archive.account_id}-${var.region}"
+      filter_prefix = "o-625no8z3dd/AWSLogs/o-625no8z3dd/"
       kms_key_arn   = "arn:aws:kms:${var.region}:${data.aws_caller_identity.log_archive.account_id}:key/72713e0c-b7f4-438a-9eca-41c36b775f30"
     }
   ]
