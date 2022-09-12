@@ -51,29 +51,6 @@ exports.handler = async (event) => {
           "type": "section",
           "fields": [{ "type": "mrkdwn", "text": `*Total*` }, { "type": "mrkdwn", "text": `$${totalCost.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD` }]
         },
-        /*
-        {
-          "type": "actions",
-          "elements": {
-            "action_id": "text1234",
-            "type": "static_select",
-            "placeholder": {
-              "type": "plain_text",
-              "text": "Click for more details"
-            },
-            "options": Object.values(accounts).map(account => {
-             return {
-                "text": {
-                  "type": "plain_text",
-                  "text": `${account["Name"]} (${account["BU"]}): $${account["Cost"].toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD`,
-                },
-                "value": account["Name"]
-              } 
-            }),
-            "action_id": "overflow-action"
-          }
-        }
-        */
       ]
     }
   )
