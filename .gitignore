@@ -6,3 +6,7 @@ common_variables.tf
 provider.tf
 !terragrunt/common/provider.tf
 !terragrunt/common/common_variables.tf
+
+secrets.auto.tfvars
+debug.log
+creds.sh

@@ -4,7 +4,7 @@ module "cloudtrail_forwarder" {
     aws = aws.log_archive
   }
 
-  source            = "github.com/cds-snc/terraform-modules?ref=v3.0.2//sentinel_forwarder"
+  source            = "github.com/cds-snc/terraform-modules?ref=v3.0.17//sentinel_forwarder"
   function_name     = "sentinel-cloud-trail-forwarder"
   billing_tag_value = var.billing_code
 
@@ -29,7 +29,7 @@ module "guardduty_forwarder" {
     aws = aws.log_archive
   }
 
-  source            = "github.com/cds-snc/terraform-modules?ref=v3.0.2//sentinel_forwarder"
+  source            = "github.com/cds-snc/terraform-modules?ref=v3.0.17//sentinel_forwarder"
   function_name     = "sentinel-guard-duty-forwarder"
   billing_tag_value = var.billing_code
 
@@ -55,7 +55,7 @@ module "securityhub_forwarder" {
     aws = aws.log_archive
   }
 
-  source            = "github.com/cds-snc/terraform-modules?ref=v3.0.2//sentinel_forwarder"
+  source            = "github.com/cds-snc/terraform-modules?ref=v3.0.17//sentinel_forwarder"
   function_name     = "sentinel-securityhub-forwarder"
   billing_tag_value = var.billing_code
 
