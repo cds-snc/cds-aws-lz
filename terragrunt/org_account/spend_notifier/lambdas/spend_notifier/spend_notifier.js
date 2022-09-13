@@ -27,33 +27,35 @@ exports.handler = async (event) => {
   })
   const totalCost = Object.values(BU).reduce((a, b) => a + b, 0)
 
-  const data = JSON.stringify(
-    {
-      "blocks": [
-        {
+  const header = {
           "type": "section",
           "text": {
             "type": "plain_text",
             "text": `Current AWS spend for ${(today.getMonth() + 1).pad(2)}-${today.getFullYear()}`,
             "emoji": true
           }
-        },
-        {
-          "type": "section",
-          "fields": Object.entries(BU).map(bu => (
-            [{ "type": "mrkdwn", "text": `*${bu[0]}*` }, { "type": "mrkdwn", "text": `$${bu[1].toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD` }]
-          )).flat()
-        },
-        {
-          "type": "divider"
-        },
-        {
+        }
+
+  const footer = {
           "type": "section",
           "fields": [{ "type": "mrkdwn", "text": `*Total*` }, { "type": "mrkdwn", "text": `$${totalCost.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD` }]
-        },
-      ]
+        }
+    
+  const blocks = Object.entries(BU).map(bu =>(
+     {
+       "type": "section",
+       "fields": [{ "type": "mrkdwn", "text": `*${bu[0]}*` }, { "type": "mrkdwn", "text": `$${bu[1].toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD` }]
+     }
+    )).flat()
+  blocks.splice(0,0, header)
+  blocks.push({ "type": "divider"})
+  blocks.push(footer)
+  const data = JSON.stringify(
+    {
+      "blocks": blocks
     }
   )
+
   const options = {
     hostname: 'sre-bot.cdssandbox.xyz',
     port: 443,
