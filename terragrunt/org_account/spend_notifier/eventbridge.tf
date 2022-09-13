@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_event_rule" "weekly_budget_spend" {
-  name                = "weekly_budget_spend"
+  name                = "weeklyBudgetSpend"
   schedule_expression = "cron(0 12 ? * SUN *)"
 
   tags = local.common_tags
@@ -15,7 +15,7 @@ resource "aws_cloudwatch_event_target" "weekly_budget_spend" {
 }
 
 resource "aws_cloudwatch_event_rule" "daily_budget_spend" {
-  name                = "daily_budget_spend"
+  name                = "dailyBudgetSpend"
   schedule_expression = "cron(0 12 * * ? *)"
 
   tags = local.common_tags
