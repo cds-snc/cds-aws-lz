@@ -91,7 +91,7 @@ async function getAccounts() {
   for (let i = 0; i < accounts.length; i++) {
     let account = accounts[i];
     let tags = await organizations.listTagsForResource({ ResourceId: account["Id"] }).promise()
-    results[account["Id"]] = { Name: account["Name"], BU: tags.Tags.find(tag => tag["Key"] == "Business Unit").Value }
+    results[account["Id"]] = { Name: account["Name"], BU: tags.Tags.find(tag => tag["Key"] == "business_unit").Value }
   }
   return results
 }

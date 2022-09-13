@@ -11,22 +11,35 @@ resource "aws_lambda_function" "spend_notifier" {
   function_name = "spend_notifier"
   role          = aws_iam_role.spend_notifier.arn
   runtime       = "nodejs16.x"
-  handler       = "app.handler"
+  handler       = "spend_notifier.handler"
   memory_size   = 512
 
   filename         = data.archive_file.spend_notifier.output_path
   source_code_hash = filebase64sha256(data.archive_file.spend_notifier.output_path)
-
-  reserved_concurrent_executions = 0
-
-
   tracing_config {
     mode = "PassThrough"
   }
+
+  timeout = 30
 
   tags = local.common_tags
 }
 
 
+resource "aws_lambda_permission" "allow_daily_budget" {
+  statement_id  = "AllowDailyBudget"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.spend_notifier.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.daily_budget_spend.arn
+}
+
+resource "aws_lambda_permission" "allow_weekly_budget" {
+  statement_id  = "AllowWeeklyBudget"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.spend_notifier.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.weekly_budget_spend.arn
+}
 
 
