@@ -5,7 +5,7 @@ data "aws_iam_policy_document" "spend_notifier_role" {
     principals {
       type = "Service"
       identifiers = [
-      "sts:AssumeRole"]
+      "lambda.amazonaws.com"]
     }
   }
 }
