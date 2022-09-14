@@ -67,7 +67,7 @@ resource "aws_iam_role_policy_attachment" "org_read_only" {
 }
 
 data "aws_iam_policy" "lambda_insights" {
-  name  = "CloudWatchLambdaInsightsExecutionRolePolicy"
+  name = "CloudWatchLambdaInsightsExecutionRolePolicy"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_insights" {
