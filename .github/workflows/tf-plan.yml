@@ -39,6 +39,7 @@ jobs:
             account: 659087519042
             role: CDSLZTerraformReadOnlyRole
             spend_notifier_hook: SPEND_NOTIFIER_HOOK
+            weekly_spend_notifier_hook: WEEKLY_SPEND_NOTIFIER_HOOK
 
           - account_folder: log_archive
             module: main
@@ -80,7 +81,8 @@ jobs:
           TF_VAR_assume_role_name: ${{ matrix.assume_role_name }}
           TF_VAR_lw_customer_id: ${{ secrets[matrix.la_customer_id] }}
           TF_VAR_lw_shared_key: ${{ secrets[matrix.la_shared_key] }}
-          TF_VAR_spend_notifier_hook: ${{ secrets[matrix.spend_notifier_hook] }}
+          TF_VAR_daily_spend_notifier_hook: ${{ secrets[matrix.spend_notifier_hook] }}
+          TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
         uses: cds-snc/terraform-plan@v2
         with:
           comment-delete: true
