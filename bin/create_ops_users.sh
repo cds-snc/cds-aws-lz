@@ -1,6 +1,13 @@
 #!/bin/bash
 
+lpass status
+if [ $? -ne 0 ]; then 
+  echo "Error: Must be logged in lpass"
+  exit 1
+fi
+
 ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+
 aws iam create-group --group-name admins
 aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AdministratorAccess --group-name admins
 
