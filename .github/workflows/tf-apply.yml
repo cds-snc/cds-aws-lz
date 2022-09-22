@@ -53,6 +53,12 @@ jobs:
           account: 137554749751
           lz_webhook_key: LZ_CHANNEL_WEBHOOK
 
+        - account_folder: aft
+          module: notifications
+          account: 137554749751
+          role: CDSLZTerraformReadOnlyRole
+          aft_notifications_hook: AFT_NOTIFICATIONS_HOOK
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -76,5 +82,6 @@ jobs:
           TF_VAR_lw_shared_key: ${{ secrets[matrix.la_shared_key] }}
           TF_VAR_daily_spend_notifier_hook: ${{ secrets[matrix.spend_notifier_hook] }}
           TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
+          TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve
