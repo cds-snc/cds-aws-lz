@@ -57,6 +57,12 @@ jobs:
             role: CDSLZTerraformReadOnlyRole
             lz_webhook_key: LZ_CHANNEL_WEBHOOK
 
+          - account_folder: aft
+            module: notifications
+            account: 137554749751
+            role: CDSLZTerraformReadOnlyRole
+            aft_notifications_hook: AFT_NOTIFICATIONS_HOOK
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -83,6 +89,7 @@ jobs:
           TF_VAR_lw_shared_key: ${{ secrets[matrix.la_shared_key] }}
           TF_VAR_daily_spend_notifier_hook: ${{ secrets[matrix.spend_notifier_hook] }}
           TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
+          TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
         uses: cds-snc/terraform-plan@v2
         with:
           comment-delete: true
