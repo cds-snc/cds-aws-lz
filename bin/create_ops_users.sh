@@ -21,7 +21,7 @@ aws iam add-user-to-group --user-name ops2 --group-name admins
 OPS2PWORD=$(aws secretsmanager get-random-password | jq -r '.RandomPassword')
 aws iam create-login-profile --user-name ops2 --password "$OPS2PWORD"
 
-lpass add --notes "Shared-SRE - AWS Cloud credentials/$ACCOUNT_ID" --non-interactive --sync=now <<EOF
+lpass add --notes "Shared-SRE - AWS Cloud credentials/Control Tower/$ACCOUNT_ID" --non-interactive --sync=now <<EOF
 
 uname: ops1
 pword: $OPS1PWORD
