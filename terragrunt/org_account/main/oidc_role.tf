@@ -1,5 +1,3 @@
-
-
 module "gh_oidc_roles" {
   source = "github.com/cds-snc/terraform-modules?ref=v3.0.2//gh_oidc_role"
   roles = [
@@ -16,6 +14,11 @@ module "gh_oidc_roles" {
     {
       name      = local.admin_plan_role
       repo_name = "cds-aws-lz"
+      claim     = "*"
+    },
+    {
+      name      = local.sre_sso_manage_perms
+      repo_name = "site-reliability-engineering"
       claim     = "*"
     }
   ]
@@ -54,6 +57,59 @@ resource "aws_iam_role_policy_attachment" "admin" {
 resource "aws_iam_role_policy_attachment" "admin_plan" {
   role       = local.admin_plan_role
   policy_arn = data.aws_iam_policy.admin.arn
+  depends_on = [
+    module.gh_oidc_roles
+  ]
+}
+
+resource "aws_iam_policy" "manage_permissions" {
+  name   = "SSOManagePermissionAssignments"
+  path   = "/"
+  policy = data.aws_iam_policy_document.manage_permissions.json
+
+  tags = {
+    CostCentre = var.billing_code
+    Terraform  = true
+  }
+}
+
+data "aws_iam_policy_document" "manage_permissions" {
+  statement {
+    sid    = "SSOManagePermissionAssignments"
+    effect = "Allow"
+    actions = [
+      "sso:CreateAccountAssignment",
+      "sso:DescribeAccountAssignmentCreationStatus",
+      "sso:DescribeAccountAssignmentDeletionStatus",
+      "sso:DeleteAccountAssignment",
+      "sso:ListAccountAssignment*",
+      "sso:ListPermissionSets*",
+    ]
+    resources = [
+      "arn:aws:sso:::permissionSet/${local.sso_instance_id}/*",
+      "arn:aws:sso:::instance/${local.sso_instance_id}",
+      "arn:aws:sso:::account/*",
+    ]
+  }
+
+  statement {
+    sid    = "IdentityStoreGetUser"
+    effect = "Allow"
+    actions = [
+      "identitystore:DescribeUser",
+      "identitystore:GetUserId",
+      "identitystore:ListUsers",
+    ]
+    resources = [
+      "arn:aws:identitystore:::user/*",
+      "arn:aws:identitystore::${var.org_account}:identitystore/${local.sso_identity_store_id}",
+    ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "manage_permissions" {
+  role       = local.sre_sso_manage_permissions
+  policy_arn = aws_iam_policy.manage_permissions.arn
   depends_on = [
     module.gh_oidc_roles
   ]
