@@ -17,7 +17,7 @@ module "gh_oidc_roles" {
       claim     = "*"
     },
     {
-      name      = local.sre_sso_manage_perms
+      name      = local.sre_sso_manage_permissions
       repo_name = "site-reliability-engineering"
       claim     = "*"
     }
