@@ -8,6 +8,9 @@ fi
 
 ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
 
+# shellcheck disable=SC2034
+AWS_DEFAULT_REGION="ca-central-1"
+
 aws iam create-group --group-name admins
 aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AdministratorAccess --group-name admins
 
