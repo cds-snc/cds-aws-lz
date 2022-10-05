@@ -42,10 +42,10 @@ exports.handler = async (event) => {
         }
     
   const blocks = Object.entries(BU).map(bu =>(
-     {
-       "type": "section",
-       "fields": [{ "type": "mrkdwn", "text": `*${bu[0]}*` }, { "type": "mrkdwn", "text": `$${bu[1].toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD` }]
-     }
+    {
+        "type": "section",
+        "fields": [{ "type": "mrkdwn", "text": `*${bu[0]}*` }, { "type": "mrkdwn", "text": `$${bu[1].toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD` }]
+    }
     )).flat()
   blocks.splice(0,0, header)
   blocks.push({ "type": "divider"})
@@ -93,9 +93,17 @@ async function getAccounts() {
   for (let i = 0; i < accounts.length; i++) {
     let account = accounts[i];
     let tags = await organizations.listTagsForResource({ ResourceId: account["Id"] }).promise()
-    results[account["Id"]] = { Name: account["Name"], BU: tags.Tags.find(tag => tag["Key"] == "business_unit").Value }
+
+    results[account["Id"]] = { Name: account["Name"], BU: getEnvTag(tags)  }
   }
   return results
+}
+
+function getEnvTag(tags) {
+  if (tags.Tags.length === 0) {
+    return "Not tagged"
+  }
+  return tags.Tags.find(tag => tag["Key"] == "business_unit").Value
 }
 
 async function getAccountCost() {
