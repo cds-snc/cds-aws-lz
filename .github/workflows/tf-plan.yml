@@ -46,6 +46,11 @@ jobs:
             account: 274536870005
             role: CDSLZTerraformReadOnlyRole
 
+          - account_folder: log_archive
+            module: log_archive_transfer
+            account: 274536870005
+            role: CDSLZTerraformReadOnlyRole
+
           - account_folder: audit
             module: main
             account: 886481071419
