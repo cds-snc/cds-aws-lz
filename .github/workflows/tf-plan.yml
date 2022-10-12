@@ -47,7 +47,7 @@ jobs:
             role: CDSLZTerraformReadOnlyRole
 
           - account_folder: log_archive
-            module: log_archive_transfer
+            module: legacy_archives
             account: 274536870005
             role: CDSLZTerraformReadOnlyRole
 
@@ -80,7 +80,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: arn:aws:iam::${{ matrix.account }}:role/${{ matrix.role }}
-          role-session-name: ${{matrix.account}}-${{matrix.module}}-${{matrix.role}}-plan
+          role-session-name: ${{matrix.module}}-plan
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Plan for ${{matrix.module }}/${{ matrix.module }}
