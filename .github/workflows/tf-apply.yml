@@ -44,6 +44,10 @@ jobs:
           module: main
           account: 274536870005
 
+        - account_folder: log_archive
+          module: legacy_archives
+          account: 274536870005
+
         - account_folder: audit
           module: main
           account: 886481071419
