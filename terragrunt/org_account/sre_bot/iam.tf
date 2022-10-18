@@ -6,7 +6,7 @@ data "aws_iam_policy_document" "sre_bot_role" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::283582579564:role/sre-bot-ecs-role",
-        "arn:aws:iam::${var.org_account}:user/MaxNeuvians"
+        "arn:aws:iam::${var.org_account}:role/AWSReservedSSO_AWSAdministratorAccess_*"
       ]
     }
   }
