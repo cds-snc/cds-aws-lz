@@ -44,6 +44,7 @@ jobs:
             module: sre_bot
             account: 659087519042
             role: CDSLZTerraformReadOnlyRole
+            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
 
           - account_folder: log_archive
             module: main
@@ -99,6 +100,7 @@ jobs:
           TF_VAR_daily_spend_notifier_hook: ${{ secrets[matrix.spend_notifier_hook] }}
           TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
           TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
+          TV_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
         uses: cds-snc/terraform-plan@v2
         with:
           comment-delete: true
