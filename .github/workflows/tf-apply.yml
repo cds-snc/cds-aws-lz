@@ -92,6 +92,6 @@ jobs:
           TF_VAR_daily_spend_notifier_hook: ${{ secrets[matrix.spend_notifier_hook] }}
           TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
           TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
-          TV_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
+          TF_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve
