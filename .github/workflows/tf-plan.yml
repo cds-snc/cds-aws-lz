@@ -20,7 +20,6 @@ permissions:
   statuses: write
 
 jobs:
-
   terraform-plan-account:
     strategy:
       fail-fast: false
@@ -40,6 +39,11 @@ jobs:
             role: CDSLZTerraformReadOnlyRole
             spend_notifier_hook: SPEND_NOTIFIER_HOOK
             weekly_spend_notifier_hook: WEEKLY_SPEND_NOTIFIER_HOOK
+
+          - account_folder: org_account
+            module: sre_bot
+            account: 659087519042
+            role: CDSLZTerraformReadOnlyRole
 
           - account_folder: log_archive
             module: main
