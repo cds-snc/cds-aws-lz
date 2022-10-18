@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "sre_bot_role" {
 
 resource "aws_iam_role" "sre_bot" {
   name               = "sre_bot_role"
-  assume_role_policy = data.aws_iam_policy_document.sre_bot_role.json
+  assume_role_policy = sensitive(data.aws_iam_policy_document.sre_bot_role.json)
 
   tags = local.common_tags
 }
