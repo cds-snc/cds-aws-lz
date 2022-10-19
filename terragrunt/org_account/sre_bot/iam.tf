@@ -47,6 +47,15 @@ data "aws_iam_policy_document" "sre_bot_policy" {
     ]
     resources = ["*"]
   }
+  
+  statement {
+    sid    = "ReadCostExplorer"
+    effect = "Allow"
+    actions = [
+      "ce:GetCostAndUsage"
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_policy" "sre_bot_policy" {
