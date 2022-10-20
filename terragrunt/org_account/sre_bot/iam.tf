@@ -5,7 +5,7 @@ data "aws_iam_policy_document" "sre_bot_role" {
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::283582579564:assumed-role/sre-bot-ecs-role",
+        "arn:aws:iam::283582579564:role/sre-bot-ecs-role",
         var.admin_sso_role_arn
       ]
     }
