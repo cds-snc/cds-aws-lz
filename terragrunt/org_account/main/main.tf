@@ -27,7 +27,8 @@ resource "aws_organizations_organization" "org_config" {
     "sso.amazonaws.com",          # Enabled by Control Tower
     "controltower.amazonaws.com", # Enabled by Control Tower
     "guardduty.amazonaws.com",
-    "securityhub.amazonaws.com"
+    "securityhub.amazonaws.com",
+    "reporting.trustedadvisor.amazonaws.com"
   ]
 
   enabled_policy_types = [
