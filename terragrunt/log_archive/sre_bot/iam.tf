@@ -23,17 +23,23 @@ data "aws_iam_policy_document" "sre_bot_policy" {
   version = "2012-10-17"
 
   statement {
-    sid       = "ReadOrgAccounts"
-    effect    = "Allow"
-    actions   = ["organizations:ListAccounts"]
+    sid    = "ReadGuardDuty"
+    effect = "Allow"
+    actions = [
+      "guardduty:Describe*",
+      "guardduty:Get*",
+      "guardduty:List*"
+    ]
     resources = ["*"]
   }
 
   statement {
-    sid    = "ReadCostExplorer"
+    sid    = "ReadSecurityHub"
     effect = "Allow"
     actions = [
-      "ce:GetCostAndUsage"
+      "securityhub:Get*",
+      "securityhub:List*",
+      "securityhub:Describe*"
     ]
     resources = ["*"]
   }
