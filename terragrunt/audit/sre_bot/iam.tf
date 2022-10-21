@@ -23,20 +23,12 @@ data "aws_iam_policy_document" "sre_bot_policy" {
   version = "2012-10-17"
 
   statement {
-    sid    = "ReadGuardDuty"
+    sid    = "ReadConfig"
     effect = "Allow"
     actions = [
-      "guardduty:GetFindingsStatistics",
-      "guardduty:ListDetectors",
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid    = "ReadSecurityHub"
-    effect = "Allow"
-    actions = [
-      "securityhub:GetFindings",
+      "config:Describe*",
+      "config:Get*",
+      "config:List*",
     ]
     resources = ["*"]
   }
