@@ -67,7 +67,7 @@ jobs:
             account: 886481071419
             role: CDSLZTerraformReadOnlyRole
 
-          - account_folder: main
+          - account_folder: audit
             module: sre_bot
             account: 886481071419
             role: CDSLZTerraformReadOnlyRole
