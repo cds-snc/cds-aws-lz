@@ -67,6 +67,12 @@ jobs:
             account: 886481071419
             role: CDSLZTerraformReadOnlyRole
 
+          - account_folder: audit
+            module: sre_bot
+            account: 886481071419
+            role: CDSLZTerraformReadOnlyRole
+            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
+
           - account_folder: aft
             module: main
             account: 137554749751
