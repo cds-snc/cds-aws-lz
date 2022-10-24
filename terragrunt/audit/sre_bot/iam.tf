@@ -26,9 +26,7 @@ data "aws_iam_policy_document" "sre_bot_policy" {
     sid    = "ReadConfig"
     effect = "Allow"
     actions = [
-      "config:Describe*",
-      "config:Get*",
-      "config:List*",
+      "config:DescribeAggregateComplianceByConfigRules",
     ]
     resources = ["*"]
   }
