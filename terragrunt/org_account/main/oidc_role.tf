@@ -17,13 +17,13 @@ module "gh_oidc_roles" {
       claim     = "*"
     },
     {
-      name      = local.sre_sso_manage_permissions
-      repo_name = "site-reliability-engineering"
+      name      = local.sre_cloud_spend
+      repo_name = "cloud-spend"
       claim     = "*"
     },
     {
-      name      = local.sre_cloud_spend
-      repo_name = "cloud-spend"
+      name      = local.sre_sso_manage_permissions
+      repo_name = "site-reliability-engineering"
       claim     = "*"
     }
   ]
