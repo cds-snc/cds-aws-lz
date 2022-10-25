@@ -12,4 +12,6 @@ module "aws-landing-zone-s3-access-logs_bucket" {
 
   bucket_name       = "legacy-aws-landing-zone-s3-access-logs"
   billing_tag_value = var.billing_code
+
+  kms_key_arn = "arn:aws:kms:ca-central-1:${var.account_id}:alias/aws/s3"
 }
