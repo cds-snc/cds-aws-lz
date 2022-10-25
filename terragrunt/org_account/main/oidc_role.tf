@@ -17,6 +17,11 @@ module "gh_oidc_roles" {
       claim     = "*"
     },
     {
+      name      = local.sre_cloud_spend
+      repo_name = "cloud-spend"
+      claim     = "*"
+    },
+    {
       name      = local.sre_sso_manage_permissions
       repo_name = "site-reliability-engineering"
       claim     = "*"
@@ -110,6 +115,44 @@ data "aws_iam_policy_document" "manage_permissions" {
 resource "aws_iam_role_policy_attachment" "manage_permissions" {
   role       = local.sre_sso_manage_permissions
   policy_arn = aws_iam_policy.manage_permissions.arn
+  depends_on = [
+    module.gh_oidc_roles
+  ]
+}
+
+resource "aws_iam_policy" "cloud_spend" {
+  name   = "SRECloudSpendPermissionAssignments"
+  path   = "/"
+  policy = data.aws_iam_policy_document.cloud_spend.json
+
+  tags = {
+    CostCentre = var.billing_code
+    Terraform  = true
+  }
+}
+
+data "aws_iam_policy_document" "cloud_spend" {
+  statement {
+    effect    = "Allow"
+    actions   = ["ce:GetCostAndUsage"]
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "organizations:ListAccounts",
+      "organizations:ListTagsForResource"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "cloud_spend" {
+  role       = local.sre_cloud_spend
+  policy_arn = aws_iam_policy.cloud_spend.arn
   depends_on = [
     module.gh_oidc_roles
   ]
