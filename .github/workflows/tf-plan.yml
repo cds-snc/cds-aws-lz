@@ -113,7 +113,7 @@ jobs:
           TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
           TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
           TF_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@v3
         with:
           comment-delete: true
           comment-title: Plan for ${{matrix.account_folder}}/${{ matrix.module }}
