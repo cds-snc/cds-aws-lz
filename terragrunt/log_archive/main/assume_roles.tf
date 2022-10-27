@@ -37,6 +37,10 @@ module "assume_apply_role" {
   billing_tag_value     = var.billing_code
 }
 
+data "aws_iam_policy" "admin" {
+  name = "AdministratorAccess"
+}
+
 resource "aws_iam_role_policy_attachment" "assume_admin" {
   role       = module.assume_apply_role.role_name
   policy_arn = data.aws_iam_policy.admin.arn
