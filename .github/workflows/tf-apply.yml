@@ -27,6 +27,7 @@ jobs:
             assume_role_name: "assume_apply"
             la_customer_id: LA_CUSTOMER_ID
             la_shared_key: LA_SHARED_KEY
+            role: CDSLZTerraformAdministratorRole
 
           - account_folder: org_account
             module: spend_notifier
@@ -34,50 +35,59 @@ jobs:
             assume_role_name: "assume_apply"
             spend_notifier_hook: SPEND_NOTIFIER_HOOK
             weekly_spend_notifier_hook: WEEKLY_SPEND_NOTIFIER_HOOK
+            role: CDSLZTerraformAdministratorRole
 
           - account_folder: org_account
             module: sre_bot
             account: 659087519042
             assume_role_name: "assume_apply"
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
+            role: CDSLZTerraformAdministratorRole
 
           - account_folder: org_account
             module: aft
             account: 659087519042
+            role: CDSLZTerraformAdministratorRole
 
           - account_folder: log_archive
             module: main
             account: 274536870005
+            role: cds-aws-lz-apply
 
           - account_folder: log_archive
             module: legacy_archives
             account: 274536870005
+            role: cds-aws-lz-apply
 
           - account_folder: log_archive
             module: sre_bot
             account: 274536870005
             assume_role_name: "assume_apply"
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
+            role: cds-aws-lz-apply
 
           - account_folder: audit
             module: main
             account: 886481071419
+            role: cds-aws-lz-apply
 
           - account_folder: audit
             module: sre_bot
             account: 886481071419
             assume_role_name: "assume_apply"
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
+            role: cds-aws-lz-apply
 
           - account_folder: aft
             module: main
             account: 137554749751
             lz_webhook_key: LZ_CHANNEL_WEBHOOK
+            role: cds-aws-lz-apply
 
           - account_folder: aft
             module: notifications
             account: 137554749751
-            role: CDSLZTerraformReadOnlyRole
+            role: cds-aws-lz-apply
             aft_notifications_hook: AFT_NOTIFICATIONS_HOOK
 
     steps:
@@ -90,7 +100,7 @@ jobs:
       - name: Configure aws credentials using OIDC
         uses: aws-actions/configure-aws-credentials@master
         with:
-          role-to-assume: arn:aws:iam::${{ matrix.account }}:role/CDSLZTerraformAdministratorRole
+          role-to-assume: arn:aws:iam::${{ matrix.account }}:role/${{ matrix.role }}
           role-session-name: ${{matrix.account}}-${{matrix.module}}-apply
           aws-region: ${{ env.AWS_REGION }}
 
