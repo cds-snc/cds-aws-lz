@@ -25,9 +25,6 @@ module "attach_tf_plan_policy_assume" {
   lock_table_name   = "terraform-state-lock-dynamo"
   billing_tag_value = var.billing_code
   policy_name       = "AssumePlan"
-  depends_on = [
-    module.gh_oidc_roles
-  ]
 }
 
 # Apply Assume Role
