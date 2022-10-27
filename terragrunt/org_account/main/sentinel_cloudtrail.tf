@@ -1,7 +1,5 @@
 resource "aws_sqs_queue" "cloudtrail_sqs_queue" {
-  providers = {
-    aws = aws.log_archive
-  }
+  provider = aws.log_archive
 
   name                      = "azure-sentinel-cloudtrail-queue"
   delay_seconds             = 90
@@ -13,9 +11,7 @@ resource "aws_sqs_queue" "cloudtrail_sqs_queue" {
 }
 
 resource "aws_sqs_queue_policy" "sqs_queue_policy" {
-  providers = {
-    aws = aws.log_archive
-  }
+  provider = aws.log_archive
 
   queue_url = aws_sqs_queue.cloudtrail_sqs_queue.id
   policy    = <<POLICY
@@ -62,9 +58,7 @@ POLICY
 }
 
 resource "aws_s3_bucket_notification" "azure_cloudtrail_bucket_notification" {
-  providers = {
-    aws = aws.log_archive
-  }
+  provider = aws.log_archive
 
   bucket = "aws-controltower-logs-${data.aws_caller_identity.log_archive.account_id}-${var.region}"
   queue {
@@ -95,9 +89,7 @@ data "aws_iam_policy_document" "azure_sentinel_assume_role" {
 }
 
 resource "aws_iam_role" "azure_sentinel" {
-  providers = {
-    aws = aws.log_archive
-  }
+  provider = aws.log_archive
 
   name               = "AzureSentinelRole"
   description        = "Azure Sentinel Integration"
