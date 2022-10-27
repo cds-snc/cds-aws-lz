@@ -1,4 +1,11 @@
 
+data "aws_caller_identity" "current" {}
+
+locals {
+  plan_name  = "CDSLZTerraformReadOnlyRole"
+  apply_name = "CDSLZTerraformAdministratorRole"
+}
+
 # Plan Assume Role
 module "assume_plan_role" {
   source                = "../../modules/assume_role"
@@ -29,7 +36,7 @@ module "assume_apply_role" {
   source                = "../../modules/assume_role"
   role_name             = "assume_apply"
   org_account           = var.org_account
-  org_account_role_name = local.admin_name
+  org_account_role_name = local.apply_name
   assume_policy_name    = "AssumeApplyRole"
   billing_tag_value     = var.billing_code
 }
