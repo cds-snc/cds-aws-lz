@@ -5,6 +5,10 @@ module "audit_plan" {
   name_of_role_to_assume = "assume_plan"
   assume_role_name       = local.plan_name
   billing_tag_value      = var.billing_code
+
+  depends_on = [
+    module.gh_oidc_roles
+  ]
 }
 
 module "audit_apply" {
@@ -13,6 +17,9 @@ module "audit_apply" {
   name_of_role_to_assume = "assume_apply"
   assume_role_name       = local.admin_name
   billing_tag_value      = var.billing_code
+  depends_on = [
+    module.gh_oidc_roles
+  ]
 }
 
 # log archive
@@ -22,6 +29,9 @@ module "log_archive_plan" {
   name_of_role_to_assume = "assume_plan"
   assume_role_name       = local.plan_name
   billing_tag_value      = var.billing_code
+  depends_on = [
+    module.gh_oidc_roles
+  ]
 }
 
 module "log_archive_apply" {
@@ -30,6 +40,9 @@ module "log_archive_apply" {
   name_of_role_to_assume = "assume_apply"
   assume_role_name       = local.admin_name
   billing_tag_value      = var.billing_code
+  depends_on = [
+    module.gh_oidc_roles
+  ]
 }
 
 # AFT Management
@@ -40,6 +53,9 @@ module "AFT_management_plan" {
   name_of_role_to_assume = "assume_plan"
   assume_role_name       = local.plan_name
   billing_tag_value      = var.billing_code
+  depends_on = [
+    module.gh_oidc_roles
+  ]
 }
 
 module "AFT_management_apply" {
@@ -48,6 +64,9 @@ module "AFT_management_apply" {
   name_of_role_to_assume = "assume_apply"
   assume_role_name       = local.admin_name
   billing_tag_value      = var.billing_code
+  depends_on = [
+    module.gh_oidc_roles
+  ]
 }
 
 
