@@ -10,3 +10,6 @@ provider.tf
 secrets.auto.tfvars
 debug.log
 creds.sh
+
+.tool-versions
+.DS_Store

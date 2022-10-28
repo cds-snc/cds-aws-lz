@@ -49,40 +49,40 @@ jobs:
           - account_folder: log_archive
             module: main
             account: 274536870005
-            role: CDSLZTerraformReadOnlyRole
+            role: cds-aws-lz-plan
 
           - account_folder: log_archive
             module: legacy_archives
             account: 274536870005
-            role: CDSLZTerraformReadOnlyRole
+            role: cds-aws-lz-plan
 
           - account_folder: log_archive
             module: sre_bot
             account: 274536870005
-            role: CDSLZTerraformReadOnlyRole
+            role: cds-aws-lz-plan
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
 
           - account_folder: audit
             module: main
             account: 886481071419
-            role: CDSLZTerraformReadOnlyRole
+            role: cds-aws-lz-plan
 
           - account_folder: audit
             module: sre_bot
             account: 886481071419
-            role: CDSLZTerraformReadOnlyRole
+            role: cds-aws-lz-plan
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
 
           - account_folder: aft
             module: main
             account: 137554749751
-            role: CDSLZTerraformReadOnlyRole
+            role: cds-aws-lz-plan
             lz_webhook_key: LZ_CHANNEL_WEBHOOK
 
           - account_folder: aft
             module: notifications
             account: 137554749751
-            role: CDSLZTerraformReadOnlyRole
+            role: cds-aws-lz-plan
             aft_notifications_hook: AFT_NOTIFICATIONS_HOOK
 
     runs-on: ubuntu-latest
