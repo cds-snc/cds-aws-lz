@@ -6,7 +6,6 @@ resource "aws_sqs_queue" "cloudtrail_sqs_queue" {
   max_message_size          = 2048
   message_retention_seconds = 86400
   receive_wait_time_seconds = 10
-  kms_master_key_id         = "arn:aws:kms:${var.region}:${data.aws_caller_identity.log_archive.account_id}:key/72713e0c-b7f4-438a-9eca-41c36b775f30"
 
 }
 
