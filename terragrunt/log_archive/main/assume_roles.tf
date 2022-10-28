@@ -1,3 +1,9 @@
+data "aws_caller_identity" "current" {}
+
+locals {
+  plan_name  = "CDSLZTerraformReadOnlyRole"
+  apply_name = "CDSLZTerraformAdministratorRole"
+}
 
 # Plan Assume Role
 module "assume_plan_role" {
@@ -18,9 +24,6 @@ module "attach_tf_plan_policy_assume" {
   lock_table_name   = "terraform-state-lock-dynamo"
   billing_tag_value = var.billing_code
   policy_name       = "AssumePlan"
-  depends_on = [
-    module.gh_oidc_roles
-  ]
 }
 
 # Apply Assume Role
@@ -29,9 +32,13 @@ module "assume_apply_role" {
   source                = "../../modules/assume_role"
   role_name             = "assume_apply"
   org_account           = var.org_account
-  org_account_role_name = local.admin_name
+  org_account_role_name = local.apply_name
   assume_policy_name    = "AssumeApplyRole"
   billing_tag_value     = var.billing_code
+}
+
+data "aws_iam_policy" "admin" {
+  name = "AdministratorAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "assume_admin" {
