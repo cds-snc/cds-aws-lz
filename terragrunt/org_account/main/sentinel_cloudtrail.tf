@@ -64,7 +64,7 @@ resource "aws_s3_bucket_notification" "azure_cloudtrail_bucket_notification" {
     id            = "azure-sentinel-cloudtrail-queue-log-event"
     queue_arn     = aws_sqs_queue.cloudtrail_sqs_queue.arn
     events        = ["s3:ObjectCreated:*"]
-    filter_prefix = "o-gfiiyvq1tj/AWSLogs/"
+    filter_prefix = "o-625no8z3dd/AWSLogs/o-625no8z3dd"
   }
   depends_on = [
     aws_sqs_queue.cloudtrail_sqs_queue
