@@ -11,12 +11,6 @@ read -r -d '' INPUT <<EOF
         "type": "ous",
         "target_value": ["$@"]
       }
-    ],
-    "exclude" : [
-      {
-        "type": "ous",
-        "target_value": ["production"]
-      }
     ]
   }
 EOF
