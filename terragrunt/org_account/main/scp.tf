@@ -42,18 +42,6 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
   }
 
   statement {
-    sid    = "DoNotAllowIAMUsersOtherThanOps"
-    effect = "Deny"
-    actions = [
-      "iam:CreateUser"
-    ]
-    not_resources = [
-      "arn:aws:iam::*:user/ops1",
-      "arn:aws:iam::*:user/ops2"
-    ]
-  }
-
-  statement {
     sid    = "DoNotAllowOpsUsersToBeDeleted"
     effect = "Deny"
     actions = [
