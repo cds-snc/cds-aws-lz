@@ -42,6 +42,30 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
   }
 
   statement {
+    sid    = "DoNotAllowIAMUsersOtherThanOps"
+    effect = "Deny"
+    actions = [
+      "iam:CreateUser"
+    ]
+    not_resources = [
+      "arn:aws:iam::*:user/ops1",
+      "arn:aws:iam::*:user/ops2"
+    ]
+  }
+
+  statement {
+    sid    = "DoNotAllowOpsUsersToBeDeleted"
+    effect = "Deny"
+    actions = [
+      "iam:DeleteUser"
+    ]
+    resources = [
+      "arn:aws:iam::*:user/ops1",
+      "arn:aws:iam::*:user/ops2"
+    ]
+  }
+
+  statement {
     sid    = "DoNotAllowIAMKeysOnOpsUsers"
     effect = "Deny"
     actions = [
@@ -50,6 +74,26 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
     resources = [
       "arn:aws:iam::*:user/ops1",
       "arn:aws:iam::*:user/ops2"
+    ]
+  }
+
+  statement {
+    sid    = "DoNotAllowLeaveOrg"
+    effect = "Deny"
+    actions = [
+      "organizations:LeaveOrganization"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+
+  statement {
+    sid    = "ProtectSecuritySettings"
+    effect = "Deny"
+    actions = [
+      "access-analyzer:DeleteAnalyzer",
+      "ec2:DisableEbsEncryptionByDefault",
     ]
   }
 }
