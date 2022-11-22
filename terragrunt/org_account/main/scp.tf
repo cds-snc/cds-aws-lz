@@ -95,6 +95,9 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
       "access-analyzer:DeleteAnalyzer",
       "ec2:DisableEbsEncryptionByDefault",
     ]
+    resources = [
+      "*"
+    ]
   }
 }
 
