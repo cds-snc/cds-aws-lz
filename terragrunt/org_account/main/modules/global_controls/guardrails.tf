@@ -13,17 +13,15 @@ locals {
   ])
   regions = toset(["ca-central-1", "us-east-1", "us-west-2"])
 
-  # Convert the regions and controls into a list of objects that are easier to address
-  src_map    = { for ctl in local.strongly_recommend_controls : "control" => ctl }
-  region_map = { for region in local.regions : "region" => region }
+  src_map    = [ for ctl in local.strongly_recommend_controls : {"control" = ctl }]
+  region_map = [ for region in local.regions : {"region" = region }]
 
   # Create a list of all possible combinations fo regions and controls
-  pairs = setproduct(src_map, region_map)
-
+  combos = [ for x in setproduct(local.src_map, local.region_map): merge(x...)]
 }
 
 resource "aws_controltower_control" "_" {
-  for_each = local.pairs
+  for_each = local.combos
 
   control_identifier = "arn:aws:controltower:${each.value.region}::control/${each.value.control}"
   target_identifier  = var.ou_arn
