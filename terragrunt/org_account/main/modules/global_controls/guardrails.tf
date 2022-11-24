@@ -17,11 +17,11 @@ locals {
   region_map = [ for region in local.regions : {"region" = region }]
 
   # Create a list of all possible combinations fo regions and controls
-  combos = toset([ for x in setproduct(local.src_map, local.region_map): merge(x...)])
+  controls = toset([ for x in setproduct(local.src_map, local.region_map): merge(x...)])
 }
 
 resource "aws_controltower_control" "_" {
-  for_each = local.combos
+  for_each = { for control in local.controls: control.control => control}
 
   control_identifier = "arn:aws:controltower:${each.value.region}::control/${each.value.control}"
   target_identifier  = var.ou_arn
