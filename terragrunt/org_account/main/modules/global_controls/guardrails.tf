@@ -1,6 +1,6 @@
 locals {
 
-  strongly_recommend_controls = set(["AWS-GR_ENCRYPTED_VOLUMES",
+  strongly_recommend_controls = toset(["AWS-GR_ENCRYPTED_VOLUMES",
     "AWS-GR_RDS_INSTANCE_PUBLIC_ACCESS_CHECK",
     "AWS-GR_RDS_SNAPSHOTS_PUBLIC_PROHIBITED",
     "AWS-GR_RESTRICTED_COMMON_PORTS",
@@ -11,7 +11,7 @@ locals {
     "AWS-GR_DETECT_CLOUDTRAIL_ENABLED_ON_MEMBER_ACCOUNTS",
     "AWS-GR_RDS_STORAGE_ENCRYPTED"
   ])
-  regions = set(["ca-central-1", "us-east-1", "us-west-2"])
+  regions = toset(["ca-central-1", "us-east-1", "us-west-2"])
 
   # Convert the regions and controls into a list of objects that are easier to address
   src_map    = { for ctl in local.strongly_recommend_controls : "control" => ctl }
