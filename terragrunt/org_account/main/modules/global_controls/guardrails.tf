@@ -17,7 +17,7 @@ locals {
   region_map = [ for region in local.regions : {"region" = region }]
 
   # Create a list of all possible combinations fo regions and controls
-  combos = [ for x in setproduct(local.src_map, local.region_map): merge(x...)]
+  combos = toset([ for x in setproduct(local.src_map, local.region_map): merge(x...)])
 }
 
 resource "aws_controltower_control" "_" {
