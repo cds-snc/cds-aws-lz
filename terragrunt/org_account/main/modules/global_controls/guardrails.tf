@@ -19,19 +19,3 @@ resource "aws_controltower_control" "ca_central_1" {
   target_identifier  = var.ou_arn
 
 }
-
-resource "aws_controltower_control" "us_east_1" {
-  for_each = local.strongly_recommend_controls
-
-  control_identifier = "arn:aws:controltower:us-east-1::control/${each.value}"
-  target_identifier  = var.ou_arn
-
-}
-
-resource "aws_controltower_control" "us_west_2" {
-  for_each = local.strongly_recommend_controls
-
-  control_identifier = "arn:aws:controltower:us-west-2::control/${each.value}"
-  target_identifier  = var.ou_arn
-
-}
