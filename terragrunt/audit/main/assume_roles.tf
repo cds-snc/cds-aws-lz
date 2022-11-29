@@ -1,8 +1,8 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  plan_name  = "CDSLZTerraformReadOnlyRole"
-  apply_name = "CDSLZTerraformAdministratorRole"
+  plan_name  = "cds-aws-lz-plan"
+  apply_name = "cds-aws-lz-apply"
 }
 
 

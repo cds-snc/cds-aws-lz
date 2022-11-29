@@ -1,6 +1,6 @@
 locals {
-  plan_name                  = "CDSLZTerraformReadOnlyRole"
-  admin_name                 = "CDSLZTerraformAdministratorRole"
+  plan_name                  = "cds-aws-lz-plan"
+  admin_name                 = "cds-aws-lz-apply"
   admin_plan_role            = "CDSLZTerraformAdminPlanRole"
   admin_account              = "274536870005"
   sre_sso_manage_permissions = "SSOManagePermissionsRole"
