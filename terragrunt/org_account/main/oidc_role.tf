@@ -2,16 +2,6 @@ module "gh_oidc_roles" {
   source = "github.com/cds-snc/terraform-modules?ref=v4.0.0//gh_oidc_role"
   roles = [
     {
-      name      = local.plan_name
-      repo_name = "cds-aws-lz"
-      claim     = "*"
-    },
-    {
-      name      = local.admin_name
-      repo_name = "cds-aws-lz"
-      claim     = "ref:refs/heads/main"
-    },
-    {
       name      = local.admin_plan_role
       repo_name = "cds-aws-lz"
       claim     = "*"
