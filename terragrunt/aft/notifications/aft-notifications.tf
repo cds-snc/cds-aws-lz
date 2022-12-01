@@ -22,7 +22,7 @@ data "aws_sns_topic" "aft_failure_notifications" {
 resource "aws_sns_topic_subscription" "aft_failure_notifications" {
   topic_arn = data.aws_sns_topic.aft_failure_notifications.arn
   protocol  = "lambda"
-  endpoint  = module.aft_failure_notifications.lambda_function_arn
+  endpoint  = module.aft_failure_notifications.lambda_arn
 }
 
 
@@ -33,5 +33,5 @@ data "aws_sns_topic" "aft_notifications" {
 resource "aws_sns_topic_subscription" "aft_notifications" {
   topic_arn = data.aws_sns_topic.aft_notifications.arn
   protocol  = "lambda"
-  endpoint  = module.aft_failure_notifications.lambda_function_arn
+  endpoint  = module.aft_failure_notifications.lambda_arn
 }
