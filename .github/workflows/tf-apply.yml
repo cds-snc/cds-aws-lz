@@ -48,6 +48,11 @@ jobs:
             module: aft
             account: 659087519042
             role: cds-aws-lz-apply
+          
+          - account_folder: org_account
+            module: sentinel_oidc
+            account: 659087519042
+            role: cds-aws-lz-apply
 
           - account_folder: log_archive
             module: main
