@@ -41,7 +41,7 @@ jobs:
             weekly_spend_notifier_hook: WEEKLY_SPEND_NOTIFIER_HOOK
 
           - account_folder: org_account
-            module: sre_bot
+            module: roles
             account: 659087519042
             role: cds-aws-lz-plan
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
@@ -63,7 +63,7 @@ jobs:
             role: cds-aws-lz-plan
 
           - account_folder: log_archive
-            module: roles
+            module: sre_bot
             account: 274536870005
             role: cds-aws-lz-plan
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
