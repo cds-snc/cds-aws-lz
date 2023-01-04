@@ -38,7 +38,7 @@ jobs:
             role: cds-aws-lz-apply
 
           - account_folder: org_account
-            module: sre_bot
+            module: roles
             account: 659087519042
             assume_role_name: "assume_apply"
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
