@@ -31,7 +31,7 @@ data "aws_iam_policy_document" "org_account_list_in_sandbox" {
 }
 
 resource "aws_iam_policy" "org_account_list_in_sandbox" {
-  name               = local.org_account_list_name
+  name   = local.org_account_list_name
   policy = data.aws_iam_policy_document.org_account_list_in_sandbox.json
 }
 
