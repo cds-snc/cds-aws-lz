@@ -54,6 +54,11 @@ jobs:
             account: 659087519042
             role: cds-aws-lz-apply
 
+          - account_folder: org_account
+            module: organization
+            account: 659087519042
+            role: cds-aws-lz-apply
+
           - account_folder: log_archive
             module: main
             account: 274536870005
