@@ -1,4 +1,4 @@
-locals { 
+locals {
   org_account_list_name = "listAccountsInOrg"
 }
 
