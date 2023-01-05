@@ -11,6 +11,8 @@ module "OIDC_Roles" {
     repo_name = "site-reliability-engineering"
     claim     = "ref:refs/heads/main"
   }]
+
+  billing_tag_value = var.billing_code
 }
 
 
