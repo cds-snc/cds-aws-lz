@@ -15,7 +15,6 @@ module "OIDC_Roles" {
   billing_tag_value = var.billing_code
 }
 
-
 # An IAM policy document that allows you to query all the accounts in an OU
 data "aws_iam_policy_document" "org_account_list_in_sandbox" {
   statement {
@@ -33,7 +32,7 @@ data "aws_iam_policy_document" "org_account_list_in_sandbox" {
 
 resource "aws_iam_policy" "org_account_list_in_sandbox" {
   name               = local.org_account_list_name
-  assume_role_policy = data.aws_iam_policy_document.org_account_list_in_sandbox.json
+  policy = data.aws_iam_policy_document.org_account_list_in_sandbox.json
 }
 
 # Attach the policy document to the role loca.org_account_list_name
