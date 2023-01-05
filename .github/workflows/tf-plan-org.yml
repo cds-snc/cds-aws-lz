@@ -1,0 +1,48 @@
+name: Terraform org plan
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "terragrunt/org_account/organization/**"
+      - ".github/workflows/tf-plan-org.yml"
+      - ".github/workflows/tf-apply.yml"
+env:
+  AWS_REGION: "ca-central-1"
+  TERRAFORM_VERSION: 1.1.7
+  TERRAGRUNT_VERSION: 0.36.3
+  CONFTEST_VERSION: 0.30.0
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+  actions: write
+  checks: write
+  statuses: write
+
+jobs:
+  terraform-plan-aft-account:
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
+
+      - name: Configure aws credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          role-to-assume: arn:aws:iam::659087519042:role/cds-aws-lz-plan
+          role-session-name: tf-plan-org
+          aws-region: ca-central-1
+
+      - name: Terraform Plan for org_account/aft
+        uses: cds-snc/terraform-plan@v3
+        with:
+          comment-delete: true
+          comment-title: Plan for org_account/organization
+          directory: ./terragrunt/org_account/organization
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          terragrunt: true

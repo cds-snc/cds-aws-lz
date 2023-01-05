@@ -19,21 +19,3 @@ resource "aws_servicecatalog_principal_portfolio_association" "aft_role_account_
   principal_arn = data.aws_iam_role.aft_execution_role.arn
 }
 
-resource "aws_organizations_organization" "org_config" {
-
-  aws_service_access_principals = [
-    "cloudtrail.amazonaws.com",   # Enabled by Control Tower
-    "config.amazonaws.com",       # Enabled by Control Tower
-    "sso.amazonaws.com",          # Enabled by Control Tower
-    "controltower.amazonaws.com", # Enabled by Control Tower
-    "guardduty.amazonaws.com",
-    "securityhub.amazonaws.com",
-    "reporting.trustedadvisor.amazonaws.com"
-  ]
-
-  enabled_policy_types = [
-    "SERVICE_CONTROL_POLICY"
-  ]
-
-  feature_set = "ALL"
-}
