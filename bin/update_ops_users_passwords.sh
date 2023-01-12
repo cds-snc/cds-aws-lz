@@ -6,22 +6,28 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+NOW=$(date)
 ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+USERS=$(aws iam list-users | jq .Users | jq '.[] | .UserName')
 
-aws iam create-group --group-name admins
-aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AdministratorAccess --group-name admins
+echo "Updating passwords for account id: $ACCOUNT_ID"
 
-aws iam create-user --user-name ops1
-aws iam add-user-to-group --user-name ops1 --group-name admins
+# Check if ops1 and ops2 users are in the account
+if [[ ! "$USERS" =~ "ops1" && ! "$USERS" =~ "ops2" ]]
+then
+  echo "Requires users 'ops1' and 'ops2' to be present in the account."
+  exit 1
+fi
+
 OPS1PWORD=$(aws secretsmanager get-random-password --region ca-central-1 | jq -r '.RandomPassword')
-aws iam create-login-profile --user-name ops1 --password "$OPS1PWORD"
+aws iam update-login-profile --user-name ops1 --password "$OPS1PWORD" 
 
-aws iam create-user --user-name ops2
-aws iam add-user-to-group --user-name ops2 --group-name admins
 OPS2PWORD=$(aws secretsmanager get-random-password --region ca-central-1 | jq -r '.RandomPassword')
-aws iam create-login-profile --user-name ops2 --password "$OPS2PWORD"
+aws iam update-login-profile --user-name ops2 --password "$OPS2PWORD"
 
 lpass add --notes "Shared-SRE - AWS Cloud credentials/Control Tower/$ACCOUNT_ID" --non-interactive --sync=now <<EOF
+~~~~~~
+Updated on: $NOW
 
 uname: ops1
 pword: $OPS1PWORD
@@ -29,4 +35,5 @@ pword: $OPS1PWORD
 uname: ops2
 pword: $OPS2PWORD
 
+~~~~~~
 EOF
