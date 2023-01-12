@@ -29,13 +29,13 @@ data "aws_iam_policy_document" "org_account_list" {
   }
 }
 
-resource "aws_iam_policy" "org_account_list_in_sandbox" {
+resource "aws_iam_policy" "org_account_list" {
   name   = "ListAccountsInOrg"
   policy = data.aws_iam_policy_document.org_account_list.json
 }
 
 # Attach the policy document to the role loca.org_account_list_name
-resource "aws_iam_role_policy_attachment" "attach_list_accounts_in_sandbox" {
+resource "aws_iam_role_policy_attachment" "attach_list_accounts" {
   role       = local.org_account_list_name
-  policy_arn = aws_iam_policy.org_account_list_in_sandbox.arn
+  policy_arn = aws_iam_policy.org_account_list.arn
 }
