@@ -28,3 +28,9 @@ variable "billing_tag_value" {
   type        = string
   description = "The value of the tag to be used for billing purposes"
 }
+
+variable "extra_roles" {
+  type        = list(string)
+  description = "A list of extra roles that can assume this role"
+  default     = []
+}
