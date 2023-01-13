@@ -9,7 +9,7 @@ NOW=$(date)
 ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
 USERS=$(aws iam list-users | jq .Users | jq '.[] | .UserName')
 
-echo "Updating passwords for account id: $ACCOUNT_ID"
+echo "Updating Ops users passwords for account id: $ACCOUNT_ID"
 
 # Check if ops1 and ops2 users are in the account
 if [[ ! "$USERS" =~ "ops1" && ! "$USERS" =~ "ops2" ]]; then
@@ -19,9 +19,11 @@ fi
 
 OPS1PWORD=$(aws secretsmanager get-random-password --region ca-central-1 | jq -r '.RandomPassword')
 aws iam update-login-profile --user-name ops1 --password "$OPS1PWORD"
+printf "uname: ops1\npword: %s\n" "$OPS1PWORD"
 
 OPS2PWORD=$(aws secretsmanager get-random-password --region ca-central-1 | jq -r '.RandomPassword')
 aws iam update-login-profile --user-name ops2 --password "$OPS2PWORD"
+printf "uname: ops2\npword: %s\n" "$OPS2PWORD"
 
 lpass add --notes "Shared-SRE - AWS Cloud credentials/Control Tower/$ACCOUNT_ID - Rotated" --non-interactive --sync=now <<EOF
 ~~~~~~
