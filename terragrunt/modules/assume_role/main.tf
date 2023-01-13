@@ -14,11 +14,8 @@ data "aws_iam_policy_document" "this" {
   statement {
     actions = ["sts:AssumeRole"]
     principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${var.org_account}:role/${var.org_account_role_name}",
-        "arn:aws:iam::${var.org_account}:user/CalvinRodo"
-      ] # Will only be here as long as I need to debug TF locally.
+      type        = "AWS"
+      identifiers = concat(["arn:aws:iam::${var.org_account}:role/${var.org_account_role_name}"], var.extra_roles)
     }
   }
 }
