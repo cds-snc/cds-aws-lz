@@ -32,7 +32,7 @@ resource "aws_iam_policy" "assume_sre_vulnerability_report" {
   policy = data.aws_iam_policy_document.assume_sre_vulnerability_report.json
 }
 
-resource "aws_iam_role_policy_attachment" "attach_list_accounts_in_sandbox" {
+resource "aws_iam_role_policy_attachment" "assume_sre_vulnerability_report" {
   role       = local.sre_vulnerability_report_oidc_role
   policy_arn = aws_iam_policy.assume_sre_vulnerability_report.arn
 }
