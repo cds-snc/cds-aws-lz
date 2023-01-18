@@ -48,7 +48,7 @@ jobs:
             module: aft
             account: 659087519042
             role: cds-aws-lz-apply
-          
+
           - account_folder: org_account
             module: sentinel_oidc
             account: 659087519042
@@ -74,7 +74,7 @@ jobs:
             account: 274536870005
             assume_role_name: "assume_apply"
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
-            role: cds-aws-lz-apply         
+            role: cds-aws-lz-apply
 
           - account_folder: audit
             module: main
