@@ -66,12 +66,7 @@ jobs:
             module: sre_bot
             account: 274536870005
             role: cds-aws-lz-plan
-            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
-
-          - account_folder: log_archive
-            module: sre_vulnerability_report
-            account: 274536870005
-            role: cds-aws-lz-plan           
+            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN       
 
           - account_folder: audit
             module: main
@@ -82,12 +77,7 @@ jobs:
             module: sre_bot
             account: 886481071419
             role: cds-aws-lz-plan
-            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
-
-          - account_folder: audit
-            module: sre_vulnerability_report
-            account: 886481071419
-            role: cds-aws-lz-plan            
+            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN       
 
           - account_folder: aft
             module: main

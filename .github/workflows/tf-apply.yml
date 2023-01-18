@@ -74,13 +74,7 @@ jobs:
             account: 274536870005
             assume_role_name: "assume_apply"
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
-            role: cds-aws-lz-apply
-
-          - account_folder: log_archive
-            module: sre_vulnerability_report
-            account: 274536870005
-            assume_role_name: "assume_apply"
-            role: cds-aws-lz-apply            
+            role: cds-aws-lz-apply         
 
           - account_folder: audit
             module: main
@@ -93,12 +87,6 @@ jobs:
             assume_role_name: "assume_apply"
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
             role: cds-aws-lz-apply
-
-          - account_folder: audit
-            module: sre_vulnerability_report
-            account: 886481071419
-            assume_role_name: "assume_apply"
-            role: cds-aws-lz-apply            
 
           - account_folder: aft
             module: main
