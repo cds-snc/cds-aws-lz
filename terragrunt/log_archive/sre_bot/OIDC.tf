@@ -1,7 +1,3 @@
-locals {
-  sre_vulnerability_report_oidc_role = "sre_vulnerability_report_github_action"
-}
-
 module "OIDC_Roles" {
   source      = "github.com/cds-snc/terraform-modules?ref=v5.0.0//gh_oidc_role"
   oidc_exists = true
@@ -13,10 +9,6 @@ module "OIDC_Roles" {
   }]
 
   billing_tag_value = var.billing_code
-
-  depends_on = [
-    aws_iam_role.sre_vulnerability_report
-  ]
 }
 
 # Allow the OIDC role to assume the SRE vulnerability report roles in log_archive and audit accounts
@@ -29,8 +21,8 @@ data "aws_iam_policy_document" "assume_sre_vulnerability_report" {
     ]
 
     resources = [
-      "arn:aws:iam::${var.account_id}:role/sre_vulnerability_report",
-      "arn:aws:iam::886481071419:role/sre_vulnerability_report",
+      aws_iam_role.sre_vulnerability_report.arn,
+      "arn:aws:iam::886481071419:role/sre_vulnerability_report"
     ]
   }
 }
