@@ -45,7 +45,7 @@ jobs:
             account: 659087519042
             role: cds-aws-lz-plan
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
-          
+
           - account_folder: org_account
             module: sentinel_oidc
             account: 659087519042
