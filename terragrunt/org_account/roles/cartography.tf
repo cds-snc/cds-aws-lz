@@ -7,7 +7,7 @@ module "assume_plan_role" {
   source                = "../../modules/assume_role"
   role_name             = "assumeCartographyOrg"
   org_account           = 794722365809                      ## Not org account it's the account the role that is assuming this role sits in
-  org_account_role_name = local.cartographyOrgListNamesname ## Not the org account role name but the name of the role assuming this role
+  org_account_role_name = "ListAccountsInOrg" ## Not the org account role name but the name of the role assuming this role
   assume_policy_name    = "AssumePlanRole"
   billing_tag_value     = var.billing_code
 }
