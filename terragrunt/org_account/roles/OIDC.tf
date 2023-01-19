@@ -1,5 +1,5 @@
 locals {
-  org_account_list_name = "listAccountsInOrg"
+  org_account_list_name = "listAccountsInSandboxOUForNuke"
 }
 
 module "OIDC_Roles" {
