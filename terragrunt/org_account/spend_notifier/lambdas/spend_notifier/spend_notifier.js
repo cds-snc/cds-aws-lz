@@ -28,7 +28,7 @@ exports.handler = async (event) => {
   const totalCost = Object.values(BU).reduce((a, b) => a + b, 0)
 
   const header = {
-          "type": "section",
+          "type": "header",
           "text": {
             "type": "plain_text",
             "text": `Current AWS spend for ${(today.getMonth() + 1).pad(2)}-${today.getFullYear()}`,
