@@ -87,6 +87,17 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
       "*"
     ]
   }
+
+  statement {
+    sid = "BlockEC2ForScratch"
+    effect = "Deny"
+    actions = [
+      "ec2:*"
+    ]
+    resources = [
+      "arn:aws:organizations::659087519042:ou/o-625no8z3dd/ou-5gsq-qhvjdryl",
+    ]
+  }
 }
 
 resource "aws_organizations_policy" "cds_snc_universal_guardrails" {
