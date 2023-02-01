@@ -17,13 +17,13 @@ if [[ ! "$USERS" =~ "ops1" && ! "$USERS" =~ "ops2" ]]; then
   exit 1
 fi
 
-OPS1PWORD=$(aws secretsmanager get-random-password --region ca-central-1 | jq -r '.RandomPassword')
+OPS1PWORD=$(aws secretsmanager get-random-password --region ca-central-1 --password-length 64 | jq -r '.RandomPassword')
 aws iam update-login-profile --user-name ops1 --password "$OPS1PWORD"
-printf "uname: ops1\npword: %s\n" "$OPS1PWORD"
+printf "\nuname: ops1\npword: %s\n" "$OPS1PWORD"
 
-OPS2PWORD=$(aws secretsmanager get-random-password --region ca-central-1 | jq -r '.RandomPassword')
+OPS2PWORD=$(aws secretsmanager get-random-password --region ca-central-1 --password-length 64 | jq -r '.RandomPassword')
 aws iam update-login-profile --user-name ops2 --password "$OPS2PWORD"
-printf "uname: ops2\npword: %s\n" "$OPS2PWORD"
+printf "\nuname: ops2\npword: %s\n" "$OPS2PWORD"
 
 lpass add --notes "Shared-SRE - AWS Cloud credentials/Control Tower/$ACCOUNT_ID - Rotated" --non-interactive --sync=now <<EOF
 ~~~~~~
