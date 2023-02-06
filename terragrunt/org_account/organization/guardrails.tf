@@ -54,9 +54,7 @@ module "REQUIRE_CLOUDTRAIL_LOG_FILE_VALIDATION" {
   ]
 
   // This control requires CT.CLOUDFORMATION.PR.1 to be enabled
-  lifecycle {
-    depends_on = [module.DISALLOW_CFN_EXTENSIONS]
-  }
+  depends_on = [module.DISALLOW_CFN_EXTENSIONS]
 }
 
 # [CT.CLOUDFORMATION.PR.1] Disallow management of resource types, modules, and hooks within the AWS CloudFormation registry
