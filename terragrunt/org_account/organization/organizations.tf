@@ -7,7 +7,8 @@ resource "aws_organizations_organization" "org_config" {
     "controltower.amazonaws.com", # Enabled by Control Tower
     "guardduty.amazonaws.com",
     "securityhub.amazonaws.com",
-    "reporting.trustedadvisor.amazonaws.com"
+    "reporting.trustedadvisor.amazonaws.com",
+    "account.amazonaws.com" # https://docs.aws.amazon.com/accounts/latest/reference/using-orgs-trusted-access.html
   ]
 
   enabled_policy_types = [
