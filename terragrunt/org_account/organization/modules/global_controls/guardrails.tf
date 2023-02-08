@@ -98,3 +98,9 @@ moved {
   from = aws_controltower_control.ca_central_1["AWS-GR_RDS_STORAGE_ENCRYPTED"]
   to   = aws_controltower_control.RDS_STORAGE_ENCRYPTED
 }
+
+
+resource "aws_controltower_control" "AWS-GR_RESTRICT_ROOT_USER_ACCESS_KEYS" {
+  target_identifier  = var.ou_arn
+  control_identifier = "arn:aws:controltower:ca-central-1::control/AWS-GR_RESTRICT_ROOT_USER_ACCESS_KEYS"
+}
