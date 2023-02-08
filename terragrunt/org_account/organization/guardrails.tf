@@ -46,7 +46,6 @@ module "REQUIRE_CLOUDTRAIL_LOG_FILE_VALIDATION" {
   ou_arns = [
     aws_organizations_organizational_unit.Test.arn,
     aws_organizations_organizational_unit.SRETools.arn,
-    aws_organizations_organizational_unit.Security.arn,
     aws_organizations_organizational_unit.Sandbox.arn,
     aws_organizations_organizational_unit.DumpsterFire.arn,
     aws_organizations_organizational_unit.AFT.arn,
