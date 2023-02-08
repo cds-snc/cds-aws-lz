@@ -87,6 +87,60 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
       "*"
     ]
   }
+
+  statement {
+    sid    = "DenyRootActions"
+    effect = "Deny"
+    actions = [
+      "*" # Deny all actions
+    ]
+    not_actions = [
+
+
+      ## Allow Account Actions for accounts created before Mar 6 2023
+      ## see https://docs.aws.amazon.com/accounts/latest/reference/security_account-permissions-ref.html
+      "aws-portal:*",
+
+      ## Allow changing of account settings
+      "account:PutChallengeQuestions",
+      "account:CloseAccount",
+      "account:PutContactInformation",
+      "account:Get*",
+      "account:List*",
+
+      ## Allow changing of account name 
+      "iam:UpdateAccountName",
+
+      ### Enable MFA 
+      "iam:CreateVirtualMFADevice",
+      "iam:EnableMFADevice",
+      "iam:GetUser",
+      "iam:ListMFADevices",
+      "iam:ListVirtualMFADevices",
+      "iam:ResyncMFADevice",
+      "iam:DeleteVirtualMFADevice",
+
+
+      ## Allow us to attach admin to the IAM Users accounts if required
+      "iam:GetPolicy",
+      "iam:ListPolicies",
+      "iam:PutPolicy",
+      "iam:AttachUserPolicy",
+      "iam:ListAttachedUserPolicies",
+      "iam:AttachGroupPolicy",
+      "iam:ListAttachedGroupPolicies",
+
+      "sts:GetSessionToken",
+
+    ]
+    resources = ["*"]
+    condition {
+      test     = "StringLike"
+      variable = "aws:PrincipalArn"
+      values   = ["arn:aws:iam::*:root"]
+    }
+  }
+
 }
 
 resource "aws_organizations_policy" "cds_snc_universal_guardrails" {
