@@ -89,7 +89,7 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
   }
 
   statement {
-    sid = "DenyRootActions"
+    sid    = "DenyRootActions"
     effect = "Deny"
     actions = [
       "*" # Deny all actions
@@ -135,7 +135,7 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
     ]
     resources = ["*"]
     condition {
-      test    = "StringLike"
+      test     = "StringLike"
       variable = "aws:PrincipalArn"
       values   = ["arn:aws:iam::*:root"]
     }
