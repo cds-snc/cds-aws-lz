@@ -8,7 +8,7 @@ resource "aws_organizations_organization" "org_config" {
     "guardduty.amazonaws.com",
     "securityhub.amazonaws.com",
     "reporting.trustedadvisor.amazonaws.com",
-    "account.amazonaws.com", # https://docs.aws.amazon.com/accounts/latest/reference/using-orgs-trusted-access.html
+    "account.amazonaws.com",                 # https://docs.aws.amazon.com/accounts/latest/reference/using-orgs-trusted-access.html
     "stacksets.cloudformation.amazonaws.com" # Enabling to allow CT to re-register OUs
   ]
 
