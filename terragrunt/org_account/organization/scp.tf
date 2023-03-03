@@ -135,7 +135,7 @@ data "aws_iam_policy_document" "cartography_tmp_scp" {
     effect = "Deny"
     actions = [
       "iam:CreateAccessKey",
-     ]
+    ]
     resources = [
       "arn:aws:iam::*:role/secopsAssetInventorySecurityAuditRole"
     ]
