@@ -98,6 +98,37 @@ data "aws_iam_policy_document" "cartography_tmp_scp" {
       "arn:aws:iam::*:role/secopsAssetInventorySecurityAuditRole"]
     }
   }
+  # Create a policy statement that prevents the modification of the IAM role secopsAssetInventoryCartographyRole
+  statement {
+    sid    = "PreventIAMRoleModifications"
+    effect = "Deny"
+    actions = [
+      "iam:AttachRolePolicy",
+      "iam:CreatePolicy",
+      "iam:CreatePolicyVersion",
+      "iam:CreateRole",
+      "iam:DeletePolicy",
+      "iam:DeletePolicyVersion",
+      "iam:DeleteRole",
+      "iam:DeleteRolePolicy",
+      "iam:DetachRolePolicy",
+      "iam:PutRolePolicy",
+      "iam:UpdateAssumeRolePolicy",
+      "iam:UpdateRole",
+      "iam:UpdateRoleDescription",
+      "iam:UpdateRolePolicy"
+    ]
+    resources = [
+      "arn:aws:iam::*:role/secopsAssetInventoryCartographyRole"
+    ]
+    condition {
+      test     = "ArnNotLike"
+      variable = "aws:PrincipalArn"
+      values = [
+        "arn:aws:iam::*:role/AWSControlTowerExecution"
+      ]
+    }
+  }
 }
 
 resource "aws_organizations_policy" "cartography_tmp_scp" {
