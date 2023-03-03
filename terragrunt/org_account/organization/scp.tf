@@ -146,6 +146,7 @@ data "aws_iam_policy_document" "cartography_tmp_scp" {
         "arn:aws:iam::*:role/AWSAFTExecution"
       ]
     }
+  }
 }
 
 resource "aws_organizations_policy" "cartography_tmp_scp" {
