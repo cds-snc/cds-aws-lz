@@ -129,6 +129,23 @@ data "aws_iam_policy_document" "cartography_tmp_scp" {
       ]
     }
   }
+
+  statement {
+    sid    = "PreventIAMAccessKeyCreation"
+    effect = "Deny"
+    actions = [
+      "iam:CreateAccessKey",
+     ]
+    resources = [
+      "arn:aws:iam::*:role/secopsAssetInventorySecurityAuditRole"
+    ]
+    condition {
+      test     = "ArnNotLike"
+      variable = "aws:PrincipalArn"
+      values = [
+        "arn:aws:iam::*:role/AWSAFTExecution"
+      ]
+    }
 }
 
 resource "aws_organizations_policy" "cartography_tmp_scp" {
