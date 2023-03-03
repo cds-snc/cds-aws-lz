@@ -81,7 +81,7 @@ data "aws_iam_policy_document" "cartography_tmp_scp" {
       "waf:*",
       "wafv2:*"
     ]
-    resources = "*"
+    resources = ["*"]
     condition {
       test     = "StringNotEquals"
       variable = "aws:RequestedRegion"
