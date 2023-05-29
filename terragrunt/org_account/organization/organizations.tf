@@ -54,10 +54,6 @@ resource "aws_organizations_policy_attachment" "Sandbox-cds_snc_universal_guardr
   target_id = aws_organizations_organizational_unit.Sandbox.id
 }
 
-# resource "aws_organizations_policy_attachment" "Test-cartography_tmp_scp" {
-#   policy_id = aws_organizations_policy.cartography_tmp_scp.id
-#   target_id = aws_organizations_organizational_unit.Test.id
-# }
 
 resource "aws_organizations_organizational_unit" "Security" {
   name      = "Security"
