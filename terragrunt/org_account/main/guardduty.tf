@@ -99,7 +99,7 @@ resource "aws_guardduty_organization_configuration" "config_us_west_2" {
 
 
 module "publishing_bucket" {
-  source = "github.com/cds-snc/terraform-modules?ref=v3.0.2//S3"
+  source = "github.com/cds-snc/terraform-modules//S3?ref=v3.0.2"
 
   providers = {
     aws = aws.log_archive
@@ -124,7 +124,7 @@ module "publishing_bucket" {
 }
 
 module "publishing_log_bucket" {
-  source = "github.com/cds-snc/terraform-modules?ref=v3.0.2//S3_log_bucket"
+  source = "github.com/cds-snc/terraform-modules//S3_log_bucket?ref=v3.0.2"
 
   providers = {
     aws = aws.log_archive
