@@ -1,21 +1,36 @@
+process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE = '1';
 const AWS = require('aws-sdk');
+const { get } = require('http');
 const costexplorer = new AWS.CostExplorer({ region: 'us-east-1' });
 const organizations = new AWS.Organizations({ region: 'us-east-1' });
 
 const https = require('https')
 
-exports.handler = async (event) => {
+//exports.handler = async (event) => {
+  async function test(event) {
+  console.log(event)
   const hook = event.hook;
   const today = new Date();
+  // call the daily cost function to get daily costs
+  const dailyAccountCost = await getDailyAccountCost()
+  console.log("Daily account cost", dailyAccountCost)
   const accountCost = await getAccountCost()
+  console.log("Account cost", accountCost)
   let accounts = await getAccounts()
+  console.log("Accounts are", accounts)
+  let accountIncreases = {}
   Object.keys(accounts).forEach(key => {
     if(accountCost.hasOwnProperty(key)){
       accounts[key]["Cost"] = accountCost[key]
     } else {
       accounts[key]["Cost"] = 0
     }
-  })
+    // if there is a 50% increase in costs for yesterady vs day before, add to accountIncreases
+    if(dailyAccountCost.hasOwnProperty(key) && dailyAccountCost[key] > 50) {
+          accountIncreases[accounts[key]["Name"]] = dailyAccountCost[key]
+    }
+  });
+  console.log("Account increases", accountIncreases)
   let BU = {}
 
   Object.values(accounts).forEach(account => {
@@ -25,7 +40,17 @@ exports.handler = async (event) => {
       BU[account["BU"]] = account["Cost"]
     }
   })
+
+  Object.values(accounts).forEach(account => {
+    if (BU.hasOwnProperty(account["BU"])) {
+      BU[account["BU"]] = BU[account["BU"]] + account["Cost"]
+    } else {
+      BU[account["BU"]] = account["Cost"]
+    }
+  })
   const totalCost = Object.values(BU).reduce((a, b) => a + b, 0)
+  console.log("Business unit", BU)
+  console.log("Total cost", totalCost)
 
   const header = {
           "type": "header",
@@ -46,18 +71,32 @@ exports.handler = async (event) => {
         "type": "section",
         "fields": [{ "type": "mrkdwn", "text": `*${bu[0]}*` }, { "type": "mrkdwn", "text": `$${bu[1].toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD` }]
     }
-    )).flat()
+    )).flat();
+
+  // concatenate accounts that have increases and construct a new blocks section 
+  const costIncreasedAccounts= Object.keys(accountIncreases).join(', ').toString()
+  const costIncreasedAccountsSection= {
+        "type": "section",
+        "text": 
+          { "type": "mrkdwn", "text": `Accounts *${costIncreasedAccounts}* saw at least *50% increase in cost* yesterday from previous day cost calculations.` },
+    }
+
   blocks.splice(0,0, header)
   blocks.push({ "type": "divider"})
   blocks.push(footer)
+
+  // if there are accounts that have 50% increase in cost, add the section to the message
+  if (costIncreasedAccounts.length > 0) {
+    blocks.push(costIncreasedAccountsSection);
+  }
   const data = JSON.stringify(
     {
       "blocks": blocks
     }
   )
-
+  console.log(data)
   const options = {
-    hostname: 'sre-bot.cdssandbox.xyz',
+   // hostname: 'sre-bot.cdssandbox.xyz',
     port: 443,
     path: `/hook/${hook}`,
     method: 'POST',
@@ -129,6 +168,69 @@ async function getAccountCost() {
   }, {});
 }
 
+/**
+ * Calculates the daily account cost for yesterday and the day before yesterday, and returns the percentage increase.
+ * @returns {Object} An object containing the percentage increase in cost for each linked account.
+ */
+async function getDailyAccountCost() {
+  const today = new Date();
+  const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1).toISOString().split("T")[0];
+  const dayBeforeYesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2).toISOString().split("T")[0];
+  const twoDaysBeforeYesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3).toISOString().split("T")[0];
+
+  // construct params for cost explorer
+  const paramsYesterday = {
+    Granularity: "DAILY",
+    TimePeriod: { Start: dayBeforeYesterday, End: yesterday},
+    Metrics: ["UNBLENDED_COST"],
+    GroupBy: [
+      {
+        Type: "DIMENSION",
+        Key: "LINKED_ACCOUNT"
+      }]
+  };
+
+  const paramsDayBeforeYesterday = {
+    Granularity: "DAILY",
+    TimePeriod: { Start: twoDaysBeforeYesterday, End: dayBeforeYesterday},
+    Metrics: ["UNBLENDED_COST"],
+    GroupBy: [
+      {
+        Type: "DIMENSION",
+        Key: "LINKED_ACCOUNT"
+      }]
+  };
+
+  // get cost for yesterday and the day before yesterday
+  const getCostsYesterday = await costexplorer.getCostAndUsage(paramsYesterday).promise();
+  const getCostsDayBeforeYesterday = await costexplorer.getCostAndUsage(paramsDayBeforeYesterday).promise();
+
+  // get the the amounts from the object for yesterday and the day before yesterday
+  const yesterdayCosts = getCostsYesterday["ResultsByTime"][0]["Groups"].reduce((acc, curr) => {
+    acc[curr["Keys"][0]] = parseFloat(curr["Metrics"]["UnblendedCost"]["Amount"]);
+    return acc;
+  }, {});
+
+  const dayBeforeYesterdayCosts = getCostsDayBeforeYesterday["ResultsByTime"][0]["Groups"].reduce((acc, curr) => {
+    acc[curr["Keys"][0]] = parseFloat(curr["Metrics"]["UnblendedCost"]["Amount"]);
+    return acc;
+  }, {});
+
+  //calculate the difference between yesterday and the day before yesterday
+  const difference = Object.keys(yesterdayCosts).reduce((acc, curr) => {
+    acc[curr] = yesterdayCosts[curr] - dayBeforeYesterdayCosts[curr];
+    return acc;
+  }, {});
+
+  //calculate the percentage increase and return it 
+  const percentageIncrease = Object.keys(difference).reduce((acc, curr) => {
+    acc[curr] = ((difference[curr] / dayBeforeYesterdayCosts[curr]) * 100).toFixed(2);
+    return acc;
+  }, {});
+  
+  return percentageIncrease;
+}
+
 function doRequest(options, data) {
   return new Promise((resolve, reject) => {
     const req = https.request(options, (res) => {
@@ -158,3 +260,5 @@ Number.prototype.pad = function (size) {
   while (s.length < (size || 2)) { s = "0" + s; }
   return s;
 }
+
+test("");
