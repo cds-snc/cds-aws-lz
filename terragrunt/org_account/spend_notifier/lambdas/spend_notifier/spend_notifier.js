@@ -1,12 +1,10 @@
 const AWS = require('aws-sdk');
-const { get } = require('http');
 const costexplorer = new AWS.CostExplorer({ region: 'us-east-1' });
 const organizations = new AWS.Organizations({ region: 'us-east-1' });
 
 const https = require('https')
 
-//exports.handler = async (event) => {
-  async function test(event) {
+exports.handler = async (event) => {
   console.log(event)
   const hook = event.hook;
   const today = new Date();
@@ -261,5 +259,3 @@ Number.prototype.pad = function (size) {
   while (s.length < (size || 2)) { s = "0" + s; }
   return s;
 }
-
-test("");
