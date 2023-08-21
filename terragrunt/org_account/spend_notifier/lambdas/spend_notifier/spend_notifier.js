@@ -55,7 +55,7 @@ exports.handler = async (event) => {
         "type": "section",
         "fields": [{ "type": "mrkdwn", "text": `*${bu[0]}*` }, { "type": "mrkdwn", "text": `$${bu[1].toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD` }]
     }
-    )).flat();
+    )).flat()
 
   // concatenate accounts that have increases and construct a new blocks section 
   const costIncreasedAccounts= Object.keys(accountIncreases).join(', ').toString()
@@ -78,6 +78,7 @@ exports.handler = async (event) => {
       "blocks": blocks
     }
   )
+
   const options = {
     hostname: 'sre-bot.cdssandbox.xyz',
     port: 443,
@@ -89,6 +90,7 @@ exports.handler = async (event) => {
     }
   }
   const resp = await doRequest(options, data);
+  console.log(resp)
   
   const response = {
     statusCode: 200,
