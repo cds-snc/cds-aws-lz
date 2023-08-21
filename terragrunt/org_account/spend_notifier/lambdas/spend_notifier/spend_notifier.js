@@ -1,4 +1,3 @@
-process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE = '1';
 const AWS = require('aws-sdk');
 const { get } = require('http');
 const costexplorer = new AWS.CostExplorer({ region: 'us-east-1' });
@@ -11,9 +10,11 @@ const https = require('https')
   console.log(event)
   const hook = event.hook;
   const today = new Date();
+
   // call the daily cost function to get daily costs
   const dailyAccountCost = await getDailyAccountCost()
   console.log("Daily account cost", dailyAccountCost)
+
   const accountCost = await getAccountCost()
   console.log("Account cost", accountCost)
   let accounts = await getAccounts()
@@ -25,8 +26,8 @@ const https = require('https')
     } else {
       accounts[key]["Cost"] = 0
     }
-    // if there is a 50% increase in costs for yesterady vs day before, add to accountIncreases
-    if(dailyAccountCost.hasOwnProperty(key) && dailyAccountCost[key] > 50) {
+    // if there is a 35% increase in costs for yesterady vs day before, add to accountIncreases
+    if(dailyAccountCost.hasOwnProperty(key) && dailyAccountCost[key] > 35) {
           accountIncreases[accounts[key]["Name"]] = dailyAccountCost[key]
     }
   });
@@ -78,14 +79,14 @@ const https = require('https')
   const costIncreasedAccountsSection= {
         "type": "section",
         "text": 
-          { "type": "mrkdwn", "text": `Accounts *${costIncreasedAccounts}* saw at least *50% increase in cost* yesterday from previous day cost calculations.` },
+          { "type": "mrkdwn", "text": `Accounts *${costIncreasedAccounts}* saw at least *35% increase in cost* yesterday from previous day cost calculations.` },
     }
 
   blocks.splice(0,0, header)
   blocks.push({ "type": "divider"})
   blocks.push(footer)
 
-  // if there are accounts that have 50% increase in cost, add the section to the message
+  // if there are accounts that have 35% increase in cost, add the section to the message
   if (costIncreasedAccounts.length > 0) {
     blocks.push(costIncreasedAccountsSection);
   }
@@ -96,7 +97,7 @@ const https = require('https')
   )
   console.log(data)
   const options = {
-   // hostname: 'sre-bot.cdssandbox.xyz',
+    hostname: 'sre-bot.cdssandbox.xyz',
     port: 443,
     path: `/hook/${hook}`,
     method: 'POST',
