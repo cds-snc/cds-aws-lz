@@ -5,18 +5,14 @@ const organizations = new AWS.Organizations({ region: 'us-east-1' });
 const https = require('https')
 
 exports.handler = async (event) => {
-  console.log(event)
   const hook = event.hook;
   const today = new Date();
 
   // call the daily cost function to get daily costs
   const dailyAccountCost = await getDailyAccountCost()
-  console.log("Daily account cost", dailyAccountCost)
 
   const accountCost = await getAccountCost()
-  console.log("Account cost", accountCost)
   let accounts = await getAccounts()
-  console.log("Accounts are", accounts)
   let accountIncreases = {}
   Object.keys(accounts).forEach(key => {
     if(accountCost.hasOwnProperty(key)){
@@ -29,7 +25,6 @@ exports.handler = async (event) => {
           accountIncreases[accounts[key]["Name"]] = dailyAccountCost[key]
     }
   });
-  console.log("Account increases", accountIncreases)
   let BU = {}
 
   Object.values(accounts).forEach(account => {
@@ -39,17 +34,7 @@ exports.handler = async (event) => {
       BU[account["BU"]] = account["Cost"]
     }
   })
-
-  Object.values(accounts).forEach(account => {
-    if (BU.hasOwnProperty(account["BU"])) {
-      BU[account["BU"]] = BU[account["BU"]] + account["Cost"]
-    } else {
-      BU[account["BU"]] = account["Cost"]
-    }
-  })
   const totalCost = Object.values(BU).reduce((a, b) => a + b, 0)
-  console.log("Business unit", BU)
-  console.log("Total cost", totalCost)
 
   const header = {
           "type": "header",
@@ -93,7 +78,6 @@ exports.handler = async (event) => {
       "blocks": blocks
     }
   )
-  console.log(data)
   const options = {
     hostname: 'sre-bot.cdssandbox.xyz',
     port: 443,
@@ -105,8 +89,7 @@ exports.handler = async (event) => {
     }
   }
   const resp = await doRequest(options, data);
-  console.log(resp)
-
+  
   const response = {
     statusCode: 200,
     body: JSON.stringify({ success: true }),
