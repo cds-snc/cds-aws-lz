@@ -25,7 +25,6 @@ exports.handler = async (event) => {
           accountIncreases[accounts[key]["Name"]] = dailyAccountCost[key]
     }
   });
-  console.log(dailyAccountCost)
   let BU = {}
 
   Object.values(accounts).forEach(account => {
@@ -79,10 +78,9 @@ exports.handler = async (event) => {
       "blocks": blocks
     }
   )
-  console.log(data)
 
   const options = {
-    //hostname: 'sre-bot.cdssandbox.xyz',
+    hostname: 'sre-bot.cdssandbox.xyz',
     port: 443,
     path: `/hook/${hook}`,
     method: 'POST',
@@ -93,7 +91,7 @@ exports.handler = async (event) => {
   }
   const resp = await doRequest(options, data);
   console.log(resp)
-  
+
   const response = {
     statusCode: 200,
     body: JSON.stringify({ success: true }),
