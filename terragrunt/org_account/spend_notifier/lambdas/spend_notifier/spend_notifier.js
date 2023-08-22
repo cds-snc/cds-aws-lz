@@ -107,7 +107,7 @@ exports.handler = async (event) => {
       "blocks": blocks
     }
   )
-  console.log(data)
+  
   const options = {
     hostname: 'sre-bot.cdssandbox.xyz',
     port: 443,
