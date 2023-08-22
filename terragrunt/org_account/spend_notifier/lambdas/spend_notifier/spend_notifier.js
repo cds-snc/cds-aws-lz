@@ -13,18 +13,33 @@ exports.handler = async (event) => {
 
   const accountCost = await getAccountCost()
   let accounts = await getAccounts()
+
+  // get all scratch accounts that exceeded the threshold of $500 yesterday
+  const scratchAccountsExceedingThreshold = await getScratchAccountsExceedingThreshold()
+
   let accountIncreases = {}
+  let scratchAccountsAffected = {}
+
   Object.keys(accounts).forEach(key => {
     if(accountCost.hasOwnProperty(key)){
       accounts[key]["Cost"] = accountCost[key]
+      // determine if the account is a scratch account
+      accounts[key]["Name"].toLowerCase().includes("scratch") ? accounts[key]["isScratch"] = true : accounts[key]["isScratch"] = false 
     } else {
       accounts[key]["Cost"] = 0
     }
-    // if there is a 35% increase in costs for yesterady vs day before, add to accountIncreases
-    if(dailyAccountCost.hasOwnProperty(key) && dailyAccountCost[key] > 35) {
+
+    // if the account is not a scratch account and there is a 35% increase in costs for yesterday vs day before, add to accountIncreases
+    if(dailyAccountCost.hasOwnProperty(key) && dailyAccountCost[key] > 35 && !accounts[key]["Name"].toLowerCase().includes("scratch")) {
           accountIncreases[accounts[key]["Name"]] = dailyAccountCost[key]
     }
+
+    // if the account is a scratch account and it exceeded the threshold of $500 yesterday, add to scratchAccountsAffected
+    if (scratchAccountsExceedingThreshold.hasOwnProperty(key) && accounts[key]["isScratch"]) {
+      scratchAccountsAffected[accounts[key]["Name"]] = scratchAccountsExceedingThreshold[key]
+    }
   });
+
   let BU = {}
 
   Object.values(accounts).forEach(account => {
@@ -65,6 +80,14 @@ exports.handler = async (event) => {
           { "type": "mrkdwn", "text": `Account(s) *${costIncreasedAccounts}* saw at least *35% increase in cost* yesterday from previous day cost calculations.` },
     }
 
+  // concatenate accounts that exceeded the threshold of $500 and construct a new blocks section
+  const scratchAccounts= Object.keys(scratchAccountsAffected).join(', ').toString()
+  const scratchAccountsSection= {
+        "type": "section",
+        "text":
+          { "type": "mrkdwn", "text": `Account(s) *${scratchAccounts} exceeded* the threshold of *$500* yesterday.` },
+  }
+
   blocks.splice(0,0, header)
   blocks.push({ "type": "divider"})
   blocks.push(footer)
@@ -73,12 +96,18 @@ exports.handler = async (event) => {
   if (costIncreasedAccounts.length > 0) {
     blocks.push(costIncreasedAccountsSection);
   }
+
+  // if the scratch accounts exceeded the threshold of $500, add the section to the message
+  if (scratchAccounts.length > 0) {
+    blocks.push(scratchAccountsSection);
+  }
+
   const data = JSON.stringify(
     {
       "blocks": blocks
     }
   )
-
+  console.log(data)
   const options = {
     hostname: 'sre-bot.cdssandbox.xyz',
     port: 443,
@@ -150,6 +179,57 @@ async function getAccountCost() {
     acc[curr["Keys"][0]] = parseFloat(curr["Metrics"]["UnblendedCost"]["Amount"]);
     return acc;
   }, {});
+}
+
+/**
+ * Calculates the monthly accumulated cost for yesterday and the day before yesterday, and returns the accounts that exceeded the threshold of $500 yesterday but not the day before yesterday.
+ * @returns {Object} An object containing the accounts that exceeded the threshold of $500 yesterday but not the day before yesterday, along with their monthly accumulated cost.
+ */
+async function getScratchAccountsExceedingThreshold() {
+  const today = new Date();
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split("T")[0];
+  const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1).toISOString().split("T")[0];
+  const dayBeforeYesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2).toISOString().split("T")[0];
+
+  // construct params for cost explorer
+  const paramsYesterday = {
+    Granularity: "MONTHLY",
+    TimePeriod: { Start: firstDayOfMonth, End: yesterday},
+    Metrics: ["UNBLENDED_COST"],
+    GroupBy: [
+      {
+        Type: "DIMENSION",
+        Key: "LINKED_ACCOUNT"
+      }]
+  };
+
+  const paramsDayBeforeYesterday = {
+    Granularity: "MONTHLY",
+    TimePeriod: { Start: firstDayOfMonth, End: dayBeforeYesterday},
+    Metrics: ["UNBLENDED_COST"],
+    GroupBy: [
+      {
+        Type: "DIMENSION",
+        Key: "LINKED_ACCOUNT"
+      }]
+  };
+
+  // get the monly accumulated cost for yesterday and the day before yesterday
+  const getAccumulatedCostsYesterday = await costexplorer.getCostAndUsage(paramsYesterday).promise();
+  const getAccumulatedCostsDayBeforeYesterday = await costexplorer.getCostAndUsage(paramsDayBeforeYesterday).promise();
+
+  // calculate which accounts exceeded the threshold of $500 yesterday but not the day before yesterday
+  const scratchAccountsAffected = getAccumulatedCostsYesterday["ResultsByTime"][0]["Groups"].reduce((acc, curr) => {
+    const accountName = curr["Keys"][0];
+    const yesterdayCost = parseFloat(curr["Metrics"]["UnblendedCost"]["Amount"]);
+    const dayBeforeYesterdayCost = getAccumulatedCostsDayBeforeYesterday["ResultsByTime"][0]["Groups"].find(group => group["Keys"][0] === accountName);
+    if (yesterdayCost > 500 && (!dayBeforeYesterdayCost || parseFloat(dayBeforeYesterdayCost["Metrics"]["UnblendedCost"]["Amount"]) < 500)) {
+      acc[accountName] = yesterdayCost;
+    }
+    return acc;
+  }, {});
+
+  return scratchAccountsAffected;
 }
 
 /**
