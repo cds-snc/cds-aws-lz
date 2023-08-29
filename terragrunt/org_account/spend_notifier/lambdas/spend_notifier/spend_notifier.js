@@ -238,14 +238,14 @@ async function getScratchAccountsExceedingThreshold() {
  */
 async function getDailyAccountCost() {
   const today = new Date();
+  const dayToday = today.toISOString().split("T")[0];
   const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1).toISOString().split("T")[0];
   const dayBeforeYesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2).toISOString().split("T")[0];
-  const twoDaysBeforeYesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3).toISOString().split("T")[0];
 
   // construct params for cost explorer
   const paramsYesterday = {
     Granularity: "DAILY",
-    TimePeriod: { Start: dayBeforeYesterday, End: yesterday},
+    TimePeriod: { Start: yesterday, End: dayToday},
     Metrics: ["UNBLENDED_COST"],
     GroupBy: [
       {
@@ -256,7 +256,7 @@ async function getDailyAccountCost() {
 
   const paramsDayBeforeYesterday = {
     Granularity: "DAILY",
-    TimePeriod: { Start: twoDaysBeforeYesterday, End: dayBeforeYesterday},
+    TimePeriod: { Start: dayBeforeYesterday, End: yesterday},
     Metrics: ["UNBLENDED_COST"],
     GroupBy: [
       {
