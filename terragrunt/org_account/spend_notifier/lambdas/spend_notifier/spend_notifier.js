@@ -30,7 +30,7 @@ exports.handler = async (event) => {
     }
 
     // if the account is not a scratch account and there is a 35% increase in costs for yesterday vs day before, add to accountIncreases
-    if(dailyAccountCost.hasOwnProperty(key) && dailyAccountCost[key] > 35 && !accounts[key]["Name"].toLowerCase().includes("scratch")) {
+    if(dailyAccountCost.hasOwnProperty(key) && dailyAccountCost[key] > 35 && !accounts[key]["isScratch"]) {
           accountIncreases[accounts[key]["Name"]] = dailyAccountCost[key]
     }
 
