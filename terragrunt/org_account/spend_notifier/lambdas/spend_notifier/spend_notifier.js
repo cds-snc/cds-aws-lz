@@ -187,14 +187,14 @@ async function getAccountCost() {
  */
 async function getScratchAccountsExceedingThreshold() {
   const today = new Date();
+  const todayDate = today.toISOString().split("T")[0];
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split("T")[0];
   const yesterday = new Date(today.setDate(today.getDate() - 1)).toISOString().split("T")[0];
-  const dayBeforeYesterday = new Date(today.setDate(today.getDate() - 2)).toISOString().split("T")[0];
 
   // construct params for cost explorer
   const paramsYesterday = {
     Granularity: "MONTHLY",
-    TimePeriod: { Start: firstDayOfMonth, End: yesterday},
+    TimePeriod: { Start: firstDayOfMonth, End: todayDate},
     Metrics: ["UNBLENDED_COST"],
     GroupBy: [
       {
@@ -205,7 +205,7 @@ async function getScratchAccountsExceedingThreshold() {
 
   const paramsDayBeforeYesterday = {
     Granularity: "MONTHLY",
-    TimePeriod: { Start: firstDayOfMonth, End: dayBeforeYesterday},
+    TimePeriod: { Start: firstDayOfMonth, End: yesterday},
     Metrics: ["UNBLENDED_COST"],
     GroupBy: [
       {
@@ -240,7 +240,8 @@ async function getDailyAccountCost() {
   const today = new Date();
   const dayToday = today.toISOString().split("T")[0];
   const yesterday = new Date(today.setDate(today.getDate() - 1)).toISOString().split("T")[0];
-  const dayBeforeYesterday = new Date(today.setDate(today.getDate() - 2)).toISOString().split("T")[0];
+  // since today gets essentially yesterdays date, we need to decrement by 1 again to get the day before yesterday
+  const dayBeforeYesterday = new Date(today.setDate(today.getDate() - 1)).toISOString().split("T")[0];
 
   // construct params for cost explorer
   const paramsYesterday = {
