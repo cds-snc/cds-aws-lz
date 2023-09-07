@@ -239,9 +239,8 @@ async function getScratchAccountsExceedingThreshold() {
 async function getDailyAccountCost() {
   const today = new Date();
   const dayToday = today.toISOString().split("T")[0];
-  const yesterday = new Date(today.setDate(today.getDate() - 1)).toISOString().split("T")[0];
-  // since today gets essentially yesterdays date, we need to decrement by 1 again to get the day before yesterday
-  const dayBeforeYesterday = new Date(today.setDate(today.getDate() - 1)).toISOString().split("T")[0];
+  const yesterday = new Date(new Date().setDate(today.getDate() - 1)).toISOString().split("T")[0];
+  const dayBeforeYesterday = new Date(new Date().setDate(today.getDate() - 2)).toISOString().split("T")[0];
 
   // construct params for cost explorer
   const paramsYesterday = {
