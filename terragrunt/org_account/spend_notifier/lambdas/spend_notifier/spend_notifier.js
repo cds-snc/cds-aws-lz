@@ -5,7 +5,7 @@ const organizations = new AWS.Organizations({ region: 'us-east-1' });
 const https = require('https')
 
 exports.handler = async (event) => {
-  const hook = event.hook;
+ const hook = event.hook;
   const today = new Date();
 
   // call the daily cost function to get daily costs
@@ -191,45 +191,49 @@ async function getScratchAccountsExceedingThreshold() {
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split("T")[0];
   const yesterday = new Date(today.setDate(today.getDate() - 1)).toISOString().split("T")[0];
 
-  // construct params for cost explorer
-  const paramsYesterday = {
-    Granularity: "MONTHLY",
-    TimePeriod: { Start: firstDayOfMonth, End: todayDate},
-    Metrics: ["UNBLENDED_COST"],
-    GroupBy: [
-      {
+  // do this calculation only if yesterday is greater than or equal to the first day of the month. This is needed since we go back 2 days to calculate the difference in cost.
+  if (yesterday >= firstDayOfMonth) {
+    // construct params for cost explorer
+    const paramsYesterday = {
+      Granularity: "MONTHLY",
+      TimePeriod: { Start: firstDayOfMonth, End: todayDate},
+      Metrics: ["UNBLENDED_COST"],
+      GroupBy: [
+        {
         Type: "DIMENSION",
         Key: "LINKED_ACCOUNT"
       }]
-  };
+    };
 
-  const paramsDayBeforeYesterday = {
-    Granularity: "MONTHLY",
-    TimePeriod: { Start: firstDayOfMonth, End: yesterday},
-    Metrics: ["UNBLENDED_COST"],
-    GroupBy: [
-      {
-        Type: "DIMENSION",
-        Key: "LINKED_ACCOUNT"
-      }]
-  };
+    const paramsDayBeforeYesterday = {
+      Granularity: "MONTHLY",
+      TimePeriod: { Start: firstDayOfMonth, End: yesterday},
+      Metrics: ["UNBLENDED_COST"],
+      GroupBy: [
+        {
+          Type: "DIMENSION",
+          Key: "LINKED_ACCOUNT"
+        }]
+    };
 
-  // get the monly accumulated cost for yesterday and the day before yesterday
-  const getAccumulatedCostsYesterday = await costexplorer.getCostAndUsage(paramsYesterday).promise();
-  const getAccumulatedCostsDayBeforeYesterday = await costexplorer.getCostAndUsage(paramsDayBeforeYesterday).promise();
+    // get the monly accumulated cost for yesterday and the day before yesterday
+    const getAccumulatedCostsYesterday = await costexplorer.getCostAndUsage(paramsYesterday).promise();
+    const getAccumulatedCostsDayBeforeYesterday = await costexplorer.getCostAndUsage(paramsDayBeforeYesterday).promise();
 
-  // calculate which accounts exceeded the threshold of $500 yesterday but not the day before yesterday
-  const scratchAccountsAffected = getAccumulatedCostsYesterday["ResultsByTime"][0]["Groups"].reduce((acc, curr) => {
-    const accountName = curr["Keys"][0];
-    const yesterdayCost = parseFloat(curr["Metrics"]["UnblendedCost"]["Amount"]);
-    const dayBeforeYesterdayCost = getAccumulatedCostsDayBeforeYesterday["ResultsByTime"][0]["Groups"].find(group => group["Keys"][0] === accountName);
-    if (yesterdayCost > 500 && (!dayBeforeYesterdayCost || parseFloat(dayBeforeYesterdayCost["Metrics"]["UnblendedCost"]["Amount"]) < 500)) {
-      acc[accountName] = yesterdayCost;
-    }
-    return acc;
-  }, {});
+    // calculate which accounts exceeded the threshold of $500 yesterday but not the day before yesterday
+    const scratchAccountsAffected = getAccumulatedCostsYesterday["ResultsByTime"][0]["Groups"].reduce((acc, curr) => {
+      const accountName = curr["Keys"][0];
+      const yesterdayCost = parseFloat(curr["Metrics"]["UnblendedCost"]["Amount"]);
+      const dayBeforeYesterdayCost = getAccumulatedCostsDayBeforeYesterday["ResultsByTime"][0]["Groups"].find(group => group["Keys"][0] === accountName);
+      if (yesterdayCost > 500 && (!dayBeforeYesterdayCost || parseFloat(dayBeforeYesterdayCost["Metrics"]["UnblendedCost"]["Amount"]) < 500)) {
+        acc[accountName] = yesterdayCost;
+      }
+      return acc;
+    }, {});
 
   return scratchAccountsAffected;
+}
+return {}
 }
 
 /**
