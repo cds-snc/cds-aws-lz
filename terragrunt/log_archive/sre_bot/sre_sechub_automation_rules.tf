@@ -31,4 +31,7 @@ resource "aws_iam_policy" "sre_sechub_automation_rules" {
 resource "aws_iam_role_policy_attachment" "sre_sechub_automation_rules" {
   role       = aws_iam_role.sre_sechub_automation_rules_oidc_role.name
   policy_arn = aws_iam_policy.sre_sechub_automation_rules.arn
+  depends_on = [
+    module.OIDC_Roles
+  ]
 }
