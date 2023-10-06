@@ -2,11 +2,18 @@ module "OIDC_Roles" {
   source      = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v5.0.0"
   oidc_exists = true
 
-  roles = [{
-    name      = local.sre_vulnerability_report_oidc_role
-    repo_name = "site-reliability-engineering"
-    claim     = "ref:refs/heads/main"
-  }]
+  roles = [
+    {
+      name      = local.sre_vulnerability_report_oidc_role
+      repo_name = "site-reliability-engineering"
+      claim     = "ref:refs/heads/main"
+    },
+    {
+      name      = local.sre_sechub_automation_rules_oidc_role
+      repo_name = "site-reliability-engineering"
+      claim     = "ref:refs/heads/main"
+    }
+  ]
 
   billing_tag_value = var.billing_code
 }
