@@ -51,6 +51,9 @@ module "aft_managment" {
 
 resource "aws_securityhub_account" "log_archive" {
   provider = aws.log_archive
+
+  auto_enable_controls      = true
+  control_finding_generator = "SECURITY_CONTROL"
 }
 
 resource "aws_securityhub_finding_aggregator" "example" {
