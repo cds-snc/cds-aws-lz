@@ -3,8 +3,7 @@
 resource "aws_securityhub_account" "this" {
   provider = aws.member
 
-  auto_enable_controls      = true
-  control_finding_generator = "SECURITY_CONTROL"  
+  auto_enable_controls = true
 }
 
 data "aws_caller_identity" "member" {
