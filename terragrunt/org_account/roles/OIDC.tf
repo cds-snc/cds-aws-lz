@@ -25,7 +25,7 @@ data "aws_iam_policy_document" "org_account_list_in_sandbox" {
     ]
 
     resources = [
-      "arn:aws:organizations::659087519042:ou/o-625no8z3dd/ou-5gsq-qhvjdryl",
+      "arn:aws:organizations::659087519042:ou/o-625no8z3dd/ou-5gsq-9tmkqm3f",
     ]
   }
 }
