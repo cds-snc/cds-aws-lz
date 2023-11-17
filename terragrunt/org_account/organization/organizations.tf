@@ -48,7 +48,7 @@ resource "aws_organizations_organizational_unit" "Sandbox" {
   parent_id = local.root
 }
 
-resource "aws_organizations_organizational_unit" "Sandbox" {
+resource "aws_organizations_organizational_unit" "SandboxMigration" {
   name      = "SandboxMigration"
   parent_id = local.root
 }
