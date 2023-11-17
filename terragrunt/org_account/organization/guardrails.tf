@@ -15,10 +15,10 @@ module "Production_SRC" {
   ou_arn = aws_organizations_organizational_unit.Production.arn
 }
 
-module "Sandbox_SRC" {
-  source = "./modules/global_controls"
-  ou_arn = aws_organizations_organizational_unit.Sandbox.arn
-}
+# module "Sandbox_SRC" {
+#   source = "./modules/global_controls"
+#   ou_arn = aws_organizations_organizational_unit.Sandbox.arn
+# }
 
 module "Security_SRC" {
   source = "./modules/global_controls"
@@ -46,7 +46,7 @@ module "REQUIRE_CLOUDTRAIL_LOG_FILE_VALIDATION" {
   ou_arns = [
     aws_organizations_organizational_unit.Test.arn,
     aws_organizations_organizational_unit.SRETools.arn,
-    aws_organizations_organizational_unit.Sandbox.arn,
+    # aws_organizations_organizational_unit.Sandbox.arn,
     aws_organizations_organizational_unit.DumpsterFire.arn,
     aws_organizations_organizational_unit.AFT.arn,
     aws_organizations_organizational_unit.Staging.arn
@@ -65,7 +65,7 @@ module "DISALLOW_CFN_EXTENSIONS" {
     aws_organizations_organizational_unit.Test.arn,
     aws_organizations_organizational_unit.SRETools.arn,
     aws_organizations_organizational_unit.Security.arn,
-    aws_organizations_organizational_unit.Sandbox.arn,
+    # aws_organizations_organizational_unit.Sandbox.arn,
     aws_organizations_organizational_unit.DumpsterFire.arn,
     aws_organizations_organizational_unit.AFT.arn,
     aws_organizations_organizational_unit.Staging.arn
