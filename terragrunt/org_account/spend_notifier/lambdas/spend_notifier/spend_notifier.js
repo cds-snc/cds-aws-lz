@@ -9,7 +9,7 @@ exports.handler = async (event) => {
   const today = new Date();
 
   // call the daily cost function to get daily costs
-  const dailyAccountCost = await getDailyAccountCost()
+  const [dailyAccountCost, amountIncrease] = await getDailyAccountCost()
 
   const accountCost = await getAccountCost()
   let accounts = await getAccounts()
@@ -29,8 +29,8 @@ exports.handler = async (event) => {
       accounts[key]["Cost"] = 0
     }
 
-    // if the account is not a scratch account and there is a 35% increase in costs for yesterday vs day before, add to accountIncreases
-    if(dailyAccountCost.hasOwnProperty(key) && dailyAccountCost[key] > 35 && !accounts[key]["isScratch"]) {
+    // if the account is not a scratch account and there is a 35% increase in costs for yesterday vs day before AND the difference in the dollar amount is greater than $10, add to accountIncreases
+    if(dailyAccountCost.hasOwnProperty(key) && dailyAccountCost[key] >35 && !accounts[key]["isScratch"] && amountIncrease.hasOwnProperty(key) && amountIncrease[key] > 10) {
           accountIncreases[accounts[key]["Name"]] = dailyAccountCost[key]
     }
 
@@ -295,8 +295,9 @@ async function getDailyAccountCost() {
     acc[curr] = ((difference[curr] / dayBeforeYesterdayCosts[curr]) * 100).toFixed(2);
     return acc;
   }, {});
-  
-  return percentageIncrease;
+
+  //return the percentage increase and the difference in dollar amount
+  return [percentageIncrease, difference];
 }
 
 function doRequest(options, data) {
