@@ -192,7 +192,7 @@ async function getScratchAccountsExceedingThreshold() {
   const yesterday = new Date(today.setDate(today.getDate() - 1)).toISOString().split("T")[0];
 
   // do this calculation only if yesterday is greater than or equal to the first day of the month. This is needed since we go back 2 days to calculate the difference in cost.
-  if (yesterday >= firstDayOfMonth) {
+  if (yesterday > firstDayOfMonth) {
     // construct params for cost explorer
     const paramsYesterday = {
       Granularity: "MONTHLY",
