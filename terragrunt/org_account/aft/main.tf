@@ -1,7 +1,7 @@
 module "account_factory_for_terraform" {
-  source = "github.com/aws-ia/terraform-aws-control_tower_account_factory?ref=1.10.3"
+  source = "github.com/aws-ia/terraform-aws-control_tower_account_factory?ref=1.11.1"
 
-  terraform_version = "1.3.9"
+  terraform_version = "1.5.7"
 
   vcs_provider                                  = "github"
   account_customizations_repo_name              = "cds-snc/aft-account-customizations"
