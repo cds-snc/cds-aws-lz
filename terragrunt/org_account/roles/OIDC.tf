@@ -1,5 +1,6 @@
 locals {
-  org_account_list_name = "listAccountsInSandboxOUForNuke"
+  org_account_list_name   = "listAccountsInSandboxOUForNuke"
+  org_allow_policy_toggle = "ghActionAllowPolicyToggle"
 }
 
 module "OIDC_Roles" {
@@ -10,6 +11,11 @@ module "OIDC_Roles" {
     name      = local.org_account_list_name
     repo_name = "site-reliability-engineering"
     claim     = "ref:refs/heads/main"
+    },
+    {
+      name      = local.org_allow_policy_toggle
+      repo_name = "site-reliability-engineering"
+      claim     = "ref:refs/heads/main"
   }]
 
   billing_tag_value = var.billing_code
@@ -39,4 +45,35 @@ resource "aws_iam_policy" "org_account_list_in_sandbox" {
 resource "aws_iam_role_policy_attachment" "attach_list_accounts_in_sandbox" {
   role       = local.org_account_list_name
   policy_arn = aws_iam_policy.org_account_list_in_sandbox.arn
+}
+
+# temporary role to run toggle on/off the config recorder to run the aft vault backup cleanup script in a workflow
+data "aws_iam_policy_document" "org_allow_policy_toggle" {
+  statement {
+    sid = "AllowPolicyToggle"
+
+    actions = [
+      "organizations:ListPoliciesForTarget",
+      "organizations:ListRoots",
+      "organizations:ListOrganizationalUnitsForParent",
+      "organizations:DescribePolicy",
+      "organizations:DetachPolicy",
+      "organizations:AttachPolicy"
+    ]
+
+    resources = "*"
+  }
+
+}
+
+resource "aws_iam_policy" "org_allow_policy_toggle" {
+  name   = local.org_allow_policy_toggle
+  policy = data.aws_iam_policy_document.org_allow_policy_toggle.json
+
+}
+
+resource "aws_iam_role_policy_attachment" "attach_org_allow_policy_toggle" {
+  role       = local.org_allow_policy_toggle
+  policy_arn = aws_iam_policy.org_allow_policy_toggle.arn
+
 }
