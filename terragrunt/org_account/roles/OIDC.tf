@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "org_allow_policy_toggle" {
       "organizations:AttachPolicy"
     ]
 
-    resources = "*"
+    resources = ["*"]
   }
 
 }

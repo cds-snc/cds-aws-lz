@@ -40,7 +40,7 @@ data "aws_iam_policy_document" "aft_vault_cleanup" {
       "config:StartConfigurationRecorder",
       "config:DescribeConfigurationRecorderStatus"
     ]
-    resources = "*"
+    resources = ["*"]
   }
 }
 
