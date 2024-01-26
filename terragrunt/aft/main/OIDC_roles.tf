@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "aft_vault_cleanup" {
       "backup:ListRecoveryPointsByBackupVault"
     ]
     resources = [
-      "arn:aws:backup:ca-central-1:137554749751:backup-vault:aft-controltower-backup-vault",
+      "arn:aws:backup:${var.region}:${var.account_id}:backup-vault:aft-controltower-backup-vault",
       "arn:aws:backup:ca-central-1:137554749751:recovery-point:*"
     ]
   }
