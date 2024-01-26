@@ -2,7 +2,7 @@ locals {
   aft_vault_cleanup = "aft-vault-cleanup-resources"
 }
 
-module "OIDC_Roles" {
+module "gh_oidc_roles" {
   source      = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v9.0.3"
   oidc_exists = true
 
@@ -51,7 +51,9 @@ resource "aws_iam_policy" "aft_vault_cleanup" {
 
 }
 resource "aws_iam_role_policy_attachment" "assume_aft_vault_cleanup_role" {
-  role       = module.assume_aft_vault_cleanup_role.role_name
+  role       = local.aft_vault_cleanup
   policy_arn = aws_iam_policy.aft_vault_cleanup.arn
-
+  depends_on = [
+    module.gh_oidc_roles
+  ]
 }
