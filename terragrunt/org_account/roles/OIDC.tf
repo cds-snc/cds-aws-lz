@@ -75,5 +75,8 @@ resource "aws_iam_policy" "org_allow_policy_toggle" {
 resource "aws_iam_role_policy_attachment" "attach_org_allow_policy_toggle" {
   role       = local.org_allow_policy_toggle
   policy_arn = aws_iam_policy.org_allow_policy_toggle.arn
+  depends_on = [ 
+    module.OIDC_Roles
+   ]
 
 }
