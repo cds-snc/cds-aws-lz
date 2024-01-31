@@ -11,6 +11,7 @@ env:
   TERRAFORM_VERSION: 1.1.7
   TERRAGRUNT_VERSION: 0.36.3
   CONFTEST_VERSION: 0.30.0
+  TF_SUMMARIZE_VERSION: 0.3.5
 
 permissions:
   id-token: write
@@ -39,7 +40,7 @@ jobs:
           aws-region: ca-central-1
 
       - name: Terraform Plan for org_account/aft
-        uses: cds-snc/terraform-plan@v3
+        uses: cds-snc/terraform-plan@v3.2.0
         with:
           comment-delete: true
           comment-title: Plan for org_account/organization
