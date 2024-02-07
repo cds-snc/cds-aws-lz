@@ -10,6 +10,7 @@ env:
   TERRAFORM_VERSION: 1.1.7
   TERRAGRUNT_VERSION: 0.36.3
   CONFTEST_VERSION: 0.30.0
+  TF_SUMMARIZE_VERSION: 0.3.5
 
 permissions:
   id-token: write
@@ -52,6 +53,12 @@ jobs:
             role: cds-aws-lz-plan
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
 
+          - account_folder: org_account
+            module: bi_extracts
+            account: 659087519042
+            role: cds-aws-lz-plan
+            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
+
           - account_folder: log_archive
             module: main
             account: 274536870005
@@ -90,6 +97,7 @@ jobs:
             account: 137554749751
             role: cds-aws-lz-plan
             aft_notifications_hook: AFT_NOTIFICATIONS_HOOK
+          
 
     runs-on: ubuntu-latest
     steps:
@@ -119,7 +127,7 @@ jobs:
           TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
           TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
           TF_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
-        uses: cds-snc/terraform-plan@v3
+        uses: cds-snc/terraform-plan@v3.2.0
         with:
           comment-delete: true
           comment-title: Plan for ${{matrix.account_folder}}/${{ matrix.module }}
