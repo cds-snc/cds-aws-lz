@@ -2,7 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: cds-aws-lz
-  description: CDS
+  description: CDS AWS Landing Zone
   labels:
     license: MIT
 spec:
