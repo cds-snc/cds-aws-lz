@@ -1,20 +1,4 @@
 apiVersion: backstage.io/v1alpha1
-kind: System
-metadata:
-  name: cds-aws-landing-zone
-  description: CDS AWS Landing zone
-spec:
-  domain: site-reliability-engineering
-  owner: internal-sre
-  lifecycle: production
-  components:
-    - https://github.com/cds-snc/cds-aws-lz
-    - https://github.com/cds-snc/aft-account-customizations
-    - https://github.com/cds-snc/aft-account-provisioning-customizations
-    - https://github.com/cds-snc/aft-account-request/
-    - https://github.com/cds-snc/aft-global-customizations
----
-apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: cds-aws-lz
