@@ -7,7 +7,7 @@ metadata:
     license: MIT
 spec:
   type: website
-  lifecycle: production—
+  lifecycle: production
   owner: internal-sre
   domain: site-reliability-engineering
   system: cds-aws-landing-zone
