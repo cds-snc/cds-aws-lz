@@ -10,3 +10,4 @@ spec:
   lifecycle: production—
   owner: internal-sre
   domain: site-reliability-engineering
+  system: cds-aws-landing-zone
