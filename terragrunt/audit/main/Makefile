@@ -1,3 +1,5 @@
+.PHONY: fmt docs
+
 fmt:
 	@terraform fmt -recursive
 
