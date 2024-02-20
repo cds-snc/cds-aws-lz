@@ -8,6 +8,6 @@ metadata:
 spec:
   type: website
   lifecycle: production
-  owner: internal-sre
+  owner: group:cds-snc/internal-sre
   domain: site-reliability-engineering
   system: cds-aws-landing-zone
