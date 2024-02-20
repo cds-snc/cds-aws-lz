@@ -19,6 +19,9 @@
 			"version": "1.7.2",
 			"tflint": "latest",
 			"terragrunt": "0.55.1"
+		},
+		"ghcr.io/dhoeric/features/terraform-docs:1": {
+			"version": "latest"
 		}
 	}
 
