@@ -8,6 +8,11 @@ import {
   id = "5bf89a78-1503-4e02-9621-3ac658f558fb"
 }
 
+import {
+  to = aws_s3_bucket_policy.billing_extract_tags
+  id = "5bf89a78-1503-4e02-9621-3ac658f558fb"
+}
+
 module "billing_extract_tags" {
   source      = "github.com/cds-snc/terraform-modules//S3?ref=v9.2.4"
   bucket_name = "5bf89a78-1503-4e02-9621-3ac658f558fb"
