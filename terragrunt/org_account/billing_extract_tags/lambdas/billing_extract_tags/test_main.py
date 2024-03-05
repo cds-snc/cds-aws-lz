@@ -1,7 +1,6 @@
 import unittest
-import os
-from unittest.mock import call, patch, MagicMock
-from main import lambda_handler
+from unittest.mock import patch, MagicMock
+from main import handler
 
 TARGET_BUCKET = "TARGET_BUCKET"
 ACCOUNT_TAGS_KEY = "account_tags.json"
@@ -24,14 +23,15 @@ class TestLambdaHandler(unittest.TestCase):
         }
         mock_orgs_list_tags.return_value = {"Tags": [{"Key": "Name", "Value": "Dev"}]}
 
-        response = lambda_handler(self.event, self.context)
+        response = handler(self.event, self.context)
 
         mock_orgs_list_accounts.assert_called()
         mock_orgs_list_tags.assert_called_with(ResourceId="123")
         mock_s3_put.assert_called_with(
             Bucket=TARGET_BUCKET,
             Key=ACCOUNT_TAGS_KEY,
-            Body='[{"Id": "123", "tag_Name": "Dev"}]',
+            Body="""[
+{"Id": "123", "tag_Name": "Dev"}]""",
         )
 
         self.assertEqual(response, {"statusCode": 200})
@@ -52,7 +52,7 @@ class TestLambdaHandler(unittest.TestCase):
             {"Tags": [{"Key": "Name", "Value": "Prod"}]},
         ]
 
-        lambda_handler(self.event, self.context)
+        handler(self.event, self.context)
 
         mock_orgs_list_accounts.assert_any_call(NextToken="token")
         mock_orgs_list_tags.assert_any_call(ResourceId="123")
@@ -60,5 +60,7 @@ class TestLambdaHandler(unittest.TestCase):
         mock_s3_put.assert_called_with(
             Bucket=TARGET_BUCKET,
             Key=ACCOUNT_TAGS_KEY,
-            Body='[{"Id": "123", "tag_Name": "Dev"}, {"Id": "456", "tag_Name": "Prod"}]',
+            Body="""[
+{"Id": "123", "tag_Name": "Dev"},
+{"Id": "456", "tag_Name": "Prod"}]""",
         )

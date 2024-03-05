@@ -15,7 +15,7 @@ s3 = boto3.client("s3")
 TARGET_BUCKET = os.getenv("TARGET_BUCKET")
 
 
-def lambda_handler(event, context):
+def handler(event, context):
     """
     Get the tags for all accounts in the organization and save them to an s3 bucket
     """
@@ -62,8 +62,8 @@ def lambda_handler(event, context):
     # .write json to string and add a newline between each record
     logging.info("Writing account tags to json")
     accounts = json.dumps(accounts, default=str)
-    # accounts = accounts.replace('},', '},\n')
-    # accounts = accounts.replace('[{', '[\n{')
+    accounts = accounts.replace("}, ", "},\n")
+    accounts = accounts.replace("[{", "[\n{")
     logging.info(f"Accounts: {accounts}")
 
     # save accounts to an s3 bucket
