@@ -26,7 +26,7 @@ resource "aws_s3_bucket_policy" "billing_extract_tags" {
 
 data "aws_iam_policy_document" "billing_extract_tags_bucket" {
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     principals {
       type        = "AWS"
       identifiers = [aws_iam_role.billing_extract_tags.arn]
@@ -45,7 +45,7 @@ data "aws_iam_policy_document" "billing_extract_tags_bucket" {
   }
 
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     principals {
       type        = "AWS"
       identifiers = ["arn:aws:iam::066023111852:root"]
