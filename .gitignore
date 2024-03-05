@@ -13,3 +13,5 @@ creds.sh
 
 .tool-versions
 .DS_Store
+
+__pycache__

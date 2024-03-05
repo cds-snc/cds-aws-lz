@@ -52,6 +52,12 @@ jobs:
             role: cds-aws-lz-plan
             admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
 
+          - account_folder: org_account
+            module: billing_extract_tags
+            account: 659087519042
+            role: cds-aws-lz-plan
+            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN            
+
           - account_folder: log_archive
             module: main
             account: 274536870005
