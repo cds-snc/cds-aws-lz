@@ -64,6 +64,10 @@ resource "aws_organizations_organizational_unit" "Security" {
   parent_id = local.root
 }
 
+resource "aws_organizations_policy_attachment" "Security-cds_snc_universal_guardrails" {
+  policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.Security.id
+}
 
 resource "aws_organizations_organizational_unit" "SRETools" {
   name      = "SRETools"
