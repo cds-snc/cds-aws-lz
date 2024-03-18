@@ -30,6 +30,10 @@ resource "aws_organizations_organizational_unit" "AFT" {
   parent_id = local.root
 }
 
+resource "aws_organizations_policy_attachment" "AFT-cds_snc_universal_guardrails" {
+  policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.AFT.id
+}
 
 resource "aws_organizations_organizational_unit" "DumpsterFire" {
   name      = "DumpsterFire"
