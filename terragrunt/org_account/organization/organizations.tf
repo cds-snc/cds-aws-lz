@@ -35,6 +35,17 @@ resource "aws_organizations_policy_attachment" "AFT-cds_snc_universal_guardrails
   target_id = aws_organizations_organizational_unit.AFT.id
 }
 
+
+resource "aws_organizations_organizational_unit" "DumpsterFire" {
+  name      = "DumpsterFire"
+  parent_id = local.root
+}
+
+resource "aws_organizations_policy_attachment" "DumpsterFire-cds_snc_universal_guardrails" {
+  policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.DumpsterFire.id
+}
+
 resource "aws_organizations_organizational_unit" "Production" {
   name      = "Production"
   parent_id = local.root
