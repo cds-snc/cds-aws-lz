@@ -157,3 +157,21 @@ resource "aws_organizations_policy" "cds_snc_universal_guardrails" {
   type    = "SERVICE_CONTROL_POLICY"
   content = data.aws_iam_policy_document.cds_snc_universal_guardrails.json
 }
+
+data "aws_iam_policy_document" "qurantine_deny_all_policy" {
+  statement {
+    sid    = "DenyAllActions"
+    effect = "Deny"
+
+    actions = ["*"]
+    resources = [
+      "*",
+    ]
+  }
+}
+
+resource "aws_organizations_policy" "qurantine_deny_all_policy" {
+  name    = "Qurantine account and Deny All Policy"
+  type    = "SERVICE_CONTROL_POLICY"
+  content = data.aws_iam_policy_document.qurantine_deny_all_policy.json
+}
