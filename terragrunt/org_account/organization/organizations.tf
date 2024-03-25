@@ -106,3 +106,8 @@ resource "aws_organizations_policy_attachment" "Test-cds_snc_universal_guardrail
   policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
   target_id = aws_organizations_organizational_unit.Test.id
 }
+
+resource "aws_organizations_policy_attachment" "DumpsterFire-qurantine_deny_all_policy" {
+  policy_id = aws_organizations_policy.qurantine_deny_all_policy.id
+  target_id = aws_organizations_organizational_unit.DumpsterFire.id
+}
