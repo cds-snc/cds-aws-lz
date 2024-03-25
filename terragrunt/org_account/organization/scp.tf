@@ -157,3 +157,23 @@ resource "aws_organizations_policy" "cds_snc_universal_guardrails" {
   type    = "SERVICE_CONTROL_POLICY"
   content = data.aws_iam_policy_document.cds_snc_universal_guardrails.json
 }
+
+
+data "aws_iam_policy_document" "block_ec2" {
+  statement {
+    sid    = "PreventEC2Creation"
+    effect = "Deny"
+    actions = [
+      "ec2:RunInstances",
+    ]
+    resources = [
+      "*",
+    ]
+  }
+}
+
+resource "aws_organizations_policy" "block_ec2" {
+  name    = "Block EC2 Creation"
+  type    = "SERVICE_CONTROL_POLICY"
+  content = data.aws_iam_policy_document.block_ec2.json
+}

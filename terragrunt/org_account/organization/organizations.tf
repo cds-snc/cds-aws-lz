@@ -61,6 +61,17 @@ resource "aws_organizations_policy_attachment" "Sandbox-cds_snc_universal_guardr
   target_id = aws_organizations_organizational_unit.Sandbox.id
 }
 
+resource "aws_organizations_policy_attachment" "Sandbox-PreventEC2Creation" {
+  policy_id = aws_organizations_policy.block_ec2.id
+  target_id = aws_organizations_organizational_unit.Sandbox.id
+}
+
+
+resource "aws_organizations_policy_attachment" "767397971970-PreventEC2Creation" {
+  policy_id = aws_organizations_policy.block_ec2.id
+  target_id = "767397971970"
+}
+
 
 resource "aws_organizations_organizational_unit" "Security" {
   name      = "Security"
