@@ -13,6 +13,7 @@ data "aws_iam_policy_document" "sre_identity_audit_assume" {
         "arn:aws:iam::${var.account_id}:role/${local.sre_identity_audit_oidc_role}"
       ]
     }
+    effect = "Allow"
   }
 }
 
