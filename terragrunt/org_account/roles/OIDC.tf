@@ -1,8 +1,3 @@
-locals {
-  org_account_list_name        = "listAccountsInSandboxOUForNuke"
-  org_allow_policy_toggle      = "ghActionAllowPolicyToggle"
-  sre_identity_audit_oidc_role = "sre_identity_audit_oidc_role"
-}
 
 module "OIDC_Roles" {
   source      = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v5.0.0"
@@ -112,4 +107,9 @@ resource "aws_iam_policy" "assume_sre_identity_audit" {
   policy = data.aws_iam_policy_document.assume_sre_identity_audit.json
 
   tags = local.common_tags
+}
+
+resource "aws_iam_role_policy_attachment" "assume_sre_identity_audit" {
+  role       = local.sre_identity_audit_oidc_role
+  policy_arn = aws_iam_policy.assume_sre_identity_audit.arn
 }
