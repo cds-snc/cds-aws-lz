@@ -46,6 +46,8 @@ data "aws_iam_policy_document" "org_account_list_in_sandbox" {
 resource "aws_iam_policy" "org_account_list_in_sandbox" {
   name   = local.org_account_list_name
   policy = data.aws_iam_policy_document.org_account_list_in_sandbox.json
+
+  tags = local.common_tags
 }
 
 # Attach the policy document to the role loca.org_account_list_name
@@ -77,6 +79,8 @@ resource "aws_iam_policy" "org_allow_policy_toggle" {
   name   = local.org_allow_policy_toggle
   policy = data.aws_iam_policy_document.org_allow_policy_toggle.json
 
+    tags = local.common_tags
+
 }
 
 resource "aws_iam_role_policy_attachment" "attach_org_allow_policy_toggle" {
@@ -106,4 +110,6 @@ data "aws_iam_policy_document" "assume_sre_identity_audit" {
 resource "aws_iam_policy" "assume_sre_identity_audit" {
   name   = local.sre_identity_audit_oidc_role
   policy = data.aws_iam_policy_document.assume_sre_identity_audit.json
+
+  tags = local.common_tags
 }
