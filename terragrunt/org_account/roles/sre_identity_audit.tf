@@ -13,7 +13,6 @@ data "aws_iam_policy_document" "sre_identity_audit_assume" {
         "arn:aws:iam::${var.account_id}:role/${local.sre_identity_audit_oidc_role}"
       ]
     }
-    effect = "Allow"
   }
 }
 
@@ -60,4 +59,16 @@ data "aws_iam_policy_document" "sre_identity_audit" {
     ]
     resources = ["arn:aws:organizations::${var.account_id}:account/*"]
   }
+}
+
+resource "aws_iam_policy" "sre_identity_audit" {
+  name   = "sre_identity_audit"
+  policy = data.aws_iam_policy_document.sre_identity_audit.json
+
+  tags = local.common_tags
+}
+
+resource "aws_iam_role_policy_attachment" "sre_identity_audit" {
+  role       = aws_iam_role.sre_identity_audit.name
+  policy_arn = aws_iam_policy.sre_identity_audit.arn
 }
