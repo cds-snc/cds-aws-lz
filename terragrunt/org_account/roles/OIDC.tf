@@ -74,7 +74,7 @@ resource "aws_iam_policy" "org_allow_policy_toggle" {
   name   = local.org_allow_policy_toggle
   policy = data.aws_iam_policy_document.org_allow_policy_toggle.json
 
-    tags = local.common_tags
+  tags = local.common_tags
 
 }
 
