@@ -3,4 +3,7 @@ locals {
     CostCentre = var.billing_code
     Terraform  = "true"
   }
+  org_account_list_name        = "listAccountsInSandboxOUForNuke"
+  org_allow_policy_toggle      = "ghActionAllowPolicyToggle"
+  sre_identity_audit_oidc_role = "sre_identity_audit_oidc_role"
 }
