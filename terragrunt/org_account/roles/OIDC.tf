@@ -1,6 +1,7 @@
 locals {
-  org_account_list_name   = "listAccountsInSandboxOUForNuke"
-  org_allow_policy_toggle = "ghActionAllowPolicyToggle"
+  org_account_list_name        = "listAccountsInSandboxOUForNuke"
+  org_allow_policy_toggle      = "ghActionAllowPolicyToggle"
+  sre_identity_audit_oidc_role = "sre_identity_audit_oidc_role"
 }
 
 module "OIDC_Roles" {
@@ -16,7 +17,13 @@ module "OIDC_Roles" {
       name      = local.org_allow_policy_toggle
       repo_name = "site-reliability-engineering"
       claim     = "ref:refs/heads/main"
-  }]
+    },
+    {
+      name      = local.sre_identity_audit_oidc_role
+      repo_name = "site-reliability-engineering"
+      claim     = "ref:refs/heads/main"
+    },
+  ]
 
   billing_tag_value = var.billing_code
 }
@@ -79,4 +86,24 @@ resource "aws_iam_role_policy_attachment" "attach_org_allow_policy_toggle" {
     module.OIDC_Roles
   ]
 
+}
+
+data "aws_iam_policy_document" "assume_sre_identity_audit" {
+  statement {
+    sid = "AssumeSREIdentityAuditRoles"
+
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    resources = [
+      aws_iam_role.sre_identity_audit.arn,
+      "arn:aws:iam::${var.account_id}:role/sre_identity_audit" # org_account
+    ]
+  }
+}
+
+resource "aws_iam_policy" "assume_sre_identity_audit" {
+  name   = local.sre_identity_audit_oidc_role
+  policy = data.aws_iam_policy_document.assume_sre_identity_audit.json
 }
