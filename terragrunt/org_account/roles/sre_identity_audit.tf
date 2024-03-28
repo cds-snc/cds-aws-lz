@@ -1,11 +1,10 @@
 #
-# Role used by the cds-snc/site-reliability-engineering/tools/aws-identity-center-audit to read the identitystore, sso-admin and organizations service configurations.
+# Role used by the cds-snc/site-reliability-engineering/tools/aws-identity-center-audit to read the identitystore, sso and organizations service configurations.
 #
 # It will be assumed by the GitHub Actions workflow.
 #
 data "aws_iam_policy_document" "sre_identity_audit_assume" {
   statement {
-    effect = "Allow"
     sid     = "AssumeRole"
     actions = ["sts:AssumeRole"]
     principals {
@@ -33,7 +32,7 @@ data "aws_iam_policy_document" "sre_identity_audit" {
     actions = [
       "identitystore:ListUsers",
       "identitystore:ListGroups",
-      "identitystore:ListGroupMemberships",
+      "identitystore:ListGroupMemberships"
     ]
     resources = ["arn:aws:identitystore:${var.region}:${var.account_id}:identitystore/*"]
   }
@@ -42,12 +41,13 @@ data "aws_iam_policy_document" "sre_identity_audit" {
     sid    = "ReadSSOAdmin"
     effect = "Allow"
     actions = [
-      "sso-admin:DescribeInstance",
-      "sso-admin:DescribePermissionSet",
-      "sso-admin:ListPermissionSets",
-      "sso-admin:ListPermissionSetsProvisionedToAccount",
-      "sso-admin:ListAccountAssignments",
-      "sso-admin:ListAccountsForProvisionedPermissionSet",
+      "sso:DescribeInstance",
+      "sso:DescribePermissionSet",
+      "sso:ListPermissionSets",
+      "sso:ListPermissionSetsProvisionedToAccount",
+      "sso:ListAccountAssignments",
+      "sso:ListAccountsForProvisionedPermissionSet"
+
     ]
     resources = ["arn:aws:sso:::instance/ssoins-*"]
   }
