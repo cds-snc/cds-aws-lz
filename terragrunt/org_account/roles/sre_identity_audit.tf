@@ -35,7 +35,7 @@ data "aws_iam_policy_document" "sre_identity_audit" {
       "identitystore:ListGroups",
       "identitystore:ListGroupMemberships"
     ]
-    resources = ["arn:aws:identitystore:${var.region}:${var.account_id}:identitystore/*"]
+    resources = ["*"]
   }
 
   statement {
@@ -50,7 +50,7 @@ data "aws_iam_policy_document" "sre_identity_audit" {
       "sso:ListAccountsForProvisionedPermissionSet"
 
     ]
-    resources = ["arn:aws:sso:::instance/*"]
+    resources = ["*"]
   }
 
   statement {
@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "sre_identity_audit" {
     actions = [
       "organizations:ListAccounts",
     ]
-    resources = ["arn:aws:organizations::${var.account_id}:account/*"]
+    resources = ["*"]
   }
 }
 
