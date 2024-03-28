@@ -7,6 +7,7 @@ data "aws_iam_policy_document" "sre_identity_audit_assume" {
   statement {
     sid     = "AssumeRole"
     actions = ["sts:AssumeRole"]
+    effect  = "Allow"
     principals {
       type = "AWS"
       identifiers = [
@@ -49,7 +50,7 @@ data "aws_iam_policy_document" "sre_identity_audit" {
       "sso:ListAccountsForProvisionedPermissionSet"
 
     ]
-    resources = ["arn:aws:sso:::instance/ssoins-*"]
+    resources = ["arn:aws:sso:::instance/*"]
   }
 
   statement {
