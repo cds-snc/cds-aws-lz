@@ -167,6 +167,11 @@ data "aws_iam_policy_document" "qurantine_deny_all_policy" {
     resources = [
       "*",
     ]
+    condition {
+      test     = "StringNotLike"
+      variable = "aws:username"
+      values   = ["ops1", "ops2"]
+    }
   }
 }
 
