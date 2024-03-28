@@ -41,8 +41,6 @@ data "aws_iam_policy_document" "org_account_list_in_sandbox" {
 resource "aws_iam_policy" "org_account_list_in_sandbox" {
   name   = local.org_account_list_name
   policy = data.aws_iam_policy_document.org_account_list_in_sandbox.json
-
-  tags = local.common_tags
 }
 
 # Attach the policy document to the role loca.org_account_list_name
@@ -73,8 +71,6 @@ data "aws_iam_policy_document" "org_allow_policy_toggle" {
 resource "aws_iam_policy" "org_allow_policy_toggle" {
   name   = local.org_allow_policy_toggle
   policy = data.aws_iam_policy_document.org_allow_policy_toggle.json
-
-  tags = local.common_tags
 
 }
 
