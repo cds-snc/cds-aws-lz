@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "sre_identity_audit_assume" {
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${var.account_id}:role/${local.sre_identity_audit_oidc_role}"
+        "arn:aws:iam::659087519042:role/${local.sre_identity_audit_oidc_role}"
       ]
     }
   }
