@@ -3,3 +3,4 @@ variable "admin_sso_role_arn" {
   description = "(Required) The ARN for the admin SSO role"
   sensitive   = true
 }
+

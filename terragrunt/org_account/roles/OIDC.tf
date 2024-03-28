@@ -1,7 +1,3 @@
-locals {
-  org_account_list_name   = "listAccountsInSandboxOUForNuke"
-  org_allow_policy_toggle = "ghActionAllowPolicyToggle"
-}
 
 module "OIDC_Roles" {
   source      = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v5.0.0"
@@ -16,7 +12,13 @@ module "OIDC_Roles" {
       name      = local.org_allow_policy_toggle
       repo_name = "site-reliability-engineering"
       claim     = "ref:refs/heads/main"
-  }]
+    },
+    {
+      name      = local.sre_identity_audit_oidc_role
+      repo_name = "site-reliability-engineering"
+      claim     = "ref:refs/heads/main"
+    },
+  ]
 
   billing_tag_value = var.billing_code
 }
