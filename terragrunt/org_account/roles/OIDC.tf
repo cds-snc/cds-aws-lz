@@ -112,4 +112,6 @@ resource "aws_iam_policy" "assume_sre_identity_audit" {
 resource "aws_iam_role_policy_attachment" "assume_sre_identity_audit" {
   role       = local.sre_identity_audit_oidc_role
   policy_arn = aws_iam_policy.assume_sre_identity_audit.arn
+
+  depends_on = [module.OIDC_Roles]
 }
