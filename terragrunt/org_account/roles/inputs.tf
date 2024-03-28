@@ -13,8 +13,3 @@ variable "region" {
   type        = string
   description = "(Required) The region for the account"
 }
-
-variable "billing_code" {
-  type        = string
-  description = "(Required) The billing code for the account"
-}
