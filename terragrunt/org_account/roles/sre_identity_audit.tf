@@ -3,27 +3,6 @@
 #
 # It will be assumed by the GitHub Actions workflow.
 #
-data "aws_iam_policy_document" "sre_identity_audit_assume" {
-  statement {
-    sid     = "AssumeRole"
-    actions = ["sts:AssumeRole"]
-    effect  = "Allow"
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${var.account_id}:role/${local.sre_identity_audit_oidc_role}"
-      ]
-    }
-  }
-}
-
-resource "aws_iam_role" "sre_identity_audit" {
-  name               = "sre_identity_audit"
-  assume_role_policy = data.aws_iam_policy_document.sre_identity_audit_assume.json
-
-  tags = local.common_tags
-}
-
 data "aws_iam_policy_document" "sre_identity_audit" {
   version = "2012-10-17"
 
@@ -71,6 +50,9 @@ resource "aws_iam_policy" "sre_identity_audit" {
 }
 
 resource "aws_iam_role_policy_attachment" "sre_identity_audit" {
-  role       = aws_iam_role.sre_identity_audit.name
+  role       = local.sre_identity_audit_oidc_role
   policy_arn = aws_iam_policy.sre_identity_audit.arn
+  depends_on = [ 
+    module.OIDC_Roles
+   ]
 }

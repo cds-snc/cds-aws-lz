@@ -86,32 +86,3 @@ resource "aws_iam_role_policy_attachment" "attach_org_allow_policy_toggle" {
   ]
 
 }
-
-data "aws_iam_policy_document" "assume_sre_identity_audit" {
-  statement {
-    sid = "AssumeSREIdentityAuditRoles"
-
-    actions = [
-      "sts:AssumeRole",
-    ]
-
-    resources = [
-      aws_iam_role.sre_identity_audit.arn,
-      "arn:aws:iam::${var.account_id}:role/sre_identity_audit" # org_account
-    ]
-  }
-}
-
-resource "aws_iam_policy" "assume_sre_identity_audit" {
-  name   = local.sre_identity_audit_oidc_role
-  policy = data.aws_iam_policy_document.assume_sre_identity_audit.json
-
-  tags = local.common_tags
-}
-
-resource "aws_iam_role_policy_attachment" "assume_sre_identity_audit" {
-  role       = local.sre_identity_audit_oidc_role
-  policy_arn = aws_iam_policy.assume_sre_identity_audit.arn
-
-  depends_on = [module.OIDC_Roles]
-}
