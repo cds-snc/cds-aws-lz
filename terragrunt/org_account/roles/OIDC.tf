@@ -97,7 +97,7 @@ data "aws_iam_policy_document" "assume_sre_identity_audit" {
 
     resources = [
       aws_iam_role.sre_identity_audit.arn,
-      "arn:aws:iam::659087519042:role/sre_identity_audit" # org_account
+      "arn:aws:iam::${var.account_id}:role/sre_identity_audit" # org_account
     ]
   }
 }
