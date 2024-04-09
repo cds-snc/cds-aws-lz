@@ -83,30 +83,30 @@ import {
 
 import {
   to = aws_ssoadmin_account_assignment.articles_devs_staging["AWSAdministratorAccess"]
-  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,729164266357,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_administrator_access},${local.sso_instance_arn}"
+  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,729164266357,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_administrator_access.arn},${local.sso_instance_arn}"
 }
 
 import {
   to = aws_ssoadmin_account_assignment.articles_devs_staging["AWSReadOnlyAccess"]
-  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,729164266357,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_read_only_access},${local.sso_instance_arn}"
+  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,729164266357,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_read_only_access.arn},${local.sso_instance_arn}"
 }
 
 import {
   to = aws_ssoadmin_account_assignment.articles_devs_production["AWSAdministratorAccess"]
-  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,472286471787,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_administrator_access},${local.sso_instance_arn}"
+  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,472286471787,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_administrator_access.arn},${local.sso_instance_arn}"
 }
 
 import {
   to = aws_ssoadmin_account_assignment.articles_devs_production["AWSReadOnlyAccess"]
-  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,472286471787,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_read_only_access},${local.sso_instance_arn}"
+  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,472286471787,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_read_only_access.arn},${local.sso_instance_arn}"
 }
 
 import {
   to = aws_ssoadmin_account_assignment.articles_devs_platform_list_manager["AWSAdministratorAccess"]
-  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,762579868088,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_administrator_access},${local.sso_instance_arn}"
+  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,762579868088,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_administrator_access.arn},${local.sso_instance_arn}"
 }
 
 import {
   to = aws_ssoadmin_account_assignment.articles_devs_platform_list_manager["AWSReadOnlyAccess"]
-  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,762579868088,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_read_only_access},${local.sso_instance_arn}"
+  id = "${local.sso_identity_store_id}/2c2df578-9041-7052-74b1-a2d362f212bb,GROUP,762579868088,AWS_ACCOUNT,${data.aws_ssoadmin_permission_set.aws_read_only_access.arn},${local.sso_instance_arn}"
 }
