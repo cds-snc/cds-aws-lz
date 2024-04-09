@@ -77,7 +77,7 @@ import {
 }
 
 import {
-  to = aws_identitystore_group.articls_vpn
+  to = aws_identitystore_group.articles_vpn
   id = "dccd4518-30d1-7014-0e65-d503dc3c4b75"
 }
 
