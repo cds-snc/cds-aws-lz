@@ -84,7 +84,7 @@ resource "aws_ssoadmin_account_assignment" "articles" {
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set_arn
 
-  principal_id   = each.value.group.principal_id
+  principal_id   = each.value.group.group_id
   principal_type = "GROUP"
 
   target_id   = each.value.target_id
