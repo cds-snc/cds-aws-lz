@@ -79,7 +79,7 @@ locals {
 }
 
 resource "aws_ssoadmin_account_assignment" "articles" {
-  for_each = { for perm in local.articles_permission_set_arns : perm.group.display_name => perm }
+  for_each = { for perm in local.articles_permission_set_arns : "${perm.group.display_name}-${perm.target_id}" => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set_arn
