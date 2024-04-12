@@ -29,14 +29,14 @@ No requirements.
 | <a name="module_gd_log_archive_detector"></a> [gd\_log\_archive\_detector](#module\_gd\_log\_archive\_detector) | ../../modules/guardduty_detectors | n/a |
 | <a name="module_gd_org_detector"></a> [gd\_org\_detector](#module\_gd\_org\_detector) | ../../modules/guardduty_detectors | n/a |
 | <a name="module_gh_oidc_roles"></a> [gh\_oidc\_roles](#module\_gh\_oidc\_roles) | github.com/cds-snc/terraform-modules//gh_oidc_role | v4.0.0 |
-| <a name="module_guardduty_forwarder"></a> [guardduty\_forwarder](#module\_guardduty\_forwarder) | github.com/cds-snc/terraform-modules//sentinel_forwarder | v3.0.19 |
+| <a name="module_guardduty_forwarder"></a> [guardduty\_forwarder](#module\_guardduty\_forwarder) | github.com/cds-snc/terraform-modules//sentinel_forwarder | v9.3.8 |
 | <a name="module_log_archive_apply"></a> [log\_archive\_apply](#module\_log\_archive\_apply) | ../../modules/allow_assumed_role | n/a |
 | <a name="module_log_archive_plan"></a> [log\_archive\_plan](#module\_log\_archive\_plan) | ../../modules/allow_assumed_role | n/a |
 | <a name="module_org"></a> [org](#module\_org) | ../../modules/existing_security_hub_member | n/a |
 | <a name="module_password_policy"></a> [password\_policy](#module\_password\_policy) | github.com/cds-snc/terraform-modules//aws_goc_password_policy | v3.0.2 |
 | <a name="module_publishing_bucket"></a> [publishing\_bucket](#module\_publishing\_bucket) | github.com/cds-snc/terraform-modules//S3 | v3.0.2 |
 | <a name="module_publishing_log_bucket"></a> [publishing\_log\_bucket](#module\_publishing\_log\_bucket) | github.com/cds-snc/terraform-modules//S3_log_bucket | v3.0.2 |
-| <a name="module_securityhub_forwarder"></a> [securityhub\_forwarder](#module\_securityhub\_forwarder) | github.com/cds-snc/terraform-modules//sentinel_forwarder | v3.0.19 |
+| <a name="module_securityhub_forwarder"></a> [securityhub\_forwarder](#module\_securityhub\_forwarder) | github.com/cds-snc/terraform-modules//sentinel_forwarder | v9.3.8 |
 
 ## Resources
 

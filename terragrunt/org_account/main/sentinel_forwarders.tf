@@ -4,9 +4,11 @@ module "guardduty_forwarder" {
     aws = aws.log_archive
   }
 
-  source            = "github.com/cds-snc/terraform-modules//sentinel_forwarder?ref=v3.0.19"
+  source            = "github.com/cds-snc/terraform-modules//sentinel_forwarder?ref=v9.3.8"
   function_name     = "sentinel-guard-duty-forwarder"
   billing_tag_value = var.billing_code
+
+  layer_arn = "arn:aws:lambda:ca-central-1:283582579564:layer:aws-sentinel-connector-layer:125"
 
   customer_id = var.lw_customer_id
   shared_key  = var.lw_shared_key
@@ -30,9 +32,11 @@ module "securityhub_forwarder" {
     aws = aws.log_archive
   }
 
-  source            = "github.com/cds-snc/terraform-modules//sentinel_forwarder?ref=v3.0.19"
+  source            = "github.com/cds-snc/terraform-modules//sentinel_forwarder?ref=v9.3.8"
   function_name     = "sentinel-securityhub-forwarder"
   billing_tag_value = var.billing_code
+
+  layer_arn = "arn:aws:lambda:ca-central-1:283582579564:layer:aws-sentinel-connector-layer:125"
 
   customer_id = var.lw_customer_id
   shared_key  = var.lw_shared_key
