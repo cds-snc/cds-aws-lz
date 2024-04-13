@@ -6,7 +6,7 @@
 # Production
 #
 resource "aws_identitystore_group" "notify_production_access_ecs_blazer" {
-  display_name      = "Notify-Production-Connect-ECS-Blazer"
+  display_name      = "Notify-Production-Access-ECS-Blazer"
   description       = "Grants members access to the Notify Production account's ECS Blazer task."
   identity_store_id = local.sso_identity_store_id
 }
@@ -68,7 +68,7 @@ resource "aws_identitystore_group" "notify_production_read_only_cloudwatch" {
 #
 # Staging
 #
-resource "aws_identitystore_group" "notify_staging_access_ecs_staging" {
+resource "aws_identitystore_group" "notify_staging_access_ecs_blazer" {
   display_name      = "Notify-Staging-Access-ECS-Blazer"
   description       = "Grants members access to the Notify Staging account's ECS Blazer task."
   identity_store_id = local.sso_identity_store_id

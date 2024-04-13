@@ -7,44 +7,44 @@ locals {
     {
       group              = aws_identitystore_group.notify_production_admin,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_administrator_access.arn,
-      target_id          = "296255494825"
+      target_id          = local.notify_production_account_id
     },
     {
       group              = aws_identitystore_group.notify_production_billing,
       permission_set_arn = data.aws_ssoadmin_permission_set.billing.arn,
-      target_id          = "296255494825"
-    },    
+      target_id          = local.notify_production_account_id
+    },
     {
       group              = aws_identitystore_group.notify_production_read_only,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_read_only_access.arn,
-      target_id          = "296255494825"
+      target_id          = local.notify_production_account_id
     },
     # Notification-Staging       
     {
       group              = aws_identitystore_group.notify_staging_admin,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_administrator_access.arn,
-      target_id          = "239043911459"
+      target_id          = local.notify_staging_account_id
     },
     {
       group              = aws_identitystore_group.notify_staging_billing,
       permission_set_arn = data.aws_ssoadmin_permission_set.billing.arn,
-      target_id          = "239043911459"
-    },    
+      target_id          = local.notify_staging_account_id
+    },
     {
       group              = aws_identitystore_group.notify_staging_read_only,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_read_only_access.arn,
-      target_id          = "239043911459"
+      target_id          = local.notify_staging_account_id
     },
     # Notification-Dev
     {
       group              = aws_identitystore_group.notify_dev_admin,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_administrator_access.arn,
-      target_id          = "800095993820"
+      target_id          = local.notify_dev_account_id
     },
     {
       group              = aws_identitystore_group.notify_dev_read_only,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_read_only_access.arn,
-      target_id          = "800095993820"
+      target_id          = local.notify_dev_account_id
     },
   ]
 }

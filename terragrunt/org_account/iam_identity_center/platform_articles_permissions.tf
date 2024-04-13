@@ -7,34 +7,34 @@ locals {
     {
       group              = aws_identitystore_group.articles_production_admin,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_administrator_access.arn,
-      target_id          = "472286471787"
+      target_id          = local.articles_production_account_id
     },
     {
       group              = aws_identitystore_group.articles_production_read_only,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_read_only_access.arn,
-      target_id          = "472286471787"
+      target_id          = local.articles_production_account_id
     },
     # GCArticles-Staging       
     {
       group              = aws_identitystore_group.articles_staging_admin,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_administrator_access.arn,
-      target_id          = "729164266357"
+      target_id          = local.articles_staging_account_id
     },
     {
       group              = aws_identitystore_group.articles_staging_read_only,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_read_only_access.arn,
-      target_id          = "729164266357"
+      target_id          = local.articles_staging_account_id
     },
     # PlatformListManager-Production
     {
       group              = aws_identitystore_group.articles_production_admin,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_administrator_access.arn,
-      target_id          = "762579868088"
+      target_id          = local.list_manager_production_account_id
     },
     {
       group              = aws_identitystore_group.articles_production_read_only,
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_read_only_access.arn,
-      target_id          = "762579868088"
+      target_id          = local.list_manager_production_account_id
     },
   ]
 }
