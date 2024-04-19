@@ -37,6 +37,28 @@ data "aws_iam_policy_document" "sre_bot_policy" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    sid    = "ManageIdentityStoreUsers"
+    effect = "Allow"
+    actions = [
+      "identitystore:GetUserId",
+      "identitystore:CreateUser",
+      "identitystore:DescribeUser",
+      "identitystore:ListUsers",
+      "identitystore:DeleteUser",
+      "identitystore:UpdateUser",
+      "identitystore:ListGroups",
+      "identitystore:ListGroupMembershipsForMember",
+      "identitystore:ListGroupMemberships",
+      "identitystore:DescribeGroup",
+      "identitystore:DescribeGroupMembership",
+      "identitystore:GetGroupId",
+      "identitystore:IsMemberInGroups",
+      "identitystore:GetGroupMembershipId"
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_policy" "sre_bot_policy" {
