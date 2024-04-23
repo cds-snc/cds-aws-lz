@@ -12,7 +12,7 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aft_failure_notifications"></a> [aft\_failure\_notifications](#module\_aft\_failure\_notifications) | github.com/cds-snc/terraform-modules//notify_slack | v3.0.17 |
+| <a name="module_aft_failure_notifications"></a> [aft\_failure\_notifications](#module\_aft\_failure\_notifications) | github.com/cds-snc/terraform-modules//notify_slack | v9.3.9 |
 
 ## Resources
 
