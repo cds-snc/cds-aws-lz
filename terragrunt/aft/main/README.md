@@ -12,7 +12,7 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aft_slack_notification"></a> [aft\_slack\_notification](#module\_aft\_slack\_notification) | github.com/cds-snc/terraform-modules//notify_slack | v3.0.2 |
+| <a name="module_aft_slack_notification"></a> [aft\_slack\_notification](#module\_aft\_slack\_notification) | github.com/cds-snc/terraform-modules//notify_slack | v9.3.9 |
 | <a name="module_assume_apply_role"></a> [assume\_apply\_role](#module\_assume\_apply\_role) | ../../modules/assume_role | n/a |
 | <a name="module_assume_plan_role"></a> [assume\_plan\_role](#module\_assume\_plan\_role) | ../../modules/assume_role | n/a |
 | <a name="module_attach_tf_plan_policy_assume"></a> [attach\_tf\_plan\_policy\_assume](#module\_attach\_tf\_plan\_policy\_assume) | github.com/cds-snc/terraform-modules//attach_tf_plan_policy | v3.0.2 |
