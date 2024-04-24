@@ -1,6 +1,8 @@
-const AWS = require('aws-sdk');
-const costexplorer = new AWS.CostExplorer({ region: 'us-east-1' });
-const organizations = new AWS.Organizations({ region: 'us-east-1' });
+const { CostExplorerClient, GetCostAndUsageCommand } = require("@aws-sdk/client-cost-explorer");
+const costExplorerClient = new CostExplorerClient({ region: "us-east-1" });
+
+const { OrganizationsClient, ListAccountsCommand, ListTagsForResourceCommand } = require("@aws-sdk/client-organizations");
+const orgClient = new OrganizationsClient({ region: "us-east-1" });
 
 const https = require('https')
 
@@ -133,18 +135,18 @@ async function getAccounts() {
   let response = {};
   let params = {};
 
-  response = await organizations.listAccounts(params).promise()
+  response = await orgClient.send(new ListAccountsCommand(params));
   accounts = [...accounts, ...response.Accounts];
 
   while (response.NextToken) {
     params.NextToken = response.NextToken;
-    response = await organizations.listAccounts(params).promise()
+    response = await orgClient.send(new ListAccountsCommand(params));
     accounts = [...accounts, ...response.Accounts];
   }
   let results = {}
   for (let i = 0; i < accounts.length; i++) {
     let account = accounts[i];
-    let tags = await organizations.listTagsForResource({ ResourceId: account["Id"] }).promise()
+    let tags = await orgClient.send(new ListTagsForResourceCommand({ ResourceId: account["Id"] }));
 
     results[account["Id"]] = { Name: account["Name"], BU: getEnvTag(tags)  }
   }
@@ -174,7 +176,7 @@ async function getAccountCost() {
       }]
   };
 
-  const result = await costexplorer.getCostAndUsage(params).promise();
+  const result = await costExplorerClient.send(new GetCostAndUsageCommand(params));
   return result["ResultsByTime"][0]["Groups"].reduce((acc, curr) => {
     acc[curr["Keys"][0]] = parseFloat(curr["Metrics"]["UnblendedCost"]["Amount"]);
     return acc;
@@ -216,9 +218,9 @@ async function getScratchAccountsExceedingThreshold() {
         }]
     };
 
-    // get the monly accumulated cost for yesterday and the day before yesterday
-    const getAccumulatedCostsYesterday = await costexplorer.getCostAndUsage(paramsYesterday).promise();
-    const getAccumulatedCostsDayBeforeYesterday = await costexplorer.getCostAndUsage(paramsDayBeforeYesterday).promise();
+    // get the monthly accumulated cost for yesterday and the day before yesterday
+    const getAccumulatedCostsYesterday = await costExplorerClient.send(new GetCostAndUsageCommand(paramsYesterday));
+    const getAccumulatedCostsDayBeforeYesterday = await costExplorerClient.send(new GetCostAndUsageCommand(paramsDayBeforeYesterday));
 
     // calculate which accounts exceeded the threshold of $500 yesterday but not the day before yesterday
     const scratchAccountsAffected = getAccumulatedCostsYesterday["ResultsByTime"][0]["Groups"].reduce((acc, curr) => {
@@ -270,8 +272,8 @@ async function getDailyAccountCost() {
   };
 
   // get cost for yesterday and the day before yesterday
-  const getCostsYesterday = await costexplorer.getCostAndUsage(paramsYesterday).promise();
-  const getCostsDayBeforeYesterday = await costexplorer.getCostAndUsage(paramsDayBeforeYesterday).promise();
+  const getCostsYesterday = await costExplorerClient.send(new GetCostAndUsageCommand(paramsYesterday));
+  const getCostsDayBeforeYesterday = await costExplorerClient.send(new GetCostAndUsageCommand(paramsDayBeforeYesterday));
 
   // get the the amounts from the object for yesterday and the day before yesterday
   const yesterdayCosts = getCostsYesterday["ResultsByTime"][0]["Groups"].reduce((acc, curr) => {
