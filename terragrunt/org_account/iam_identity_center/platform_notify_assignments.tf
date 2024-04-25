@@ -17,7 +17,7 @@ locals {
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_administrator_access.arn,
     },
     {
-      group              = aws_identitystore_group.notify_production_admin_pinpoint,
+      group              = aws_identitystore_group.notify_production_admin_pinpoint_sms,
       permission_set_arn = aws_ssoadmin_permission_set.admin_pointpoint_sms.arn,
     },
     {
@@ -48,7 +48,7 @@ locals {
       permission_set_arn = data.aws_ssoadmin_permission_set.aws_administrator_access.arn,
     },
     {
-      group              = aws_identitystore_group.notify_staging_admin_pinpoint,
+      group              = aws_identitystore_group.notify_staging_admin_pinpoint_sms,
       permission_set_arn = aws_ssoadmin_permission_set.admin_pointpoint_sms.arn,
     },
     {

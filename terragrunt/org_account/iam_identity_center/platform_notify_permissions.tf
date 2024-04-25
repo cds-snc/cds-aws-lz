@@ -18,7 +18,7 @@ resource "aws_ssoadmin_customer_managed_policy_attachment" "admin_pointpoint_sms
 
 resource "aws_iam_policy" "admin_pointpoint_sms" {
   name        = "Admin-Pinpoint-SMS"
-  path        = "/identity-center/notify/"
+  path        = "/identity-center/"
   description = "Full access to Pointpoint SMS Voice."
   policy      = data.aws_iam_policy_document.admin_pointpoint_sms.json
 }
@@ -282,7 +282,7 @@ resource "aws_ssoadmin_customer_managed_policy_attachment" "access_quicksight" {
 
 resource "aws_iam_policy" "access_quicksight" {
   name        = "Access-QuickSight"
-  path        = "/identity-center/notify/"
+  path        = "/identity-center/"
   description = "Grants access to QuickSight."
   policy      = data.aws_iam_policy_document.access_quicksight.json
 }

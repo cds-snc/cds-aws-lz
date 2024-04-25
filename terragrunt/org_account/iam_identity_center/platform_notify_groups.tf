@@ -25,9 +25,9 @@ resource "aws_identitystore_group" "notify_production_admin" {
   identity_store_id = local.sso_identity_store_id
 }
 
-resource "aws_identitystore_group" "notify_production_admin_pinpoint" {
-  display_name      = "Notify-Production-Admin-Pinpoint"
-  description       = "Grants members administrator access to the Notify Production account's Pinpoint service."
+resource "aws_identitystore_group" "notify_production_admin_pinpoint_sms" {
+  display_name      = "Notify-Production-Admin-Pinpoint-SMS"
+  description       = "Grants members administrator access to the Notify Production account's Pinpoint SMS service."
   identity_store_id = local.sso_identity_store_id
 }
 
@@ -76,8 +76,8 @@ resource "aws_identitystore_group" "notify_staging_admin" {
   identity_store_id = local.sso_identity_store_id
 }
 
-resource "aws_identitystore_group" "notify_staging_admin_pinpoint" {
-  display_name      = "Notify-Staging-Admin-Pinpoint"
+resource "aws_identitystore_group" "notify_staging_admin_pinpoint_sms" {
+  display_name      = "Notify-Staging-Admin-Pinpoint-SMS"
   description       = "Grants members administrator access to the Notify Staging account's Pinpoint service."
   identity_store_id = local.sso_identity_store_id
 }
