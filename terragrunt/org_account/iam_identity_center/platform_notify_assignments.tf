@@ -6,11 +6,11 @@ locals {
   notify_production_permission_set_arns = [
     {
       group              = aws_identitystore_group.notify_production_access_ecs_blazer,
-      permission_set_arn = data.aws_ssoadmin_permission_set.notify_access_ecs_blazer.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.notify_access_ecs_blazer.arn,
     },
     {
       group              = aws_identitystore_group.notify_production_access_quicksight,
-      permission_set_arn = data.aws_ssoadmin_permission_set.access_quicksight.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.access_quicksight.arn,
     },
     {
       group              = aws_identitystore_group.notify_production_admin,
@@ -18,15 +18,15 @@ locals {
     },
     {
       group              = aws_identitystore_group.notify_production_admin_pinpoint,
-      permission_set_arn = data.aws_ssoadmin_permission_set.admin_pointpoint_sms.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.admin_pointpoint_sms.arn,
     },
     {
       group              = aws_identitystore_group.notify_production_admin_s3_website_assets,
-      permission_set_arn = data.aws_ssoadmin_permission_set.admin_s3_website_assets.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.admin_s3_website_assets.arn,
     },
     {
       group              = aws_identitystore_group.notify_production_admin_support_center,
-      permission_set_arn = data.aws_ssoadmin_permission_set.admin_support_center.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.admin_support_center.arn,
     },
     {
       group              = aws_identitystore_group.notify_production_billing,
@@ -41,7 +41,7 @@ locals {
   notify_staging_permission_set_arns = [
     {
       group              = aws_identitystore_group.notify_staging_access_ecs_blazer,
-      permission_set_arn = data.aws_ssoadmin_permission_set.notify_access_ecs_blazer.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.notify_access_ecs_blazer.arn,
     },
     {
       group              = aws_identitystore_group.notify_staging_admin,
@@ -49,15 +49,15 @@ locals {
     },
     {
       group              = aws_identitystore_group.notify_staging_admin_pinpoint,
-      permission_set_arn = data.aws_ssoadmin_permission_set.admin_pointpoint_sms.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.admin_pointpoint_sms.arn,
     },
     {
       group              = aws_identitystore_group.notify_staging_admin_s3_website_assets,
-      permission_set_arn = data.aws_ssoadmin_permission_set.admin_s3_website_assets.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.admin_s3_website_assets.arn,
     },
     {
       group              = aws_identitystore_group.notify_staging_admin_support_center,
-      permission_set_arn = data.aws_ssoadmin_permission_set.admin_support_center.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.admin_support_center.arn,
     },
     {
       group              = aws_identitystore_group.notify_staging_billing,
