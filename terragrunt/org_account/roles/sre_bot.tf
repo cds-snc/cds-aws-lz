@@ -55,7 +55,9 @@ data "aws_iam_policy_document" "sre_bot_policy" {
       "identitystore:DescribeGroupMembership",
       "identitystore:GetGroupId",
       "identitystore:IsMemberInGroups",
-      "identitystore:GetGroupMembershipId"
+      "identitystore:GetGroupMembershipId",
+      "identitystore:CreateGroupMembership",
+      "identitystore:DeleteGroupMembership"
     ]
     resources = ["*"]
   }
