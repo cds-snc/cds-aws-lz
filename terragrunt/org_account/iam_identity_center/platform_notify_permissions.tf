@@ -202,7 +202,7 @@ resource "aws_ssoadmin_managed_policy_attachment" "admin_support_center" {
   permission_set_arn = aws_ssoadmin_permission_set.admin_support_center.arn
 }
 
-resource "aws_ssoadmin_customer_managed_policy_attachment" "ses_sns_manage_suppressed" {
+resource "aws_ssoadmin_customer_managed_policy_attachment" "remove_ses_sns_suppressed" {
   instance_arn       = local.sso_instance_arn
   permission_set_arn = aws_ssoadmin_permission_set.admin_support_center.arn
   customer_managed_policy_reference {
