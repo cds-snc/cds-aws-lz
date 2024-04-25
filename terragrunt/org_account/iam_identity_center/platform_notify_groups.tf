@@ -42,7 +42,7 @@ resource "aws_identitystore_group" "notify_production_admin_s3_website_assets" {
 }
 
 resource "aws_identitystore_group" "notify_production_admin_support_center" {
-  display_name      = "Notify-Production-Admin-SupporCenter"
+  display_name      = "Notify-Production-Admin-SupportCenter"
   description       = "Grants members administrator access to the Notify Production account's Support Center."
   identity_store_id = local.sso_identity_store_id
 }
@@ -99,7 +99,7 @@ resource "aws_identitystore_group" "notify_staging_admin_s3_website_assets" {
 }
 
 resource "aws_identitystore_group" "notify_staging_admin_support_center" {
-  display_name      = "Notify-Staging-Admin-SupporCenter"
+  display_name      = "Notify-Staging-Admin-SupportCenter"
   description       = "Grants members administrator access to the Notify Staging account's Support Center."
   identity_store_id = local.sso_identity_store_id
 }
