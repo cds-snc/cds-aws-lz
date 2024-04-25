@@ -95,7 +95,7 @@ resource "aws_ssoadmin_account_assignment" "notify_production" {
 }
 
 resource "aws_ssoadmin_account_assignment" "notify_staging" {
-  for_each = { for perm in local.notify_production_permission_set_arns : perm.group.display_name => perm }
+  for_each = { for perm in local.notify_staging_permission_set_arns : perm.group.display_name => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set_arn

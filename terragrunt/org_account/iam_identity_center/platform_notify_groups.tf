@@ -1,8 +1,4 @@
 #
-# TODO: figure out prupose of NotificationSRE group
-#
-
-#
 # Production
 #
 resource "aws_identitystore_group" "notify_production_access_ecs_blazer" {
@@ -59,12 +55,6 @@ resource "aws_identitystore_group" "notify_production_read_only" {
   identity_store_id = local.sso_identity_store_id
 }
 
-resource "aws_identitystore_group" "notify_production_read_only_cloudwatch" {
-  display_name      = "Notify-Production-ReadOnly-CloudWatch"
-  description       = "Grants members read-only access to the Notify Production account's CloudWatch service."
-  identity_store_id = local.sso_identity_store_id
-}
-
 #
 # Staging
 #
@@ -113,12 +103,6 @@ resource "aws_identitystore_group" "notify_staging_billing" {
 resource "aws_identitystore_group" "notify_staging_read_only" {
   display_name      = "Notify-Staging-ReadOnly"
   description       = "Grants members read-only access to the Notify Staging account."
-  identity_store_id = local.sso_identity_store_id
-}
-
-resource "aws_identitystore_group" "notify_staging_read_only_cloudwatch" {
-  display_name      = "Notify-Staging-ReadOnly-CloudWatch"
-  description       = "Grants members read-only access to the Notify Staging account's CloudWatch service."
   identity_store_id = local.sso_identity_store_id
 }
 
