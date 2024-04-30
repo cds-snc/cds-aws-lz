@@ -34,6 +34,6 @@ resource "aws_cloudwatch_metric_alarm" "pipeline_failed" {
   treat_missing_data  = "notBreaching"
 
   alarm_description = "AFT pipeline execution has failed"
-  alarm_actions     = [data.aws_sns_topic.aft_failure_notifications.arn]
-  ok_actions        = [data.aws_sns_topic.aft_failure_notifications.arn]
+  alarm_actions     = [aws_sns_topic.aft_cloudwatch_alarms.arn]
+  ok_actions        = [aws_sns_topic.aft_cloudwatch_alarms.arn]
 }
