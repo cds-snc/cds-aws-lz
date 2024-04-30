@@ -9,7 +9,7 @@ resource "aws_sns_topic" "aft_cloudwatch_alarms" {
 }
 
 resource "aws_sns_topic_subscription" "aft_cloudwatch_alarms_slack" {
-  topic_arn = aws_sns_topic.cloudwatch_alarms.arn
+  topic_arn = aws_sns_topic.aft_cloudwatch_alarms.arn
   protocol  = "https"
   endpoint  = var.aft_notifications_hook
 }
