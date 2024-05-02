@@ -51,6 +51,11 @@ resource "aws_organizations_organizational_unit" "Production" {
   parent_id = local.root
 }
 
+resource "aws_organizations_policy_attachment" "Production-cds_snc_universal_guardrails" {
+  policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.Production.id
+}
+
 resource "aws_organizations_organizational_unit" "Sandbox" {
   name      = "Sandbox"
   parent_id = local.root
