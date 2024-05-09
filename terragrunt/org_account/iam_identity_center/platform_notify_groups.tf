@@ -126,3 +126,18 @@ resource "aws_identitystore_group" "notify_dev_read_only" {
   description       = "Grants members read-only access to the Notify Dev account."
   identity_store_id = local.sso_identity_store_id
 }
+
+#
+# Sandbox
+#
+resource "aws_identitystore_group" "notify_sandbox_admin" {
+  display_name      = "Notify-Sandbox-Admin"
+  description       = "Grants members administrator access to the Notify Sandbox account."
+  identity_store_id = local.sso_identity_store_id
+}
+
+resource "aws_identitystore_group" "notify_sandbox_read_only" {
+  display_name      = "Notify-Sandbox-ReadOnly"
+  description       = "Grants members read-only access to the Notify Sandbox account."
+  identity_store_id = local.sso_identity_store_id
+}

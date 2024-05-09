@@ -7,6 +7,7 @@ locals {
   notify_production_account_id = "296255494825"
   notify_staging_account_id    = "239043911459"
   notify_dev_account_id        = "800095993820"
+  notify_sandbox_account_id    = "891376947407"
 
   sso_identity_store_id = "d-9d67173bdd"
   sso_instance_id       = "ssoins-8824c710b5ddb452"
