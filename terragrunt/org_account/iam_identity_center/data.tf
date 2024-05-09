@@ -10,8 +10,3 @@ data "aws_ssoadmin_permission_set" "aws_read_only_access" {
   instance_arn = local.sso_instance_arn
   name         = "AWSReadOnlyAccess"
 }
-
-data "aws_ssoadmin_permission_set" "billing" {
-  instance_arn = local.sso_instance_arn
-  name         = "Billing"
-}
