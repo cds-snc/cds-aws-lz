@@ -29,8 +29,8 @@ locals {
       permission_set_arn = aws_ssoadmin_permission_set.admin_support_center.arn,
     },
     {
-      group              = aws_identitystore_group.notify_production_billing,
-      permission_set_arn = data.aws_ssoadmin_permission_set.billing.arn,
+      group              = aws_identitystore_group.notify_production_read_only_billing,
+      permission_set_arn = aws_ssoadmin_permission_set.read_only_billing.arn,
     },
     {
       group              = aws_identitystore_group.notify_production_read_only,
@@ -60,8 +60,8 @@ locals {
       permission_set_arn = aws_ssoadmin_permission_set.admin_support_center.arn,
     },
     {
-      group              = aws_identitystore_group.notify_staging_billing,
-      permission_set_arn = data.aws_ssoadmin_permission_set.billing.arn,
+      group              = aws_identitystore_group.notify_staging_read_only_billing,
+      permission_set_arn = aws_ssoadmin_permission_set.read_only_billing.arn,
     },
     {
       group              = aws_identitystore_group.notify_staging_read_only,

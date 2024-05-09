@@ -43,9 +43,9 @@ resource "aws_identitystore_group" "notify_production_admin_support_center" {
   identity_store_id = local.sso_identity_store_id
 }
 
-resource "aws_identitystore_group" "notify_production_billing" {
-  display_name      = "Notify-Production-Billing"
-  description       = "Grants members billing access to the Notify Production account."
+resource "aws_identitystore_group" "notify_production_read_only_billing" {
+  display_name      = "Notify-Production-ReadOnly-Billing"
+  description       = "Grants members read-only Billing and Cost Explorer access to the Notify Production account."
   identity_store_id = local.sso_identity_store_id
 }
 
@@ -94,9 +94,9 @@ resource "aws_identitystore_group" "notify_staging_admin_support_center" {
   identity_store_id = local.sso_identity_store_id
 }
 
-resource "aws_identitystore_group" "notify_staging_billing" {
-  display_name      = "Notify-Staging-Billing"
-  description       = "Grants members billing access to the Notify Staging account."
+resource "aws_identitystore_group" "notify_staging_read_only_billing" {
+  display_name      = "Notify-Staging-ReadOnly-Billing"
+  description       = "Grants members read-only Billing and Cost Explorer access to the Notify Staging account."
   identity_store_id = local.sso_identity_store_id
 }
 

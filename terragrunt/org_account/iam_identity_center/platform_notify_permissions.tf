@@ -1,4 +1,52 @@
 #
+# Billing read-only
+#
+resource "aws_ssoadmin_permission_set" "read_only_billing" {
+  name         = "ReadOnly-Billing"
+  description  = "Grants read-only access to billing data."
+  instance_arn = local.sso_instance_arn
+}
+
+resource "aws_ssoadmin_customer_managed_policy_attachment" "read_only_billing" {
+  instance_arn       = local.sso_instance_arn
+  permission_set_arn = aws_ssoadmin_permission_set.read_only_billing.arn
+  customer_managed_policy_reference {
+    name = aws_iam_policy.read_only_billing.name
+    path = aws_iam_policy.read_only_billing.path
+  }
+}
+
+resource "aws_iam_policy" "read_only_billing" {
+  name        = "ReadOnly-Billing"
+  path        = "/identity-center/"
+  description = "Read-only access to Billing and Cost Explorer."
+  policy      = data.aws_iam_policy_document.read_only_billing.json
+}
+
+data "aws_iam_policy_document" "read_only_billing" {
+  statement {
+    sid    = "BillingRead"
+    effect = "Allow"
+    actions = [
+      "billing:Get*",
+      "billing:List*"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "CostExplorerRead"
+    effect = "Allow"
+    actions = [
+      "ce:Describe*",
+      "ce:Get*",
+      "ce:List*"
+    ]
+    resources = ["*"]
+  }
+}
+
+#
 # Pinpoint SMS admin
 #
 resource "aws_ssoadmin_permission_set" "admin_pointpoint_sms" {
