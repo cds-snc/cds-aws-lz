@@ -7,20 +7,10 @@ resource "aws_ssoadmin_permission_set" "read_only_billing" {
   instance_arn = local.sso_instance_arn
 }
 
-resource "aws_ssoadmin_customer_managed_policy_attachment" "read_only_billing" {
-  instance_arn       = local.sso_instance_arn
+resource "aws_ssoadmin_permission_set_inline_policy" "read_only_billing" {
   permission_set_arn = aws_ssoadmin_permission_set.read_only_billing.arn
-  customer_managed_policy_reference {
-    name = aws_iam_policy.read_only_billing.name
-    path = aws_iam_policy.read_only_billing.path
-  }
-}
-
-resource "aws_iam_policy" "read_only_billing" {
-  name        = "ReadOnly-Billing"
-  path        = "/identity-center/"
-  description = "Read-only access to Billing and Cost Explorer."
-  policy      = data.aws_iam_policy_document.read_only_billing.json
+  inline_policy      = data.aws_iam_policy_document.read_only_billing.json
+  instance_arn       = local.sso_instance_arn
 }
 
 data "aws_iam_policy_document" "read_only_billing" {
@@ -49,29 +39,19 @@ data "aws_iam_policy_document" "read_only_billing" {
 #
 # Pinpoint SMS admin
 #
-resource "aws_ssoadmin_permission_set" "admin_pointpoint_sms" {
+resource "aws_ssoadmin_permission_set" "admin_pinpoint_sms" {
   name         = "Admin-Pinpoint-SMS"
   description  = "Grants full access to Pinpoint SMS Voice."
   instance_arn = local.sso_instance_arn
 }
 
-resource "aws_ssoadmin_customer_managed_policy_attachment" "admin_pointpoint_sms" {
+resource "aws_ssoadmin_permission_set_inline_policy" "admin_pinpoint_sms" {
+  permission_set_arn = aws_ssoadmin_permission_set.admin_pinpoint_sms.arn
+  inline_policy      = data.aws_iam_policy_document.admin_pinpoint_sms.json
   instance_arn       = local.sso_instance_arn
-  permission_set_arn = aws_ssoadmin_permission_set.admin_pointpoint_sms.arn
-  customer_managed_policy_reference {
-    name = aws_iam_policy.admin_pointpoint_sms.name
-    path = aws_iam_policy.admin_pointpoint_sms.path
-  }
 }
 
-resource "aws_iam_policy" "admin_pointpoint_sms" {
-  name        = "Admin-Pinpoint-SMS"
-  path        = "/identity-center/"
-  description = "Full access to Pointpoint SMS Voice."
-  policy      = data.aws_iam_policy_document.admin_pointpoint_sms.json
-}
-
-data "aws_iam_policy_document" "admin_pointpoint_sms" {
+data "aws_iam_policy_document" "admin_pinpoint_sms" {
   statement {
     sid    = "DataRead"
     effect = "Allow"
@@ -109,20 +89,10 @@ resource "aws_ssoadmin_permission_set" "notify_access_ecs_blazer" {
   instance_arn = local.sso_instance_arn
 }
 
-resource "aws_ssoadmin_customer_managed_policy_attachment" "notify_access_ecs_blazer" {
-  instance_arn       = local.sso_instance_arn
+resource "aws_ssoadmin_permission_set_inline_policy" "notify_access_ecs_blazer" {
   permission_set_arn = aws_ssoadmin_permission_set.notify_access_ecs_blazer.arn
-  customer_managed_policy_reference {
-    name = aws_iam_policy.notify_access_ecs_blazer.name
-    path = aws_iam_policy.notify_access_ecs_blazer.path
-  }
-}
-
-resource "aws_iam_policy" "notify_access_ecs_blazer" {
-  name        = "Access-ECS-Blazer"
-  path        = "/identity-center/notify/"
-  description = "Manage SSM sessions to connect to the Blazer ECS Task."
-  policy      = data.aws_iam_policy_document.notify_access_ecs_blazer.json
+  inline_policy      = data.aws_iam_policy_document.notify_access_ecs_blazer.json
+  instance_arn       = local.sso_instance_arn
 }
 
 data "aws_iam_policy_document" "notify_access_ecs_blazer" {
@@ -174,20 +144,10 @@ resource "aws_ssoadmin_permission_set" "admin_s3_website_assets" {
   instance_arn = local.sso_instance_arn
 }
 
-resource "aws_ssoadmin_customer_managed_policy_attachment" "admin_s3_website_assets" {
-  instance_arn       = local.sso_instance_arn
+resource "aws_ssoadmin_permission_set_inline_policy" "admin_s3_website_assets" {
   permission_set_arn = aws_ssoadmin_permission_set.admin_s3_website_assets.arn
-  customer_managed_policy_reference {
-    name = aws_iam_policy.admin_s3_website_assets.name
-    path = aws_iam_policy.admin_s3_website_assets.path
-  }
-}
-
-resource "aws_iam_policy" "admin_s3_website_assets" {
-  name        = "Admin-S3-WebsiteAssets"
-  path        = "/identity-center/notify/"
-  description = "Grants ability to manage the Notify S3 website assets."
-  policy      = data.aws_iam_policy_document.admin_s3_website_assets.json
+  inline_policy      = data.aws_iam_policy_document.admin_s3_website_assets.json
+  instance_arn       = local.sso_instance_arn
 }
 
 data "aws_iam_policy_document" "admin_s3_website_assets" {
@@ -250,23 +210,13 @@ resource "aws_ssoadmin_managed_policy_attachment" "admin_support_center" {
   permission_set_arn = aws_ssoadmin_permission_set.admin_support_center.arn
 }
 
-resource "aws_ssoadmin_customer_managed_policy_attachment" "remove_ses_sns_suppressed" {
-  instance_arn       = local.sso_instance_arn
+resource "aws_ssoadmin_permission_set_inline_policy" "admin_support_center" {
   permission_set_arn = aws_ssoadmin_permission_set.admin_support_center.arn
-  customer_managed_policy_reference {
-    name = aws_iam_policy.remove_ses_sns_suppressed.name
-    path = aws_iam_policy.remove_ses_sns_suppressed.path
-  }
+  inline_policy      = data.aws_iam_policy_document.admin_support_center.json
+  instance_arn       = local.sso_instance_arn
 }
 
-resource "aws_iam_policy" "remove_ses_sns_suppressed" {
-  name        = "Remove-SES-SNS-Suppressed"
-  path        = "/identity-center/"
-  description = "Remove SES and SNS suppressed phone numbers and email addresses."
-  policy      = data.aws_iam_policy_document.remove_ses_sns_suppressed.json
-}
-
-data "aws_iam_policy_document" "remove_ses_sns_suppressed" {
+data "aws_iam_policy_document" "admin_support_center" {
   statement {
     sid    = "SESReadAndDeleteSuppressed"
     effect = "Allow"
@@ -319,20 +269,10 @@ resource "aws_ssoadmin_managed_policy_attachment" "access_quicksight" {
   permission_set_arn = aws_ssoadmin_permission_set.access_quicksight.arn
 }
 
-resource "aws_ssoadmin_customer_managed_policy_attachment" "access_quicksight" {
-  instance_arn       = local.sso_instance_arn
+resource "aws_ssoadmin_permission_set_inline_policy" "access_quicksight" {
   permission_set_arn = aws_ssoadmin_permission_set.access_quicksight.arn
-  customer_managed_policy_reference {
-    name = aws_iam_policy.access_quicksight.name
-    path = aws_iam_policy.access_quicksight.path
-  }
-}
-
-resource "aws_iam_policy" "access_quicksight" {
-  name        = "Access-QuickSight"
-  path        = "/identity-center/"
-  description = "Grants access to QuickSight."
-  policy      = data.aws_iam_policy_document.access_quicksight.json
+  inline_policy      = data.aws_iam_policy_document.access_quicksight.json
+  instance_arn       = local.sso_instance_arn
 }
 
 data "aws_iam_policy_document" "access_quicksight" {
