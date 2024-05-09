@@ -127,7 +127,7 @@ data "aws_iam_policy_document" "notify_access_ecs_blazer" {
     ]
     resources = ["*"]
     condition {
-      test     = "arn_like"
+      test     = "ArnLike"
       variable = "ecs:cluster"
       values = [
         "arn:aws:ecs:ca-central-1:*:cluster/blazer"
