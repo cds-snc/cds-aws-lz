@@ -18,7 +18,7 @@ locals {
     },
     {
       group              = aws_identitystore_group.notify_production_admin_pinpoint_sms,
-      permission_set_arn = aws_ssoadmin_permission_set.admin_pointpoint_sms.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.admin_pinpoint_sms.arn,
     },
     {
       group              = aws_identitystore_group.notify_production_admin_s3_website_assets,
@@ -49,7 +49,7 @@ locals {
     },
     {
       group              = aws_identitystore_group.notify_staging_admin_pinpoint_sms,
-      permission_set_arn = aws_ssoadmin_permission_set.admin_pointpoint_sms.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.admin_pinpoint_sms.arn,
     },
     {
       group              = aws_identitystore_group.notify_staging_admin_s3_website_assets,

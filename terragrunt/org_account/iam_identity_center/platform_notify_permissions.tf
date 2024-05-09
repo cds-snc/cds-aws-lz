@@ -39,19 +39,19 @@ data "aws_iam_policy_document" "read_only_billing" {
 #
 # Pinpoint SMS admin
 #
-resource "aws_ssoadmin_permission_set" "admin_pointpoint_sms" {
+resource "aws_ssoadmin_permission_set" "admin_pinpoint_sms" {
   name         = "Admin-Pinpoint-SMS"
   description  = "Grants full access to Pinpoint SMS Voice."
   instance_arn = local.sso_instance_arn
 }
 
-resource "aws_ssoadmin_permission_set_inline_policy" "admin_pointpoint_sms" {
-  permission_set_arn = aws_ssoadmin_permission_set.admin_pointpoint_sms.arn
-  inline_policy      = data.aws_iam_policy_document.admin_pointpoint_sms.json
+resource "aws_ssoadmin_permission_set_inline_policy" "admin_pinpoint_sms" {
+  permission_set_arn = aws_ssoadmin_permission_set.admin_pinpoint_sms.arn
+  inline_policy      = data.aws_iam_policy_document.admin_pinpoint_sms.json
   instance_arn       = local.sso_instance_arn
 }
 
-data "aws_iam_policy_document" "admin_pointpoint_sms" {
+data "aws_iam_policy_document" "admin_pinpoint_sms" {
   statement {
     sid    = "DataRead"
     effect = "Allow"
