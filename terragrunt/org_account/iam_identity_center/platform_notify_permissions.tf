@@ -104,7 +104,7 @@ data "aws_iam_policy_document" "admin_pointpoint_sms" {
 # SSM session connection to the Blazer ECS task
 #
 resource "aws_ssoadmin_permission_set" "notify_access_ecs_blazer" {
-  name         = "Notify-Access-ECS-Blazer"
+  name         = "Access-ECS-Blazer"
   description  = "Grants access to the Blazer ECS task using an SSM session."
   instance_arn = local.sso_instance_arn
 }
@@ -119,7 +119,7 @@ resource "aws_ssoadmin_customer_managed_policy_attachment" "notify_access_ecs_bl
 }
 
 resource "aws_iam_policy" "notify_access_ecs_blazer" {
-  name        = "Notify-Access-ECS-Blazer"
+  name        = "Access-ECS-Blazer"
   path        = "/identity-center/notify/"
   description = "Manage SSM sessions to connect to the Blazer ECS Task."
   policy      = data.aws_iam_policy_document.notify_access_ecs_blazer.json
@@ -261,7 +261,7 @@ resource "aws_ssoadmin_customer_managed_policy_attachment" "remove_ses_sns_suppr
 
 resource "aws_iam_policy" "remove_ses_sns_suppressed" {
   name        = "Remove-SES-SNS-Suppressed"
-  path        = "/identity-center/notify/"
+  path        = "/identity-center/"
   description = "Remove SES and SNS suppressed phone numbers and email addresses."
   policy      = data.aws_iam_policy_document.remove_ses_sns_suppressed.json
 }
