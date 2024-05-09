@@ -210,13 +210,13 @@ resource "aws_ssoadmin_managed_policy_attachment" "admin_support_center" {
   permission_set_arn = aws_ssoadmin_permission_set.admin_support_center.arn
 }
 
-resource "aws_ssoadmin_permission_set_inline_policy" "remove_ses_sns_suppressed" {
+resource "aws_ssoadmin_permission_set_inline_policy" "admin_support_center" {
   permission_set_arn = aws_ssoadmin_permission_set.admin_support_center.arn
-  inline_policy      = data.aws_iam_policy_document.remove_ses_sns_suppressed.json
+  inline_policy      = data.aws_iam_policy_document.admin_support_center.json
   instance_arn       = local.sso_instance_arn
 }
 
-data "aws_iam_policy_document" "remove_ses_sns_suppressed" {
+data "aws_iam_policy_document" "admin_support_center" {
   statement {
     sid    = "SESReadAndDeleteSuppressed"
     effect = "Allow"
