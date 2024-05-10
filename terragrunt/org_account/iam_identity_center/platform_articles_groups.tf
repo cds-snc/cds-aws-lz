@@ -2,7 +2,7 @@
 # Production
 #
 resource "aws_identitystore_group" "articles_production_access_vpc_clientvpn" {
-  display_name      = "Articles-Production-Access-VPC-ClientVPN"
+  display_name      = "Articles-Production-VPC-ClientVPN-Access"
   description       = "Grants members access to the GC Articles Production Client VPN."
   identity_store_id = local.sso_identity_store_id
 }
@@ -23,7 +23,7 @@ resource "aws_identitystore_group" "articles_production_read_only" {
 # Staging
 #
 resource "aws_identitystore_group" "articles_staging_access_vpc_clientvpn" {
-  display_name      = "Articles-Staging-Access-VPC-ClientVPN"
+  display_name      = "Articles-Staging-VPC-ClientVPN-Access"
   description       = "Grants members access to the GC Articles Staging Client VPN."
   identity_store_id = local.sso_identity_store_id
 }
