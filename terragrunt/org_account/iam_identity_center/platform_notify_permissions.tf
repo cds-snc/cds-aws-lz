@@ -2,7 +2,7 @@
 # Billing read-only
 #
 resource "aws_ssoadmin_permission_set" "read_only_billing" {
-  name         = "ReadOnly-Billing"
+  name         = "Billing-ReadOnly"
   description  = "Grants read-only access to billing data."
   instance_arn = local.sso_instance_arn
 }
@@ -40,7 +40,7 @@ data "aws_iam_policy_document" "read_only_billing" {
 # Pinpoint SMS admin
 #
 resource "aws_ssoadmin_permission_set" "admin_pinpoint_sms" {
-  name         = "Admin-Pinpoint-SMS"
+  name         = "Pinpoint-SMS-Admin"
   description  = "Grants full access to Pinpoint SMS Voice."
   instance_arn = local.sso_instance_arn
 }
@@ -84,7 +84,7 @@ data "aws_iam_policy_document" "admin_pinpoint_sms" {
 # SSM session connection to the Blazer ECS task
 #
 resource "aws_ssoadmin_permission_set" "notify_access_ecs_blazer" {
-  name         = "Access-ECS-Blazer"
+  name         = "ECS-Blazer-Access"
   description  = "Grants access to the Blazer ECS task using an SSM session."
   instance_arn = local.sso_instance_arn
 }
@@ -140,7 +140,7 @@ data "aws_iam_policy_document" "notify_access_ecs_blazer" {
 # QuickSight
 #
 resource "aws_ssoadmin_permission_set" "admin_s3_website_assets" {
-  name         = "Admin-S3-WebsiteAssets"
+  name         = "S3-NotifyWebsiteAssets-Admin"
   instance_arn = local.sso_instance_arn
 }
 
@@ -192,7 +192,7 @@ data "aws_iam_policy_document" "admin_s3_website_assets" {
 # Support Center admin
 #
 resource "aws_ssoadmin_permission_set" "admin_support_center" {
-  name         = "Admin-SupportCenter"
+  name         = "SupportCenter-Admin"
   instance_arn = local.sso_instance_arn
 }
 
@@ -244,7 +244,7 @@ data "aws_iam_policy_document" "admin_support_center" {
 # QuickSight
 #
 resource "aws_ssoadmin_permission_set" "access_quicksight" {
-  name         = "Access-QuickSight"
+  name         = "QuickSight-Access"
   instance_arn = local.sso_instance_arn
 }
 
