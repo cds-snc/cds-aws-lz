@@ -141,6 +141,7 @@ data "aws_iam_policy_document" "notify_access_ecs_blazer" {
 #
 resource "aws_ssoadmin_permission_set" "admin_s3_website_assets" {
   name         = "S3-NotifyWebsiteAssets-Admin"
+  description  = "Grants full access to the S3 buckets used for the Notify website assets."
   instance_arn = local.sso_instance_arn
 }
 
@@ -193,6 +194,7 @@ data "aws_iam_policy_document" "admin_s3_website_assets" {
 #
 resource "aws_ssoadmin_permission_set" "admin_support_center" {
   name         = "SupportCenter-Admin"
+  description  = "Grants full access to Support Center, manage SES/SMS suppressions and read-only CloudWatch."
   instance_arn = local.sso_instance_arn
 }
 
@@ -243,8 +245,9 @@ data "aws_iam_policy_document" "admin_support_center" {
 #
 # QuickSight
 #
-resource "aws_ssoadmin_permission_set" "access_quicksight" {
-  name         = "QuickSight-Access"
+resource "aws_ssoadmin_permission_set" "quicksight" {
+  name         = "Quicksight"
+  description  = "Grants access to Quicksight without giving the ability to manage users or the subscription level."
   instance_arn = local.sso_instance_arn
 }
 
@@ -262,48 +265,42 @@ locals {
   ])
 }
 
-resource "aws_ssoadmin_managed_policy_attachment" "access_quicksight" {
+resource "aws_ssoadmin_managed_policy_attachment" "quicksight" {
   for_each           = local.quicksight_managed_policy_arns
   instance_arn       = local.sso_instance_arn
   managed_policy_arn = each.key
-  permission_set_arn = aws_ssoadmin_permission_set.access_quicksight.arn
+  permission_set_arn = aws_ssoadmin_permission_set.quicksight.arn
 }
 
-resource "aws_ssoadmin_permission_set_inline_policy" "access_quicksight" {
-  permission_set_arn = aws_ssoadmin_permission_set.access_quicksight.arn
-  inline_policy      = data.aws_iam_policy_document.access_quicksight.json
+resource "aws_ssoadmin_permission_set_inline_policy" "quicksight" {
+  permission_set_arn = aws_ssoadmin_permission_set.quicksight.arn
+  inline_policy      = data.aws_iam_policy_document.quicksight.json
   instance_arn       = local.sso_instance_arn
 }
 
-data "aws_iam_policy_document" "access_quicksight" {
+data "aws_iam_policy_document" "quicksight" {
   statement {
     sid    = "QuickSightAccess"
     effect = "Allow"
     actions = [
-      "quicksight:CreateAnalysis",
-      "quicksight:CreateDashboard",
-      "quicksight:CreateDataSet",
-      "quicksight:CreateFolder",
-      "quicksight:CreateFolderMembership",
-      "quicksight:DeleteAnalysis",
-      "quicksight:DeleteDashboard",
-      "quicksight:DeleteDataSet",
-      "quicksight:DeleteFolder",
-      "quicksight:DeleteFolderMembership",
-      "quicksight:Describe*",
-      "quicksight:Get*",
-      "quicksight:List*",
-      "quicksight:Pass*",
-      "quicksight:RestoreAnalysis",
-      "quicksight:Search*",
-      "quicksight:Search*",
-      "quicksight:TagResource",
-      "quicksight:UntagResource",
-      "quicksight:UpdateAnalysis",
-      "quicksight:UpdateDashboard",
-      "quicksight:UpdateDataSet",
-      "quicksight:UpdateFolder",
-      "quicksight:UpdateFolderMembership",
+      "quicksight:*"
+    ]
+    resources = ["*"]
+  }
+  statement {
+    sid    = "QuickSightGuardrails"
+    effect = "Deny"
+    actions = [
+      "quicksight:CreateAdmin",
+      "quicksight:DeleteAccountSubscription",
+      "quicksight:DeleteUser",
+      "quicksight:DeleteUserByPrincipalId",
+      "quicksight:DeleteVPCConnection",
+      "quicksight:Subscribe",
+      "quicksight:Unsubscribe",
+      "quicksight:UpdateAccountSettings",
+      "quicksight:UpdateUser",
+      "quicksight:UpdateVPCConnection",
     ]
     resources = ["*"]
   }
