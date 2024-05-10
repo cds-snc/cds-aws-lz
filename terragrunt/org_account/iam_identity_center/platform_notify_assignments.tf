@@ -10,7 +10,7 @@ locals {
     },
     {
       group              = aws_identitystore_group.notify_production_access_quicksight,
-      permission_set_arn = aws_ssoadmin_permission_set.access_quicksight.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.quicksight.arn,
     },
     {
       group              = aws_identitystore_group.notify_production_admin,
