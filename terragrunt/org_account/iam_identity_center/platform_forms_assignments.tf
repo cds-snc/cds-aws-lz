@@ -25,7 +25,7 @@ locals {
     },
     {
       group              = aws_identitystore_group.forms_staging_read_only,
-      permission_set_arn = data.aws_ssoadmin_permission_set.read_only_billing.arn,
+      permission_set_arn = aws_ssoadmin_permission_set.read_only_billing.arn,
     },
   ]
 }
