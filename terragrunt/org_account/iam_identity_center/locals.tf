@@ -2,6 +2,9 @@ locals {
   articles_production_account_id = "472286471787"
   articles_staging_account_id    = "729164266357"
 
+  forms_production_account_id = "957818836222"
+  forms_staging_account_id    = "687401027353"
+
   list_manager_production_account_id = "762579868088"
 
   notify_production_account_id = "296255494825"
