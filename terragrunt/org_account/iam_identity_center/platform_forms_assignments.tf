@@ -3,7 +3,7 @@
 #
 locals {
   # Forms-Production
-  forms_production_permission_set_arns = [
+  forms_production_permission_sets = [
     {
       group          = aws_identitystore_group.forms_production_admin,
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
@@ -14,7 +14,7 @@ locals {
     },
   ]
   # Forms-Staging
-  forms_staging_permission_set_arns = [
+  forms_staging_permission_sets = [
     {
       group          = aws_identitystore_group.forms_staging_admin,
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
@@ -31,7 +31,7 @@ locals {
 }
 
 resource "aws_ssoadmin_account_assignment" "forms_production" {
-  for_each = { for perm in local.forms_production_permission_set_arns : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
+  for_each = { for perm in local.forms_production_permission_sets : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set.arn
@@ -44,7 +44,7 @@ resource "aws_ssoadmin_account_assignment" "forms_production" {
 }
 
 resource "aws_ssoadmin_account_assignment" "forms_staging" {
-  for_each = { for perm in local.forms_staging_permission_set_arns : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
+  for_each = { for perm in local.forms_staging_permission_sets : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set.arn

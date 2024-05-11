@@ -3,7 +3,7 @@
 #
 locals {
   # GCArticles-Production
-  articles_production_permission_set_arns = [
+  articles_production_permission_sets = [
     {
       group          = aws_identitystore_group.articles_production_admin,
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
@@ -14,7 +14,7 @@ locals {
     },
   ]
   # GCArticles-Staging
-  articles_staging_permission_set_arns = [
+  articles_staging_permission_sets = [
     {
       group          = aws_identitystore_group.articles_staging_admin,
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
@@ -25,7 +25,7 @@ locals {
     },
   ]
   # PlatformListManager-Production
-  list_manager_production_permission_set_arns = [
+  list_manager_production_permission_sets = [
     {
       group          = aws_identitystore_group.articles_production_admin,
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
@@ -38,7 +38,7 @@ locals {
 }
 
 resource "aws_ssoadmin_account_assignment" "articles_production" {
-  for_each = { for perm in local.articles_production_permission_set_arns : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
+  for_each = { for perm in local.articles_production_permission_sets : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set.arn
@@ -51,7 +51,7 @@ resource "aws_ssoadmin_account_assignment" "articles_production" {
 }
 
 resource "aws_ssoadmin_account_assignment" "articles_staging" {
-  for_each = { for perm in local.articles_staging_permission_set_arns : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
+  for_each = { for perm in local.articles_staging_permission_sets : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set.arn
@@ -64,7 +64,7 @@ resource "aws_ssoadmin_account_assignment" "articles_staging" {
 }
 
 resource "aws_ssoadmin_account_assignment" "list_manager_production" {
-  for_each = { for perm in local.list_manager_production_permission_set_arns : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
+  for_each = { for perm in local.list_manager_production_permission_sets : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set.arn
