@@ -10,7 +10,7 @@ locals {
     },
     {
       group          = aws_identitystore_group.design_system_production_read_only,
-      permission_set = data.aws_ssoadmin_permission_set.aws_read_only_accessrn,
+      permission_set = data.aws_ssoadmin_permission_set.aws_read_only_access,
     },
   ]
 }
