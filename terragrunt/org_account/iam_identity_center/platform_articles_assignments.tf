@@ -75,33 +75,3 @@ resource "aws_ssoadmin_account_assignment" "list_manager_production" {
   target_id   = local.list_manager_production_account_id
   target_type = "AWS_ACCOUNT"
 }
-
-moved {
-  from = aws_ssoadmin_account_assignment.articles_production["Articles-Production-Admin"]
-  to   = aws_ssoadmin_account_assignment.articles_production["Articles-Production-Admin-AWSAdministratorAccess"]
-}
-
-moved {
-  from = aws_ssoadmin_account_assignment.articles_production["Articles-Production-ReadOnly"]
-  to   = aws_ssoadmin_account_assignment.articles_production["Articles-Production-ReadOnly-AWSReadOnlyAccess"]
-}
-
-moved {
-  from = aws_ssoadmin_account_assignment.articles_staging["Articles-Staging-Admin"]
-  to   = aws_ssoadmin_account_assignment.articles_staging["Articles-Staging-Admin-AWSAdministratorAccess"]
-}
-
-moved {
-  from = aws_ssoadmin_account_assignment.articles_staging["Articles-Staging-ReadOnly"]
-  to   = aws_ssoadmin_account_assignment.articles_staging["Articles-Staging-ReadOnly-AWSReadOnlyAccess"]
-}
-
-moved {
-  from = aws_ssoadmin_account_assignment.list_manager_production["Articles-Production-Admin"]
-  to   = aws_ssoadmin_account_assignment.list_manager_production["Articles-Production-Admin-AWSAdministratorAccess"]
-}
-
-moved {
-  from = aws_ssoadmin_account_assignment.list_manager_production["Articles-Production-ReadOnly"]
-  to   = aws_ssoadmin_account_assignment.list_manager_production["Articles-Production-ReadOnly-AWSReadOnlyAccess"]
-}
