@@ -2,7 +2,7 @@
 # Canadian Digital Service website admin
 #
 resource "aws_ssoadmin_permission_set" "canadian_digital_service_production_website_admin" {
-  name         = "CanadianDigitalService-Website-Admin"
+  name         = "CDS-Website-Admin"
   description  = "Grants admin access to the Canadian Digital Service's account resources that are used by the main CDS website."
   instance_arn = local.sso_instance_arn
 }
