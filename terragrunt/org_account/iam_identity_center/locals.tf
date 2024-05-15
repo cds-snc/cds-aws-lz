@@ -1,6 +1,13 @@
 locals {
-  articles_production_account_id = "472286471787"
-  articles_staging_account_id    = "729164266357"
+
+  alpha_canada_website_production_account_id      = "414662622316"
+  canadian_digital_services_production_account_id = "866996500832"
+  cds_website_production_account_id               = "521732289257"
+  cds_website_cms_production_account_id           = "773858180673"
+
+  articles_production_account_id     = "472286471787"
+  articles_staging_account_id        = "729164266357"
+  list_manager_production_account_id = "762579868088"
 
   design_system_production_account_id = "307395567143"
 
@@ -8,8 +15,6 @@ locals {
 
   forms_production_account_id = "957818836222"
   forms_staging_account_id    = "687401027353"
-
-  list_manager_production_account_id = "762579868088"
 
   notify_production_account_id = "296255494825"
   notify_staging_account_id    = "239043911459"
