@@ -23,7 +23,7 @@ resource "aws_identitystore_group" "canadian_digital_service_production_read_onl
 }
 
 resource "aws_identitystore_group" "canadian_digital_service_production_website_admin" {
-  display_name      = "CanadianDigitalService-Production-Admin"
+  display_name      = "CanadianDigitalService-Production-Website-Admin"
   description       = "Grants members administrator access to the Canadian Digital Service website's Production account resources."
   identity_store_id = local.sso_identity_store_id
 }
