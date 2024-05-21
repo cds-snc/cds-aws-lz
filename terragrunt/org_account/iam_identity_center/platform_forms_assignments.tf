@@ -9,8 +9,16 @@ locals {
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
     },
     {
+      group          = aws_identitystore_group.forms_production_rds_query_access,
+      permission_set = aws_ssoadmin_permission_set.rds_query_access,
+    },
+    {
       group          = aws_identitystore_group.forms_production_read_only,
       permission_set = data.aws_ssoadmin_permission_set.aws_read_only_access,
+    },
+    {
+      group          = aws_identitystore_group.forms_production_read_only,
+      permission_set = aws_ssoadmin_permission_set.read_only_billing,
     },
   ]
   # Forms-Staging
@@ -18,6 +26,10 @@ locals {
     {
       group          = aws_identitystore_group.forms_staging_admin,
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
+    },
+    {
+      group          = aws_identitystore_group.forms_staging_rds_query_access,
+      permission_set = aws_ssoadmin_permission_set.rds_query_access,
     },
     {
       group          = aws_identitystore_group.forms_staging_read_only,
