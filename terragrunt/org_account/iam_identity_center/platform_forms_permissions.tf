@@ -57,6 +57,7 @@ data "aws_iam_policy_document" "rds_query_access" {
       "dbqms:GetQueryString",
       "dbqms:UpdateFavoriteQuery",
       "dbqms:UpdateQueryHistory",
+      "rds:Describe*",
       "rds-data:BatchExecuteStatement",
       "rds-data:BeginTransaction",
       "rds-data:CommitTransaction",
