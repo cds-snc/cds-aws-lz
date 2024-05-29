@@ -25,6 +25,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          #
+          # If more modules are added, they should also
+          # be added to tf-drift-check.yml
+          #
           - account_folder: org_account
             module: main
             account: 659087519042
@@ -116,9 +120,6 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Plan for ${{matrix.module }}/${{ matrix.module }}
-        # I have no idea if this will work.
-        # It does!
-        # I'll remove this later
         env:
           TF_VAR_aft_slack_webhook: ${{ secrets[matrix.lz_webhook_key] }}
           TF_VAR_assume_role_name: ${{ matrix.assume_role_name }}

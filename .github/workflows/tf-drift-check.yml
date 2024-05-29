@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: "ca-central-1"
+  AWS_REGION: ca-central-1
   TERRAFORM_VERSION: 1.7.2
   TERRAGRUNT_VERSION: 0.55.1
   CONFTEST_VERSION: 0.49.0
@@ -98,7 +98,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: setup terraform tools
+      - name: Setup Terraform tools
         uses: cds-snc/terraform-tools-setup@v1
 
       - name: Configure aws credentials using OIDC
