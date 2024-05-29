@@ -1,0 +1,124 @@
+name: Terraform drift check
+on:
+  workflow_dispatch:
+
+env:
+  AWS_REGION: "ca-central-1"
+  TERRAFORM_VERSION: 1.7.2
+  TERRAGRUNT_VERSION: 0.55.1
+  CONFTEST_VERSION: 0.49.0
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform-drift-check:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - account_folder: org_account
+            module: main
+            account: 659087519042
+            role: cds-aws-lz-plan
+            assume_role_name: "assume_plan"
+            la_customer_id: LA_CUSTOMER_ID
+            la_shared_key: LA_SHARED_KEY
+
+          - account_folder: org_account
+            module: spend_notifier
+            account: 659087519042
+            role:  cds-aws-lz-plan
+            spend_notifier_hook: SPEND_NOTIFIER_HOOK
+            weekly_spend_notifier_hook: WEEKLY_SPEND_NOTIFIER_HOOK
+
+          - account_folder: org_account
+            module: roles
+            account: 659087519042
+            role: cds-aws-lz-plan
+            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
+
+          - account_folder: org_account
+            module: sentinel_oidc
+            account: 659087519042
+            role: cds-aws-lz-plan
+
+          - account_folder: org_account
+            module: billing_extract_tags
+            account: 659087519042
+            role: cds-aws-lz-plan
+
+          - account_folder: org_account
+            module: iam_identity_center
+            account: 659087519042
+            role: cds-aws-lz-plan            
+
+          - account_folder: log_archive
+            module: main
+            account: 274536870005
+            role: cds-aws-lz-plan
+
+          - account_folder: log_archive
+            module: legacy_archives
+            account: 274536870005
+            role: cds-aws-lz-plan
+
+          - account_folder: log_archive
+            module: sre_bot
+            account: 274536870005
+            role: cds-aws-lz-plan
+            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
+
+          - account_folder: audit
+            module: main
+            account: 886481071419
+            role: cds-aws-lz-plan
+
+          - account_folder: audit
+            module: sre_bot
+            account: 886481071419
+            role: cds-aws-lz-plan
+            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
+
+          - account_folder: aft
+            module: main
+            account: 137554749751
+            role: cds-aws-lz-plan
+            lz_webhook_key: LZ_CHANNEL_WEBHOOK
+
+          - account_folder: aft
+            module: notifications
+            account: 137554749751
+            role: cds-aws-lz-plan
+            aft_notifications_hook: AFT_NOTIFICATIONS_HOOK
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
+
+      - name: Configure aws credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          role-to-assume: arn:aws:iam::${{ matrix.account }}:role/${{ matrix.role }}
+          role-session-name: ${{matrix.module}}-drift-check
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform drift check for ${{matrix.module }}/${{ matrix.module }}
+        env:
+          TF_VAR_aft_slack_webhook: ${{ secrets[matrix.lz_webhook_key] }}
+          TF_VAR_assume_role_name: ${{ matrix.assume_role_name }}
+          TF_VAR_lw_customer_id: ${{ secrets[matrix.la_customer_id] }}
+          TF_VAR_lw_shared_key: ${{ secrets[matrix.la_shared_key] }}
+          TF_VAR_daily_spend_notifier_hook: ${{ secrets[matrix.spend_notifier_hook] }}
+          TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
+          TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
+          TF_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
+        working-directory: ./terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}
+        run: |
+          terragrunt init
+          terragrunt plan -detailed-exitcode
