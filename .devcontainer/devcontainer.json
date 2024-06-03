@@ -5,22 +5,22 @@
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/base:bullseye@sha256:9f76ab65f8aeb02e5e33cba37311fa3ac0a653e91e247db12e11d690566a446f",
 	"features": {
-		"ghcr.io/devcontainers/features/aws-cli:1": {
+		"ghcr.io/devcontainers/features/aws-cli:1@sha256:8d39e89cc98291953fb03cf7ef540dc1a7c78c3162f0eee9b61c800e4838f807": {
 			"version": "latest"
 		},
-		"ghcr.io/devcontainers/features/github-cli:1": {
+		"ghcr.io/devcontainers/features/github-cli:1@sha256:464564228ccdd6028f01f8a62a3cfbaf76e9ba7953b29ac0e53ba2c262604312": {
 			"version": "latest"
 		},
-		"ghcr.io/devcontainers/features/python:1": {
+		"ghcr.io/devcontainers/features/python:1@sha256:d449aea663ea23ac4a7968719d5920dd57128f0429cd8e216849d5afe67651fb": {
 			"installTools": true,
 			"version": "3.12"
 		},
-		"ghcr.io/devcontainers/features/terraform:1": {
+		"ghcr.io/devcontainers/features/terraform:1@sha256:403fe3406aaf4618d9ca5b79cd1bd4a3576eac8816b18419650ab2f87026bb09": {
 			"version": "1.7.2",
 			"tflint": "latest",
 			"terragrunt": "0.55.1"
 		},
-		"ghcr.io/dhoeric/features/terraform-docs:1": {
+		"ghcr.io/dhoeric/features/terraform-docs:1@sha256:eb0c7b50809a020fa74ba924999caaf1bd2b43783ec1589775447dbca557623b": {
 			"version": "latest"
 		}
 	}
