@@ -1,6 +1,6 @@
 
 module "OIDC_Roles" {
-  source      = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v5.0.0"
+  source      = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v5.1.11"
   oidc_exists = true
 
   roles = [{
