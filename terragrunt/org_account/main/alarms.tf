@@ -7,7 +7,7 @@ resource "aws_sns_topic" "warning" {
 }
 
 module "alarm_actions" {
-  source                = "github.com/cds-snc/terraform-modules//user_login_alarm?ref=v3.0.2"
+  source                = "github.com/cds-snc/terraform-modules//user_login_alarm?ref=v3.0.20"
   account_names         = ["Ops1", "Ops2"]
   log_group_name        = "aws-controltower/CloudTrailLogs"
   alarm_actions_success = [aws_sns_topic.critical.arn]

@@ -18,7 +18,7 @@ module "assume_plan_role" {
 }
 
 module "attach_tf_plan_policy_assume" {
-  source            = "github.com/cds-snc/terraform-modules//attach_tf_plan_policy?ref=v3.0.2"
+  source            = "github.com/cds-snc/terraform-modules//attach_tf_plan_policy?ref=v3.0.20"
   account_id        = data.aws_caller_identity.current.account_id
   role_name         = "assume_plan"
   bucket_name       = "${var.billing_code}-tf"
