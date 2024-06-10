@@ -36,12 +36,6 @@ jobs:
             weekly_spend_notifier_hook: WEEKLY_SPEND_NOTIFIER_HOOK
 
           - account_folder: org_account
-            module: roles
-            account: 659087519042
-            role: cds-aws-lz-plan
-            admin_sso_role_arn: ADMIN_SSO_ROLE_ARN
-
-          - account_folder: org_account
             module: sentinel_oidc
             account: 659087519042
             role: cds-aws-lz-plan
