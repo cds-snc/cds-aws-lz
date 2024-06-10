@@ -1,5 +1,5 @@
 module "aft_failure_notifications" {
-  source = "github.com/cds-snc/terraform-modules//notify_slack?ref=v9.4.5"
+  source = "github.com/cds-snc/terraform-modules//notify_slack?ref=v9.4.8"
 
   function_name     = "slack_notifier_aft"
   project_name      = "AFT"
