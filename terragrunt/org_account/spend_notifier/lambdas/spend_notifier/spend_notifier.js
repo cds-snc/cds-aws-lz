@@ -7,7 +7,7 @@ const orgClient = new OrganizationsClient({ region: "us-east-1" });
 const https = require('https')
 
 exports.handler = async (event) => {
- const hook = event.hook;
+  const hook = event.hook;
   const today = new Date();
 
   // call the daily cost function to get daily costs
@@ -109,7 +109,7 @@ exports.handler = async (event) => {
       "blocks": blocks
     }
   )
-  
+
   const options = {
     hostname: 'sre-bot.cdssandbox.xyz',
     port: 443,
@@ -117,9 +117,11 @@ exports.handler = async (event) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Content-Length': data.length
+      'Content-Length': data.length,
+      'User-Agent':'AWS_Lambda_Cost_Notifier_Function (Node.js)'  // Set User-Agent header
     }
   }
+
   const resp = await doRequest(options, data);
   console.log(resp)
 
