@@ -91,6 +91,18 @@ data "aws_iam_policy_document" "admin_support_center" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    sid    = "PinpointListAndDeleteOptedOutNumbers"
+    effect = "Allow"
+    actions = [
+      "sms-voice:DeleteOptedOutNumber",
+      "sms-voice:DescribeOptOutLists",
+      "sms-voice:DescribeOptedOutNumbers",
+      "sms-voice:PutOptedOutNumber"
+    ]
+    resources = ["*"]
+  }
 }
 
 #
