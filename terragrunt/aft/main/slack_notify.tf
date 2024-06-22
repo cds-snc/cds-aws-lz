@@ -1,5 +1,5 @@
 module "aft_slack_notification" {
-  source            = "github.com/cds-snc/terraform-modules//notify_slack?ref=v9.4.9"
+  source            = "github.com/cds-snc/terraform-modules//notify_slack?ref=v9.4.11"
   billing_tag_value = var.billing_code
   function_name     = "aft_slack_notification"
   project_name      = "Account Factory for Terraform"
