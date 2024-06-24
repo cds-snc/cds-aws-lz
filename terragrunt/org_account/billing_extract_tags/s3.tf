@@ -1,5 +1,5 @@
 module "billing_extract_tags" {
-  source      = "github.com/cds-snc/terraform-modules//S3?ref=v9.4.9"
+  source      = "github.com/cds-snc/terraform-modules//S3?ref=v9.4.11"
   bucket_name = "5bf89a78-1503-4e02-9621-3ac658f558fb"
   acl         = null
 
