@@ -23,6 +23,11 @@ locals {
       group          = aws_identitystore_group.canadian_digital_service_production_website_admin,
       permission_set = aws_ssoadmin_permission_set.canadian_digital_service_production_website_admin,
     },
+    # ! Cross Account Permission Assignment - Notify Hosted Zone
+    {
+      group          = aws_identitystore_group.notify_production_hosted_zone_admin,
+      permission_set = aws_ssoadmin_permission_set.admin_route53_notify_hosted_zone,
+    }
   ]
   # CdsWebsite-Production
   cds_website_production_permission_sets = [
