@@ -55,6 +55,12 @@ resource "aws_identitystore_group" "notify_production_read_only" {
   identity_store_id = local.sso_identity_store_id
 }
 
+resource "aws_identitystore_group" "notify_production_hosted_zone_admin" {
+  display_name      = "Notify-Production-HostedZone-Admin"
+  description       = "Grants members administrator access to the Notify Production account's Route 53 hosted zone record sets."
+  identity_store_id = local.sso_identity_store_id
+}
+
 #
 # Staging
 #
