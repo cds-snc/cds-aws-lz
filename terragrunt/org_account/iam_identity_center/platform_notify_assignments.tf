@@ -37,7 +37,7 @@ locals {
       permission_set = data.aws_ssoadmin_permission_set.aws_read_only_access,
     },
     {
-      group          = aws_identitystore_group.notify_production_hosted_zone_record_sets_admin,
+      group          = aws_identitystore_group.notify_production_hosted_zone_admin,
       permission_set = aws_ssoadmin_permission_set.admin_route53_notify_hosted_zone,
     }
   ]

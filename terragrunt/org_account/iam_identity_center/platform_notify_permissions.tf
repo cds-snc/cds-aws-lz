@@ -155,7 +155,7 @@ data "aws_iam_policy_document" "admin_s3_website_assets" {
 #  Route 53
 #
 resource "aws_ssoadmin_permission_set" "admin_route53_notify_hosted_zone" {
-  name         = "Route53-NotifyHostedZone-RecordSets-Admin"
+  name         = "Route53-Notify-Admin"
   description  = "Grants full access to the Notify hosted zone's record sets in Route 53."
   instance_arn = local.sso_instance_arn
 }
