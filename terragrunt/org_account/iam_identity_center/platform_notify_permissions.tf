@@ -150,3 +150,45 @@ data "aws_iam_policy_document" "admin_s3_website_assets" {
     ]
   }
 }
+
+#
+#  Route 53
+#
+resource "aws_ssoadmin_permission_set" "admin_route53_notify_hosted_zone" {
+  name = "Route53-NotifyHostedZone-RecordSets-Admin"
+  description = "Grants full access to the Notify hosted zone's record sets in Route 53."
+  instance_arn = local.sso_instance_arn
+}
+
+resource "aws_ssoadmin_permission_set_inline_policy" "admin_route53_notify_hosted_zone" {
+  permission_set_arn = aws_ssoadmin_permission_set.admin_route53_notify_hosted_zone.arn
+  inline_policy = data.aws_iam_policy_document.admin_route53_notify_hosted_zone.json
+  instance_arn = local.sso_instance_arn
+}
+
+data "aws_iam_policy_document" "admin_route53_notify_hosted_zone" {
+  statement {
+    sid    = "ListHostedZones"
+    effect = "Allow"
+    actions = [
+      "route53:GetHostedZone",
+      "route53:ListHostedZones",
+      "route53:GetHostedZoneCount",
+      "route53:ListHostedZonesByName"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid   = "UpdateNotifyHostedZoneRecordSets"
+    effect = "Allow"
+    actions = [
+      "route53:ListResourceRecordSets",
+      "route53:ChangeResourceRecordSets",
+      "route53:GetChange"
+    ]
+    resources = [
+      "arn:aws:route53:::hostedzone/Z1XG153PQF3VV5"
+    ]
+  }
+}

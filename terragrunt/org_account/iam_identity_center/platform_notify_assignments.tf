@@ -35,6 +35,10 @@ locals {
     {
       group          = aws_identitystore_group.notify_production_read_only,
       permission_set = data.aws_ssoadmin_permission_set.aws_read_only_access,
+    },
+    {
+      group          = aws_identitystore_group.notify_production_hosted_zone_record_sets_admin,
+      permission_set = aws_ssoadmin_permission_set.admin_route53_notify_hosted_zone,
     }
   ]
   # Notification-Staging
