@@ -189,6 +189,7 @@ data "aws_iam_policy_document" "aws_nuke_guardrails" {
     effect = "Deny"
     actions = [
       "iam:DeleteRole",
+      "iam:DetachRolePolicy",
       "iam:DeleteRolePolicy"
     ]
     resources = [
