@@ -180,3 +180,91 @@ resource "aws_organizations_policy" "qurantine_deny_all_policy" {
   type    = "SERVICE_CONTROL_POLICY"
   content = data.aws_iam_policy_document.qurantine_deny_all_policy.json
 }
+
+
+data "aws_iam_policy_document" "aws_nuke_guardrails" {
+  statement {
+
+    sid    = "ProtectAWSControlTowerRoles"
+    effect = "Deny"
+    actions = [
+      "iam:DeleteRole",
+      "iam:DeleteRolePolicy"
+    ]
+    resources = [
+      "arn:aws:iam::*:role/AWSControlTower*",
+      "arn:aws:iam::*:role/aws-service-role/*"
+    ]
+    condition {
+      test     = "ArnNotLike"
+      variable = "aws:PrincipalArn"
+      values = [
+        "arn:aws:iam::*:role/AWSAFTExecution",
+      ]
+    }
+  }
+
+  statement {
+    sid    = "ProtectSAMLProvider"
+    effect = "Deny"
+    actions = [
+      "iam:DeleteSAMLProvider"
+    ]
+    resources = [
+      "arn:aws:iam::*:saml-provider/AWSSSO_*_DO_NOT_DELETE"
+    ]
+    condition {
+      test     = "ArnNotLike"
+      variable = "aws:PrincipalArn"
+      values = [
+        "arn:aws:iam::*:role/AWSAFTExecution",
+      ]
+    }
+  }
+
+
+  statement {
+    sid    = "ProtectSSORoles"
+    effect = "Deny"
+    actions = [
+      "iam:DeleteRole",
+      "iam:DetachRolePolicy",
+      "iam:DeleteRolePolicy"
+    ]
+    resources = [
+      "arn:aws:iam::*:role/AWSReservedSSO_*"
+    ]
+    condition {
+      test     = "ArnNotLike"
+      variable = "aws:PrincipalArn"
+      values = [
+        "arn:aws:iam::*:role/AWSAFTExecution",
+      ]
+    }
+  }
+
+  statement {
+    sid    = "ProtectSSORolePolicies"
+    effect = "Deny"
+    actions = [
+      "iam:DetachRolePolicy",
+      "iam:DeletePolicy"
+    ]
+    resources = [
+      "arn:aws:iam::*:policy/AWSReservedSSO_*"
+    ]
+    condition {
+      test     = "ArnNotLike"
+      variable = "aws:PrincipalArn"
+      values = [
+        "arn:aws:iam::*:role/AWSAFTExecution",
+      ]
+    }
+  }
+}
+
+resource "aws_organizations_policy" "aws_nuke_guardrails" {
+  name    = "Control Tower Guardrails"
+  type    = "SERVICE_CONTROL_POLICY"
+  content = data.aws_iam_policy_document.aws_nuke_guardrails.json
+}
