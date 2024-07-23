@@ -229,7 +229,8 @@ data "aws_iam_policy_document" "aws_nuke_guardrails" {
     effect = "Deny"
     actions = [
       "iam:DeleteRole",
-      "iam:DeleteRolePolicy"
+      "iam:DeleteRolePolicy",
+      "iam:DetachRolePolicy"
     ]
     resources = [
       "arn:aws:iam::*:role/AWSReservedSSO_*"
