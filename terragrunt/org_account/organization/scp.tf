@@ -265,7 +265,8 @@ data "aws_iam_policy_document" "aws_nuke_guardrails" {
 }
 
 resource "aws_organizations_policy" "aws_nuke_guardrails" {
-  name    = "Control Tower Guardrails"
-  type    = "SERVICE_CONTROL_POLICY"
-  content = data.aws_iam_policy_document.aws_nuke_guardrails.json
+  name        = "AWS Nuke Guardrails"
+  description = "Guardrails to protect AWS Control Tower and AWS SSO resources"
+  type        = "SERVICE_CONTROL_POLICY"
+  content     = data.aws_iam_policy_document.aws_nuke_guardrails.json
 }

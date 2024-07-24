@@ -66,6 +66,11 @@ resource "aws_organizations_policy_attachment" "Sandbox-cds_snc_universal_guardr
   target_id = aws_organizations_organizational_unit.Sandbox.id
 }
 
+resource "aws_organizations_policy_attachment" "Sandbox-aws_nuke_guardrails" {
+  policy_id = aws_organizations_policy.aws_nuke_guardrails.id
+  target_id = aws_organizations_organizational_unit.Sandbox.id
+}
+
 
 resource "aws_organizations_organizational_unit" "Security" {
   name      = "Security"
