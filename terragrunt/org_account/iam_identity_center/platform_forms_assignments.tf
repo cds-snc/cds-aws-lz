@@ -9,6 +9,10 @@ locals {
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
     },
     {
+      group          = aws_identitystore_group.forms_production_athena_query_access,
+      permission_set = aws_ssoadmin_permission_set.athena_query_access,
+    },
+    {
       group          = aws_identitystore_group.forms_production_rds_query_access,
       permission_set = aws_ssoadmin_permission_set.rds_query_access,
     },
@@ -26,6 +30,10 @@ locals {
     {
       group          = aws_identitystore_group.forms_staging_admin,
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
+    },
+    {
+      group          = aws_identitystore_group.forms_staging_athena_query_access,
+      permission_set = aws_ssoadmin_permission_set.athena_query_access,
     },
     {
       group          = aws_identitystore_group.forms_staging_rds_query_access,

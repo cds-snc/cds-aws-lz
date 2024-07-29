@@ -1,4 +1,112 @@
 #
+# Athena query access
+#
+resource "aws_ssoadmin_permission_set" "athena_query_access" {
+  name         = "Athena-Query-Access"
+  description  = "Grants access to the Athena query editor and RDS connector Lambda functions."
+  instance_arn = local.sso_instance_arn
+}
+
+resource "aws_ssoadmin_permission_set_inline_policy" "athena_query_access" {
+  permission_set_arn = aws_ssoadmin_permission_set.athena_query_access.arn
+  inline_policy      = data.aws_iam_policy_document.athena_query_access.json
+  instance_arn       = local.sso_instance_arn
+}
+
+data "aws_iam_policy_document" "athena_query_access" {
+  statement {
+    sid = "AthenaRead"
+    actions = [
+      "athena:BatchGetNamedQuery",
+      "athena:BatchGetQueryExecution",
+      "athena:GetDataCatalog",
+      "athena:GetNamedQuery",
+      "athena:GetQueryExecution",
+      "athena:GetQueryResults",
+      "athena:GetQueryResultsStream",
+      "athena:GetWorkGroup",
+      "athena:ListDataCatalogs",
+      "athena:ListDatabases",
+      "athena:ListNamedQueries",
+      "athena:ListQueryExecutions",
+      "athena:ListTableMetadata",
+      "athena:ListWorkGroups",
+      "athena:StartQueryExecution",
+      "athena:StopQueryExecution",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "GlueRead"
+    actions = [
+      "glue:GetDatabase",
+      "glue:GetDatabases",
+      "glue:GetPartition",
+      "glue:GetPartitions",
+      "glue:GetTable",
+      "glue:GetTables",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "AthenaS3Results"
+    actions = [
+      "s3:AbortMultipartUpload",
+      "s3:GetBucketLocation",
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:ListBucketMultipartUploads",
+      "s3:ListMultipartUploadParts",
+      "s3:PutObject",
+    ]
+    resources = [
+      "arn:aws:s3:::forms-staging-athena-bucket",
+      "arn:aws:s3:::forms-staging-athena-bucket/*",
+      "arn:aws:s3:::forms-production-athena-bucket",
+      "arn:aws:s3:::forms-production-athena-bucket/*",
+    ]
+  }
+
+  statement {
+    sid = "AthenaS3ReadLogs"
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:GetObject",
+      "s3:ListBucket",
+    ]
+    resources = [
+      "arn:aws:s3:::cbs-satellite-687401027353",
+      "arn:aws:s3:::cbs-satellite-687401027353/*",
+      "arn:aws:s3:::cbs-satellite-957818836222",
+      "arn:aws:s3:::cbs-satellite-957818836222/*",
+    ]
+  }
+
+  statement {
+    sid = "BaseS3BucketPermissions"
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListAllMyBuckets",
+      "s3:ListBucket",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "InvokeAthenaConnectorLambda"
+    actions = [
+      "lambda:InvokeFunction",
+    ]
+    resources = [
+      "arn:aws:lambda:ca-central-1:687401027353:function:*-lambda-connector",
+      "arn:aws:lambda:ca-central-1:957818836222:function:*-lambda-connector",
+    ]
+  }
+}
+
+#
 # RDS query editor access
 #
 resource "aws_ssoadmin_permission_set" "rds_query_access" {
