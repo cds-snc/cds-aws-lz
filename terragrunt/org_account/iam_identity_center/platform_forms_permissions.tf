@@ -24,6 +24,7 @@ data "aws_iam_policy_document" "athena_query_access" {
       "athena:GetQueryExecution",
       "athena:GetQueryResults",
       "athena:GetQueryResultsStream",
+      "athena:GetQueryRuntimeStatistics",
       "athena:GetWorkGroup",
       "athena:ListDataCatalogs",
       "athena:ListDatabases",
@@ -81,6 +82,10 @@ data "aws_iam_policy_document" "athena_query_access" {
       "arn:aws:s3:::cbs-satellite-687401027353/*",
       "arn:aws:s3:::cbs-satellite-957818836222",
       "arn:aws:s3:::cbs-satellite-957818836222/*",
+      "arn:aws:s3:::gc-forms-staging-athena-spill-bucket",
+      "arn:aws:s3:::gc-forms-staging-athena-spill-bucket/*",
+      "arn:aws:s3:::gc-forms-production-athena-spill-bucket",
+      "arn:aws:s3:::gc-forms-production-athena-spill-bucket/*"
     ]
   }
 
@@ -90,6 +95,14 @@ data "aws_iam_policy_document" "athena_query_access" {
       "s3:GetBucketLocation",
       "s3:ListAllMyBuckets",
       "s3:ListBucket",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "DataZoneRead"
+    actions = [
+      "datazone:ListDomains"
     ]
     resources = ["*"]
   }
