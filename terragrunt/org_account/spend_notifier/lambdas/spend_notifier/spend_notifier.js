@@ -32,10 +32,9 @@ exports.handler = async (event) => {
     }
 
     // if the account is not a scratch account and there is a 35% increase in costs for yesterday vs day before AND the difference in the dollar amount is greater than $10, add to accountIncreases
-    if(dailyAccountCost.hasOwnProperty(key) && dailyAccountCost[key] >35 && !accounts[key]["isScratch"] && amountIncrease.hasOwnProperty(key) && amountIncrease[key] > 10) {
+      if(dailyAccountCost.hasOwnProperty(key) && dailyAccountCost[key] >35 && !accounts[key]["isScratch"] && amountIncrease.hasOwnProperty(key) && amountIncrease[key] > 10) {
           accountIncreases[accounts[key]["Name"]] = dailyAccountCost[key]
     }
-
     // if the account is a scratch account and it exceeded the threshold of $500 yesterday, add to scratchAccountsAffected
     if (scratchAccountsExceedingThreshold.hasOwnProperty(key) && accounts[key]["isScratch"]) {
       scratchAccountsAffected[accounts[key]["Name"]] = scratchAccountsExceedingThreshold[key]
@@ -109,7 +108,6 @@ exports.handler = async (event) => {
       "blocks": blocks
     }
   )
-
   const options = {
     hostname: 'sre-bot.cdssandbox.xyz',
     port: 443,
@@ -121,6 +119,7 @@ exports.handler = async (event) => {
       'User-Agent':'AWS_Lambda_Cost_Notifier_Function (Node.js)'  // Set User-Agent header
     }
   }
+  console.log(options)
 
   const resp = await doRequest(options, data);
   console.log(resp)
@@ -249,7 +248,7 @@ async function getDailyAccountCost() {
   const dayToday = today.toISOString().split("T")[0];
   const yesterday = new Date(new Date().setDate(today.getDate() - 1)).toISOString().split("T")[0];
   const dayBeforeYesterday = new Date(new Date().setDate(today.getDate() - 2)).toISOString().split("T")[0];
-
+  
   // construct params for cost explorer
   const paramsYesterday = {
     Granularity: "DAILY",
