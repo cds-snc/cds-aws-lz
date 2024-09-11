@@ -103,6 +103,15 @@ data "aws_iam_policy_document" "admin_support_center" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    sid    = "PinpointPhoneNumberValidate"
+    effect = "Allow"
+    actions = [
+      "mobiletargeting:PhoneNumberValidate"
+    ]
+    resources = ["*"]
+  }
 }
 
 #
