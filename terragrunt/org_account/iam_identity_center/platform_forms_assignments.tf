@@ -13,6 +13,10 @@ locals {
       permission_set = aws_ssoadmin_permission_set.athena_query_access,
     },
     {
+      group          = aws_identitystore_group.forms_production_billing_read_only,
+      permission_set = aws_ssoadmin_permission_set.read_only_billing,
+    },
+    {
       group          = aws_identitystore_group.forms_production_rds_query_access,
       permission_set = aws_ssoadmin_permission_set.rds_query_access,
     },
@@ -34,6 +38,10 @@ locals {
     {
       group          = aws_identitystore_group.forms_staging_athena_query_access,
       permission_set = aws_ssoadmin_permission_set.athena_query_access,
+    },
+    {
+      group          = aws_identitystore_group.forms_staging_billing_read_only,
+      permission_set = aws_ssoadmin_permission_set.read_only_billing,
     },
     {
       group          = aws_identitystore_group.forms_staging_rds_query_access,
