@@ -2,11 +2,11 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: cds-aws-lz
-  description: CDS AWS Landing Zone
+  description: CDS AWS Landing Zone configuration
   labels:
     license: MIT
 spec:
-  type: website
+  type: service
   lifecycle: production
   owner: group:cds-snc/internal-sre
   domain: site-reliability-engineering
