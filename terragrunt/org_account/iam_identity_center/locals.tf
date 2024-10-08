@@ -21,6 +21,8 @@ locals {
   notify_dev_account_id        = "800095993820"
   notify_sandbox_account_id    = "891376947407"
 
+  superset_production_account_id = "066023111852"
+
   sso_identity_store_id = "d-9d67173bdd"
   sso_instance_id       = "ssoins-8824c710b5ddb452"
   sso_instance_arn      = "arn:aws:sso:::instance/${local.sso_instance_id}"
