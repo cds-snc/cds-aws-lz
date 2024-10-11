@@ -15,7 +15,7 @@ locals {
 }
 
 resource "aws_ssoadmin_account_assignment" "digital_transformation_office_production" {
-  for_each = { for perm in local.digital_transformation_office_production_permission_sets: "${perm.group.display_name}-${perm.permission_set.name}" => perm }
+  for_each = { for perm in local.digital_transformation_office_production_permission_sets : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set.arn
