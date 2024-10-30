@@ -8,6 +8,8 @@ locals {
   articles_production_account_id     = "472286471787"
   articles_staging_account_id        = "729164266357"
   list_manager_production_account_id = "762579868088"
+  
+  data_lake_production_account_id = "739275439843"
 
   design_system_production_account_id = "307395567143"
 
