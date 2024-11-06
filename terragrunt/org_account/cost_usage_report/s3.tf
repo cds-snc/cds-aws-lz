@@ -1,7 +1,7 @@
 #
 # Cost and usage report
 #
-module "cost_usuage_report" {
+module "cost_usage_report" {
   source      = "github.com/cds-snc/terraform-modules//S3?ref=v9.6.8"
   bucket_name = "cds-cost-usage-report"
 
@@ -12,12 +12,12 @@ module "cost_usuage_report" {
   billing_tag_value = var.billing_code
 }
 
-resource "aws_s3_bucket_policy" "cost_usuage_report" {
-  bucket = module.cost_usuage_report.s3_bucket_id
-  policy = data.aws_iam_policy_document.cost_usuage_report.json
+resource "aws_s3_bucket_policy" "cost_usage_report" {
+  bucket = module.cost_usage_report.s3_bucket_id
+  policy = data.aws_iam_policy_document.cost_usage_report.json
 }
 
-data "aws_iam_policy_document" "cost_usuage_report" {
+data "aws_iam_policy_document" "cost_usage_report" {
   statement {
     sid    = "EnableAWSDataExportsToWriteToS3AndCheckPolicy"
     effect = "Allow"
@@ -33,8 +33,8 @@ data "aws_iam_policy_document" "cost_usuage_report" {
       "s3:GetBucketPolicy"
     ]
     resources = [
-      module.cost_usuage_report.s3_bucket_arn,
-      "${module.cost_usuage_report.s3_bucket_arn}/*"
+      module.cost_usage_report.s3_bucket_arn,
+      "${module.cost_usage_report.s3_bucket_arn}/*"
     ]
     condition {
       test     = "StringLike"
@@ -66,8 +66,8 @@ data "aws_iam_policy_document" "cost_usuage_report" {
       "s3:AbortMultipartUpload"
     ]
     resources = [
-      module.cost_usuage_report.s3_bucket_arn,
-      "${module.cost_usuage_report.s3_bucket_arn}/*"
+      module.cost_usage_report.s3_bucket_arn,
+      "${module.cost_usage_report.s3_bucket_arn}/*"
     ]
   }
 }
