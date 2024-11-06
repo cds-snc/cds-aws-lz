@@ -41,7 +41,7 @@ jobs:
             role: cds-aws-lz-plan
 
           - account_folder: org_account
-            module: billing_extract_tags
+            module: cost_usage_report
             account: 659087519042
             role: cds-aws-lz-plan
 
