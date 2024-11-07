@@ -82,8 +82,14 @@ resource "aws_iam_role_policy_attachment" "lambda_insights" {
 #
 resource "aws_iam_role" "cur_replicate" {
   name               = "CostUsageReplicateToDataLake"
-  assume_role_policy = data.aws_iam_policy_document.billing_extract_tags_assume.json
+  assume_role_policy = data.aws_iam_policy_document.cur_replicate_assume.json
   tags               = local.common_tags
+}
+
+resource "aws_iam_policy" "cur_replicate" {
+  name   = "CostUsageReplicateToDataLake"
+  policy = data.aws_iam_policy_document.cur_replicate.json
+  tags   = local.common_tags
 }
 
 resource "aws_iam_role_policy_attachment" "cur_replicate" {
