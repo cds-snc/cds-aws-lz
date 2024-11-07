@@ -17,7 +17,7 @@ resource "aws_lambda_function" "billing_extract_tags" {
 
   environment {
     variables = {
-      TARGET_BUCKET = local.data_lake_raw_s3_bucket_arn
+      TARGET_BUCKET = local.data_lake_raw_s3_bucket_name
     }
   }
 
