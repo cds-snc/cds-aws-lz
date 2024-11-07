@@ -68,6 +68,6 @@ def handler(event, context):
 
     # save accounts to an s3 bucket
     logging.info("Saving account tags to s3")
-    s3.put_object(Bucket=TARGET_BUCKET, Key="/operations/aws/organization/account-tags.json", Body=accounts)
+    s3.put_object(Bucket=TARGET_BUCKET, Key="operations/aws/organization/account-tags.json", Body=accounts)
 
     return {"statusCode": 200}

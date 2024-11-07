@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "billing_extract_tags" {
       "s3:PutObject"
     ]
     resources = [
-      "${local.data_lake_raw_s3_bucket_arn}/operations/aws/organization/account-tags.json",
+      "${local.data_lake_raw_s3_bucket_arn}/operations/aws/organization/*",
     ]
   }
 }
