@@ -1,3 +1,6 @@
+#
+# Lambda function to extract account tags and write them to the Data Lake
+#
 resource "aws_iam_role" "billing_extract_tags" {
   name               = "BillingExtractTags"
   assume_role_policy = data.aws_iam_policy_document.billing_extract_tags_assume.json
@@ -37,15 +40,10 @@ data "aws_iam_policy_document" "billing_extract_tags" {
   statement {
     effect = "Allow"
     actions = [
-      "s3:PutObject*",
-      "s3:ListBucket",
-      "s3:GetObject*",
-      "s3:DeleteObject*",
-      "s3:GetBucketLocation"
+      "s3:PutObject"
     ]
     resources = [
-      module.billing_extract_tags.s3_bucket_arn,
-      "${module.billing_extract_tags.s3_bucket_arn}/*",
+      "${local.data_lake_raw_s3_bucket_arn}/operations/aws/organization/account-tags.json",
     ]
   }
 }
@@ -77,4 +75,65 @@ data "aws_iam_policy" "lambda_insights" {
 resource "aws_iam_role_policy_attachment" "lambda_insights" {
   role       = aws_iam_role.billing_extract_tags.name
   policy_arn = data.aws_iam_policy.lambda_insights.arn
+}
+
+#
+# Replicate the Cost and Usage Report data to the Data Lake
+#
+resource "aws_iam_role" "cur_replicate" {
+  name               = "CostUsageReplicateToDataLake"
+  assume_role_policy = data.aws_iam_policy_document.billing_extract_tags_assume.json
+  tags               = local.common_tags
+}
+
+resource "aws_iam_role_policy_attachment" "cur_replicate" {
+  role       = aws_iam_role.cur_replicate.name
+  policy_arn = aws_iam_policy.cur_replicate.arn
+}
+
+data "aws_iam_policy_document" "cur_replicate_assume" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type = "Service"
+      identifiers = [
+        "s3.amazonaws.com"
+      ]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "cur_replicate" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetReplicationConfiguration",
+      "s3:ListBucket"
+    ]
+    resources = [
+      module.cost_usage_report.s3_bucket_arn
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObjectVersion",
+      "s3:GetObjectVersionAcl"
+    ]
+    resources = [
+      "${module.cost_usage_report.s3_bucket_arn}/*"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:ObjectOwnerOverrideToBucketOwner",
+      "s3:ReplicateObject",
+      "s3:ReplicateDelete"
+    ]
+    resources = [
+      "${local.data_lake_raw_s3_bucket_arn}/*"
+    ]
+  }
 }
