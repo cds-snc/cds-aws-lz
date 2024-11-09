@@ -61,9 +61,7 @@ def handler(event, context):
 
     # .write json to string and add a newline between each record
     logging.info("Writing account tags to json")
-    accounts = json.dumps(accounts, default=str)
-    accounts = accounts.replace("}, ", "},\n")
-    accounts = accounts.replace("[{", "[\n{")
+    accounts = json.dumps(accounts, default=str, indent=2)
     logging.info(f"Accounts: {accounts}")
 
     # save accounts to an s3 bucket
