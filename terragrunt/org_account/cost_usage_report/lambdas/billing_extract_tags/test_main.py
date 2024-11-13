@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 from main import handler
 
 TARGET_BUCKET = "TARGET_BUCKET"
-ACCOUNT_TAGS_KEY = "account_tags.json"
+ACCOUNT_TAGS_KEY = "operations/aws/organization/account-tags.json"
 
 
 class TestLambdaHandler(unittest.TestCase):
@@ -31,7 +31,8 @@ class TestLambdaHandler(unittest.TestCase):
             Bucket=TARGET_BUCKET,
             Key=ACCOUNT_TAGS_KEY,
             Body="""[
-{"Id": "123", "tag_Name": "Dev"}]""",
+{"id": "123","tag_name": "Dev"}
+]""",
         )
 
         self.assertEqual(response, {"statusCode": 200})
@@ -61,6 +62,7 @@ class TestLambdaHandler(unittest.TestCase):
             Bucket=TARGET_BUCKET,
             Key=ACCOUNT_TAGS_KEY,
             Body="""[
-{"Id": "123", "tag_Name": "Dev"},
-{"Id": "456", "tag_Name": "Prod"}]""",
+{"id": "123","tag_name": "Dev"},
+{"id": "456","tag_name": "Prod"}
+]""",
         )

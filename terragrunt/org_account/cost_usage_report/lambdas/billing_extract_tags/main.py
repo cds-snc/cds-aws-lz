@@ -3,6 +3,7 @@ Get the tags for all accounts in the organization and save them to an s3 bucket.
 This is then used to enrich the billing data with the account tags to allow
 for business unit filtering.
 """
+
 import json
 import logging
 import os
@@ -61,11 +62,26 @@ def handler(event, context):
 
     # .write json to string and add a newline between each record
     logging.info("Writing account tags to json")
-    accounts = json.dumps(accounts, default=str, indent=2)
-    logging.info(f"Accounts: {accounts}")
+    accounts_json = (
+        "[\n"
+        + ",\n".join(
+            json.dumps(
+                {k.lower(): v for k, v in account.items()},
+                default=str,
+                separators=(",", ": "),
+            )
+            for account in accounts
+        )
+        + "\n]"
+    )
+    logging.info(f"Accounts: {accounts_json}")
 
     # save accounts to an s3 bucket
     logging.info("Saving account tags to s3")
-    s3.put_object(Bucket=TARGET_BUCKET, Key="operations/aws/organization/account-tags.json", Body=accounts)
+    s3.put_object(
+        Bucket=TARGET_BUCKET,
+        Key="operations/aws/organization/account-tags.json",
+        Body=accounts_json,
+    )
 
     return {"statusCode": 200}
