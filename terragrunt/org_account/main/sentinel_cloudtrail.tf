@@ -2,10 +2,9 @@ resource "aws_sqs_queue" "cloudtrail_sqs_queue" {
   provider = aws.log_archive
 
   name                      = "azure-sentinel-cloudtrail-queue"
-  delay_seconds             = 90
   max_message_size          = 2048
   message_retention_seconds = 86400
-  receive_wait_time_seconds = 10
+  receive_wait_time_seconds = 5
   sqs_managed_sse_enabled   = true
 
 }
@@ -83,7 +82,7 @@ data "aws_iam_policy_document" "azure_sentinel_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "sts:ExternalId"
-      values   = [var.lw_customer_id]
+      values   = [var.lw_customer_ids]
     }
   }
 }

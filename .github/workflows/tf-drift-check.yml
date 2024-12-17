@@ -27,6 +27,7 @@ jobs:
             assume_role_name: "assume_plan"
             la_customer_id: LA_CUSTOMER_ID
             la_shared_key: LA_SHARED_KEY
+            la_customer_ids: LA_CUSTOMER_IDS
 
           - account_folder: org_account
             module: spend_notifier
@@ -110,6 +111,8 @@ jobs:
           TF_VAR_assume_role_name: ${{ matrix.assume_role_name }}
           TF_VAR_lw_customer_id: ${{ secrets[matrix.la_customer_id] }}
           TF_VAR_lw_shared_key: ${{ secrets[matrix.la_shared_key] }}
+          TF_VAR_lw_customer_ids: ${{ secrets[matrix.la_customer_ids] }}
+          TF_VAR_la_customer_id: ${{ secrets[matrix.la_customer_id] }}
           TF_VAR_daily_spend_notifier_hook: ${{ secrets[matrix.spend_notifier_hook] }}
           TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
           TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
