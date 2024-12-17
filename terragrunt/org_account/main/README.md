@@ -1,17 +1,19 @@
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | <= 5.51 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-| <a name="provider_aws.log_archive"></a> [aws.log\_archive](#provider\_aws.log\_archive) | n/a |
-| <a name="provider_aws.log_archive_us_east_1"></a> [aws.log\_archive\_us\_east\_1](#provider\_aws.log\_archive\_us\_east\_1) | n/a |
-| <a name="provider_aws.log_archive_us_west_2"></a> [aws.log\_archive\_us\_west\_2](#provider\_aws.log\_archive\_us\_west\_2) | n/a |
-| <a name="provider_aws.us-east-1"></a> [aws.us-east-1](#provider\_aws.us-east-1) | n/a |
-| <a name="provider_aws.us-west-2"></a> [aws.us-west-2](#provider\_aws.us-west-2) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.67.0 |
+| <a name="provider_aws.log_archive"></a> [aws.log\_archive](#provider\_aws.log\_archive) | 4.67.0 |
+| <a name="provider_aws.log_archive_us_east_1"></a> [aws.log\_archive\_us\_east\_1](#provider\_aws.log\_archive\_us\_east\_1) | 4.67.0 |
+| <a name="provider_aws.log_archive_us_west_2"></a> [aws.log\_archive\_us\_west\_2](#provider\_aws.log\_archive\_us\_west\_2) | 4.67.0 |
+| <a name="provider_aws.us-east-1"></a> [aws.us-east-1](#provider\_aws.us-east-1) | 4.67.0 |
+| <a name="provider_aws.us-west-2"></a> [aws.us-west-2](#provider\_aws.us-west-2) | 4.67.0 |
 
 ## Modules
 
@@ -20,7 +22,7 @@ No requirements.
 | <a name="module_AFT_management_apply"></a> [AFT\_management\_apply](#module\_AFT\_management\_apply) | ../../modules/allow_assumed_role | n/a |
 | <a name="module_AFT_management_plan"></a> [AFT\_management\_plan](#module\_AFT\_management\_plan) | ../../modules/allow_assumed_role | n/a |
 | <a name="module_aft_managment"></a> [aft\_managment](#module\_aft\_managment) | ../../modules/existing_security_hub_member | n/a |
-| <a name="module_alarm_actions"></a> [alarm\_actions](#module\_alarm\_actions) | github.com/cds-snc/terraform-modules//user_login_alarm | v3.0.2 |
+| <a name="module_alarm_actions"></a> [alarm\_actions](#module\_alarm\_actions) | github.com/cds-snc/terraform-modules//user_login_alarm | v3.0.20 |
 | <a name="module_audit"></a> [audit](#module\_audit) | ../../modules/existing_security_hub_member | n/a |
 | <a name="module_audit_apply"></a> [audit\_apply](#module\_audit\_apply) | ../../modules/allow_assumed_role | n/a |
 | <a name="module_audit_plan"></a> [audit\_plan](#module\_audit\_plan) | ../../modules/allow_assumed_role | n/a |
@@ -28,15 +30,15 @@ No requirements.
 | <a name="module_gd_audit_detector"></a> [gd\_audit\_detector](#module\_gd\_audit\_detector) | ../../modules/guardduty_detectors | n/a |
 | <a name="module_gd_log_archive_detector"></a> [gd\_log\_archive\_detector](#module\_gd\_log\_archive\_detector) | ../../modules/guardduty_detectors | n/a |
 | <a name="module_gd_org_detector"></a> [gd\_org\_detector](#module\_gd\_org\_detector) | ../../modules/guardduty_detectors | n/a |
-| <a name="module_gh_oidc_roles"></a> [gh\_oidc\_roles](#module\_gh\_oidc\_roles) | github.com/cds-snc/terraform-modules//gh_oidc_role | v4.0.0 |
-| <a name="module_guardduty_forwarder"></a> [guardduty\_forwarder](#module\_guardduty\_forwarder) | github.com/cds-snc/terraform-modules//sentinel_forwarder | v9.3.8 |
+| <a name="module_gh_oidc_roles"></a> [gh\_oidc\_roles](#module\_gh\_oidc\_roles) | github.com/cds-snc/terraform-modules//gh_oidc_role | v4.0.3 |
+| <a name="module_guardduty_forwarder"></a> [guardduty\_forwarder](#module\_guardduty\_forwarder) | github.com/cds-snc/terraform-modules//sentinel_forwarder | v9.4.11 |
 | <a name="module_log_archive_apply"></a> [log\_archive\_apply](#module\_log\_archive\_apply) | ../../modules/allow_assumed_role | n/a |
 | <a name="module_log_archive_plan"></a> [log\_archive\_plan](#module\_log\_archive\_plan) | ../../modules/allow_assumed_role | n/a |
 | <a name="module_org"></a> [org](#module\_org) | ../../modules/existing_security_hub_member | n/a |
-| <a name="module_password_policy"></a> [password\_policy](#module\_password\_policy) | github.com/cds-snc/terraform-modules//aws_goc_password_policy | v3.0.2 |
-| <a name="module_publishing_bucket"></a> [publishing\_bucket](#module\_publishing\_bucket) | github.com/cds-snc/terraform-modules//S3 | v3.0.2 |
-| <a name="module_publishing_log_bucket"></a> [publishing\_log\_bucket](#module\_publishing\_log\_bucket) | github.com/cds-snc/terraform-modules//S3_log_bucket | v3.0.2 |
-| <a name="module_securityhub_forwarder"></a> [securityhub\_forwarder](#module\_securityhub\_forwarder) | github.com/cds-snc/terraform-modules//sentinel_forwarder | v9.3.8 |
+| <a name="module_password_policy"></a> [password\_policy](#module\_password\_policy) | github.com/cds-snc/terraform-modules//aws_goc_password_policy | v3.0.20 |
+| <a name="module_publishing_bucket"></a> [publishing\_bucket](#module\_publishing\_bucket) | github.com/cds-snc/terraform-modules//S3 | v3.0.20 |
+| <a name="module_publishing_log_bucket"></a> [publishing\_log\_bucket](#module\_publishing\_log\_bucket) | github.com/cds-snc/terraform-modules//S3_log_bucket | v3.0.20 |
+| <a name="module_securityhub_forwarder"></a> [securityhub\_forwarder](#module\_securityhub\_forwarder) | github.com/cds-snc/terraform-modules//sentinel_forwarder | v9.4.11 |
 
 ## Resources
 
@@ -91,10 +93,16 @@ No requirements.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_account_id"></a> [account\_id](#input\_account\_id) | (Required) The account ID to perform actions on. | `string` | n/a | yes |
 | <a name="input_assume_role_name"></a> [assume\_role\_name](#input\_assume\_role\_name) | The name of the role to assume | `string` | n/a | yes |
+| <a name="input_billing_code"></a> [billing\_code](#input\_billing\_code) | The billing code to tag our resources with | `string` | n/a | yes |
+| <a name="input_env"></a> [env](#input\_env) | The current running environment | `string` | n/a | yes |
 | <a name="input_lw_customer_id"></a> [lw\_customer\_id](#input\_lw\_customer\_id) | The log workspace customer id for the sentinel forwarder | `string` | n/a | yes |
-| <a name="input_lw_customer_ids"></a> [lw\_customer\_ids](#input\_lw\_customer\_id) | Allows multiple log workspace customer ids to be passed to the Azure Sentinel role. | `list(string)` | n/a | yes |
+| <a name="input_lw_customer_ids"></a> [lw\_customer\_ids](#input\_lw\_customer\_ids) | The log workspace customer ids for the Azure Sentinel role. This allows us to pass in multiple workspaces | `list(string)` | n/a | yes |
 | <a name="input_lw_shared_key"></a> [lw\_shared\_key](#input\_lw\_shared\_key) | The log workspace shared key for the sentinel forwarder | `string` | n/a | yes |
+| <a name="input_org_account"></a> [org\_account](#input\_org\_account) | The account ID of the main organization account | `any` | n/a | yes |
+| <a name="input_product_name"></a> [product\_name](#input\_product\_name) | (Required) The name of the product you are deploying. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | The current AWS region | `string` | n/a | yes |
 
 ## Outputs
 
