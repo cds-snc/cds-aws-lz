@@ -82,7 +82,7 @@ data "aws_iam_policy_document" "azure_sentinel_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "sts:ExternalId"
-      values   =  var.lw_customer_ids
+      values   = var.lw_customer_ids
     }
   }
 }
