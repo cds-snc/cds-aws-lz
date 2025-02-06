@@ -12,7 +12,13 @@ module "OIDC_Roles" {
       name      = local.sre_sechub_automation_rules_oidc_role
       repo_name = "site-reliability-engineering"
       claim     = "ref:refs/heads/main"
+    },
+    {
+      name      = local.security_oscal_report_oidc_role
+      repo_name = "oscal-compliance"
+      claim     = "ref:refs/heads/main"
     }
+
   ]
 
   billing_tag_value = var.billing_code
