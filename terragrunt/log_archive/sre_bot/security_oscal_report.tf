@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "security_oscal_report" {
     sid    = "ReadSecurityHub"
     effect = "Allow"
     actions = [
-      "securityhub:GetFindings",
+      "securityhub:*",
     ]
     resources = ["*"]
   }
