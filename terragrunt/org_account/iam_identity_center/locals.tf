@@ -15,6 +15,10 @@ locals {
 
   digital_credentials_dev_account_id = "767397971970"
 
+  gc_signin_dev_account_id        = "329599618423"
+  gc_signin_production_account_id = "699475931199"
+  gc_signin_staging_account_id    = "565393049229"
+
   digital_transformation_office_production_account_id = "730335533085"
 
   forms_production_account_id = "957818836222"
