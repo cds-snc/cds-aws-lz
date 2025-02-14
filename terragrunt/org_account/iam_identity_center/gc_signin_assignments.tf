@@ -49,7 +49,7 @@ locals {
 }
 
 resource "aws_ssoadmin_account_assignment" "gc_signin_production" {
-  for_each = { for perm in local.local.gc_signin_production_permission_sets: "${perm.group.display_name}-${perm.permission_set.name}" => perm }
+  for_each = { for perm in local.gc_signin_production_permission_sets : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set.arn
@@ -62,7 +62,7 @@ resource "aws_ssoadmin_account_assignment" "gc_signin_production" {
 }
 
 resource "aws_ssoadmin_account_assignment" "gc_signin_staging" {
-  for_each = { for perm in local.local.gc_signin_staging_permission_sets: "${perm.group.display_name}-${perm.permission_set.name}" => perm }
+  for_each = { for perm in local.gc_signin_staging_permission_sets : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set.arn
@@ -75,7 +75,7 @@ resource "aws_ssoadmin_account_assignment" "gc_signin_staging" {
 }
 
 resource "aws_ssoadmin_account_assignment" "gc_signin_dev" {
-  for_each = { for perm in local.local.gc_signin_dev_permission_sets: "${perm.group.display_name}-${perm.permission_set.name}" => perm }
+  for_each = { for perm in local.gc_signin_dev_permission_sets : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set.arn
