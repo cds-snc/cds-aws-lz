@@ -22,7 +22,7 @@ locals {
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
     },
     {
-      group          = aws_identitystore_group.digital_transformation_office_staging_read_only_billing,
+      group          = aws_identitystore_group.digtal_transformation_office_staging_billing_read_only,
       permission_set = aws_ssoadmin_permission_set.read_only_billing,
     },
     {
