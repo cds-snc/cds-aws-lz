@@ -20,6 +20,7 @@ locals {
   gc_signin_staging_account_id    = "565393049229"
 
   digital_transformation_office_production_account_id = "730335533085"
+  digital_transformation_office_staging_account_id    = "992382783569"
 
   forms_production_account_id = "957818836222"
   forms_staging_account_id    = "687401027353"
