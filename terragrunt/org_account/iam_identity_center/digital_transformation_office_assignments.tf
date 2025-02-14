@@ -21,7 +21,7 @@ locals {
       group          = aws_identitystore_group.digital_transformation_office_staging_admin,
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
     },
-     {
+    {
       group          = aws_identitystore_group.digital_transformation_office_staging_read_only_billing,
       permission_set = aws_ssoadmin_permission_set.read_only_billing,
     },
@@ -46,7 +46,7 @@ resource "aws_ssoadmin_account_assignment" "digital_transformation_office_produc
 }
 
 resource "aws_ssoadmin_account_assignment" "digital_transformation_office_staging" {
-  for_each = { for perm in local.local.digital_transformation_office_staging_permission_sets: "${perm.group.display_name}-${perm.permission_set.name}" => perm }
+  for_each = { for perm in local.local.digital_transformation_office_staging_permission_sets : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
 
   instance_arn       = local.sso_instance_arn
   permission_set_arn = each.value.permission_set.arn
