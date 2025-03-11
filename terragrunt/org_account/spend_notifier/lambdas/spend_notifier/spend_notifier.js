@@ -212,7 +212,8 @@ async function getTotalCostFromApril1() {
   const todayDate = today.toISOString().split("T")[0];
 
   // Define April 1 of the current year (month index 3 = April)
-  const april1 = new Date(today.getFullYear() - 1, 3, 1).toISOString().split("T")[0];
+  const year = today.getMonth() >= 3 ? today.getFullYear() : today.getFullYear() - 1;
+  const april1 = new Date(year, 3, 1).toISOString().split("T")[0];
 
   // Set up Cost Explorer parameters:
   const params = {
