@@ -53,6 +53,10 @@ exports.handler = async (event) => {
   })
   const totalCost = Object.values(BU).reduce((a, b) => a + b, 0)
 
+  // get the amounts for the total cost from April 1 last year (essentially for the current fiscal year)
+  const totalCostFromApril1 = await getTotalCostFromApril1()
+  const totalCostFromApril1Formatted = `$${totalCostFromApril1.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD`
+
   const header = {
           "type": "header",
           "text": {
@@ -64,7 +68,12 @@ exports.handler = async (event) => {
 
   const footer = {
           "type": "section",
-          "fields": [{ "type": "mrkdwn", "text": `*Total*` }, { "type": "mrkdwn", "text": `$${totalCost.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD` }]
+          "fields": [
+            { "type": "mrkdwn", "text": `*Total*` },
+            { "type": "mrkdwn", "text": `$${totalCost.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} USD` },
+            { "type": "mrkdwn", "text": `*Total for this FY until ${(today.getMonth() + 1).pad(2)}-${today.getDate().pad(2)}*` },
+            { "type": "mrkdwn", "text": `${totalCostFromApril1Formatted}` }
+          ]
         }
     
   const blocks = Object.entries(BU).map(bu =>(
@@ -90,6 +99,8 @@ exports.handler = async (event) => {
           { "type": "mrkdwn", "text": `Account(s) *${scratchAccounts} exceeded* the threshold of *$500* yesterday.` },
   }
 
+ 
+
   blocks.splice(0,0, header)
   blocks.push({ "type": "divider"})
   blocks.push(footer)
@@ -103,6 +114,7 @@ exports.handler = async (event) => {
   if (scratchAccounts.length > 0) {
     blocks.push(scratchAccountsSection);
   }
+
 
   const data = JSON.stringify(
     {
@@ -183,6 +195,51 @@ async function getAccountCost() {
     acc[curr["Keys"][0]] = parseFloat(curr["Metrics"]["UnblendedCost"]["Amount"]);
     return acc;
   }, {});
+}
+
+/**
+ * Calculates the total cost from April 1 of the current year until today.
+ * @returns {number} The total cost from April 1 of the current year until today.
+ * @throws {Error} If the Cost Explorer API call fails.
+ * @example
+ * const totalCost = await getTotalCostFromApril1();
+ * console.log(totalCost);
+ * // 1234.56
+ */
+async function getTotalCostFromApril1() {
+  // Get today's date and format as YYYY-MM-DD.
+  const today = new Date();
+  const todayDate = today.toISOString().split("T")[0];
+
+  // Define April 1 of the current year (month index 3 = April)
+  const year = today.getMonth() >= 3 ? today.getFullYear() : today.getFullYear() - 1;
+  const april1 = new Date(year, 3, 1).toISOString().split("T")[0];
+
+  // Set up Cost Explorer parameters:
+  const params = {
+    Granularity: "MONTHLY",
+    TimePeriod: { Start: april1, End: todayDate },
+    Metrics: ["UNBLENDED_COST"],
+    GroupBy: [
+      {
+        Type: "DIMENSION",
+        Key: "LINKED_ACCOUNT",
+      },
+    ],
+  };
+
+// Call the Cost Explorer API
+const result = await costExplorerClient.send(new GetCostAndUsageCommand(params));
+
+// Sum up costs across all returned time periods (months)
+const totalCost = result["ResultsByTime"].reduce((acc, period) => {
+  const periodCost = period["Groups"].reduce((subAcc, group) => {
+    return subAcc + parseFloat(group["Metrics"]["UnblendedCost"]["Amount"]);
+  }, 0);
+  return acc + periodCost;
+}, 0);
+
+return totalCost;
 }
 
 /**
