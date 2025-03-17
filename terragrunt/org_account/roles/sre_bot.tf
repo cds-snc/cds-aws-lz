@@ -23,9 +23,13 @@ data "aws_iam_policy_document" "sre_bot_policy" {
   version = "2012-10-17"
 
   statement {
-    sid       = "ReadOrgAccounts"
-    effect    = "Allow"
-    actions   = ["organizations:ListAccounts"]
+    sid    = "ReadOrgAccounts"
+    effect = "Allow"
+    actions = [
+      "organizations:ListAccounts",
+      "organizations:DescribeAccount",
+      "organizations:ListTagsForResource"
+    ]
     resources = ["*"]
   }
 
