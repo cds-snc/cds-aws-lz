@@ -10,6 +10,7 @@ locals {
   list_manager_production_account_id = "762579868088"
 
   data_lake_production_account_id = "739275439843"
+  data_lake_staging_account_id    = "454671348950"
 
   design_system_production_account_id = "307395567143"
 
