@@ -5,9 +5,8 @@ locals {
   cds_website_production_account_id               = "521732289257"
   cds_website_cms_production_account_id           = "773858180673"
 
-  articles_production_account_id     = "472286471787"
-  articles_staging_account_id        = "729164266357"
-  list_manager_production_account_id = "762579868088"
+  articles_production_account_id = "472286471787"
+  articles_staging_account_id    = "729164266357"
 
   data_lake_production_account_id = "739275439843"
   data_lake_staging_account_id    = "454671348950"
