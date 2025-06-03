@@ -8,8 +8,10 @@ resource "aws_organizations_organization" "org_config" {
     "guardduty.amazonaws.com",
     "securityhub.amazonaws.com",
     "reporting.trustedadvisor.amazonaws.com",
-    "account.amazonaws.com",                            # https://docs.aws.amazon.com/accounts/latest/reference/using-orgs-trusted-access.html
-    "member.org.stacksets.cloudformation.amazonaws.com" # Enabling to allow CT to re-register OUs
+    "account.amazonaws.com",                             # https://docs.aws.amazon.com/accounts/latest/reference/using-orgs-trusted-access.html
+    "member.org.stacksets.cloudformation.amazonaws.com", # Enabling to allow CT to re-register OUs
+    "auditmanager.amazonaws.com",                        # Required for Audit Manager to work with Organizations and for SSC's CaC soltuion 
+    "config-multiaccountsetup.amazonaws.com"             # Required for Config Multi Account Setup to work with Organizations and for SSC's CaC solution
   ]
 
   enabled_policy_types = [
