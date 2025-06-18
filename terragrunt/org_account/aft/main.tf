@@ -1,5 +1,5 @@
 module "account_factory_for_terraform" {
-  source = "github.com/aws-ia/terraform-aws-control_tower_account_factory?ref=1.11.1"
+  source = "github.com/aws-ia/terraform-aws-control_tower_account_factory?ref=1.14.1"
 
   terraform_version = "1.7.2"
 
@@ -17,9 +17,9 @@ module "account_factory_for_terraform" {
   ct_management_account_id  = var.account_id
   log_archive_account_id    = "274536870005"
 
-  aft_feature_cloudtrail_data_events      = true
+  aft_feature_cloudtrail_data_events      = false
   aft_feature_delete_default_vpcs_enabled = true
-  aft_feature_enterprise_support          = true
+  aft_feature_enterprise_support          = false
   cloudwatch_log_group_retention          = 90
 
 }
