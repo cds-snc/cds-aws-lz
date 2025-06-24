@@ -8,7 +8,7 @@ resource "aws_iam_role" "sentinel_oidc" {
           Action = "sts:AssumeRoleWithWebIdentity"
           Condition = {
             StringEquals = {
-              "${local.url}:aud" = local.azure_client_id
+              "${local.url}:aud" = [local.azure_client_id, local.azure_client_id_cds_snc_la]
             }
           }
           Effect = "Allow"
