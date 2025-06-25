@@ -12,10 +12,10 @@ data "tls_certificate" "thumprint" {
 
 # aws_iam_openid_connect_provider.azure:
 resource "aws_iam_openid_connect_provider" "azure" {
-  client_id_list = [
+  client_id_list = sort([
     local.azure_client_id,
     local.azure_client_id_cds_snc_la,
-  ]
+  ])
   thumbprint_list = [
     data.tls_certificate.thumprint.certificates.0.sha1_fingerprint,
   ]
