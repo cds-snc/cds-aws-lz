@@ -69,6 +69,11 @@ jobs:
             module: iam_identity_center
             account: 659087519042
             role: cds-aws-lz-apply            
+          
+          - account_folder: org_account
+            module: guardrails_alerting
+            account: 659087519042
+            role: cds-aws-lz-apply
 
           - account_folder: log_archive
             module: main
