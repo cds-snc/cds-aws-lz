@@ -32,7 +32,7 @@ resource "aws_sns_topic_policy" "cloud_brokering_alerts" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-    {
+      {
         Sid    = "AllowEventBridgePublish"
         Effect = "Allow"
         Principal = {
@@ -53,14 +53,14 @@ resource "aws_sns_topic_policy" "cloud_brokering_alerts" {
           AWS = "*"
         }
         Action = [
-            "SNS:Publish",
-            "SNS:RemovePermission",
-            "SNS:SetTopicAttributes",
-            "SNS:DeleteTopic",
-            "SNS:ListSubscriptionsByTopic",
-            "SNS:GetTopicAttributes",
-            "SNS:AddPermission",
-            "SNS:Subscribe",
+          "SNS:Publish",
+          "SNS:RemovePermission",
+          "SNS:SetTopicAttributes",
+          "SNS:DeleteTopic",
+          "SNS:ListSubscriptionsByTopic",
+          "SNS:GetTopicAttributes",
+          "SNS:AddPermission",
+          "SNS:Subscribe",
         ]
         Resource = aws_sns_topic.cloud_brokering_alerts.arn
         Condition = {

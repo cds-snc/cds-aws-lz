@@ -19,7 +19,7 @@ resource "aws_cloudwatch_event_rule" "cloud_brokering_monitoring" {
         sessionContext = {
           sessionIssuer = {
             type = ["Role"]
-            arn  = var.cloud_brokering_role_arn 
+            arn  = var.cloud_brokering_role_arn
           }
         }
       }
@@ -48,16 +48,16 @@ resource "aws_cloudwatch_event_target" "cloud_brokering_sns_target" {
     }
 
     input_template = jsonencode({
-      alert_type = "CLOUD_BROKERING_SECURITY_EVENT"
-      severity   = "HIGH"
-      event_name = "<eventName>"
-      event_time = "<eventTime>"
-      event_id   = "<eventId>"
-      source_ip  = "<sourceIPAddress>"
-      user_arn   = "<userArn>"
-      role_arn   = "<sessionIssuerArn>"
-      region     = "<awsRegion>"
-      message    = "🚨 SECURITY ALERT: Cloud Brokering role performed IAM action '<eventName>' at <eventTime> from IP <sourceIPAddress>"
+      alert_type      = "CLOUD_BROKERING_SECURITY_EVENT"
+      severity        = "HIGH"
+      event_name      = "<eventName>"
+      event_time      = "<eventTime>"
+      event_id        = "<eventId>"
+      source_ip       = "<sourceIPAddress>"
+      user_arn        = "<userArn>"
+      role_arn        = "<sessionIssuerArn>"
+      region          = "<awsRegion>"
+      message         = "🚨 SECURITY ALERT: Cloud Brokering role performed IAM action '<eventName>' at <eventTime> from IP <sourceIPAddress>"
       action_required = "Investigate this activity immediately to ensure it was authorized"
     })
   }
