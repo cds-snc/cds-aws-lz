@@ -19,7 +19,7 @@ resource "aws_cloudwatch_event_rule" "cloud_brokering_monitoring" {
         sessionContext = {
           sessionIssuer = {
             type = ["Role"]
-            arn  = var.cloud_brokering_role_arn
+            arn  = [var.cloud_brokering_role_arn]
           }
         }
       }
