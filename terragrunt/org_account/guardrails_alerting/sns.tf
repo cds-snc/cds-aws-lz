@@ -2,8 +2,8 @@ data "aws_caller_identity" "current" {}
 
 
 # SNS Topic with AWS Managed KMS Encryption
-resource "aws_sns_topic" "cloud_brokering_alerts" {
-  name = "cloud-brokering-security-alerts"
+resource "aws_sns_topic" "guardrail_alerts" {
+  name = "guardrails-security-alerts"
 
   # Use AWS managed KMS key for SNS
   kms_master_key_id = "alias/aws/sns"
@@ -26,8 +26,8 @@ resource "aws_sns_topic" "cloud_brokering_alerts" {
 }
 
 # SNS Topic Policy
-resource "aws_sns_topic_policy" "cloud_brokering_alerts" {
-  arn = aws_sns_topic.cloud_brokering_alerts.arn
+resource "aws_sns_topic_policy" "guardrail_alerts_policy" {
+  arn = aws_sns_topic.guardrail_alerts.arn
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -39,7 +39,7 @@ resource "aws_sns_topic_policy" "cloud_brokering_alerts" {
           Service = "events.amazonaws.com"
         }
         Action   = "SNS:Publish"
-        Resource = aws_sns_topic.cloud_brokering_alerts.arn
+        Resource = aws_sns_topic.guardrail_alerts.arn
         Condition = {
           StringEquals = {
             "aws:SourceAccount" = data.aws_caller_identity.current.account_id
@@ -62,7 +62,7 @@ resource "aws_sns_topic_policy" "cloud_brokering_alerts" {
           "SNS:AddPermission",
           "SNS:Subscribe",
         ]
-        Resource = aws_sns_topic.cloud_brokering_alerts.arn
+        Resource = aws_sns_topic.guardrail_alerts.arn
         Condition = {
           StringEquals = {
             "aws:SourceAccount" = data.aws_caller_identity.current.account_id
@@ -75,7 +75,7 @@ resource "aws_sns_topic_policy" "cloud_brokering_alerts" {
 
 # SNS Email Subscription
 resource "aws_sns_topic_subscription" "sre_team_email" {
-  topic_arn = aws_sns_topic.cloud_brokering_alerts.arn
+  topic_arn = aws_sns_topic.guardrail_alerts.arn
   protocol  = "email"
   endpoint  = var.sre_team_email
 
