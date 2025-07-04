@@ -1,11 +1,11 @@
 resource "aws_sns_topic" "critical" {
   name              = "critical-issue"
-  kms_master_key_id = aws_kms_key.critical_sns_cloudwatch_key.arn
+  kms_master_key_id = aws_kms_key.critical_sns_cloudwatch_key.id
 }
 
 resource "aws_sns_topic" "warning" {
   name              = "warning-issue"
-  kms_master_key_id = aws_kms_key.warning_sns_cloudwatch_key.arn
+  kms_master_key_id = aws_kms_key.warning_sns_cloudwatch_key.id
 }
 
 # KMS Key for SNS Topics
