@@ -64,4 +64,24 @@ data "aws_iam_policy_document" "cost_usage_report" {
       values   = [var.account_id]
     }
   }
+  statement {
+    sid    = "DenyNonSSLRequests"
+    effect = "Deny"
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    actions   = ["s3:*"]
+    resources = [
+        module.cost_usage_report.s3_bucket_arn,
+        "${module.cost_usage_report.s3_bucket_arn}/*"
+      ]
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+  }
 }
