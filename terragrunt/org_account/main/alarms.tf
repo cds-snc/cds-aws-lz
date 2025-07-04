@@ -4,7 +4,7 @@ resource "aws_sns_topic" "critical" {
 }
 
 resource "aws_sns_topic" "warning" {
-  name = "warning-issue"
+  name              = "warning-issue"
   kms_master_key_id = aws_kms_key.warning_sns_cloudwatch_key.arn
 }
 
@@ -12,14 +12,14 @@ resource "aws_sns_topic" "warning" {
 # This is used to encrypt SNS topics for critical and warning alerts and is required by the 30 day guardrails
 # Critical SNS topics KMS key
 resource "aws_kms_key" "critical_sns_cloudwatch_key" {
-  description             = "KMS key for Critical CloudWatch SNS topics"
-  policy = data.aws_iam_policy_document.sns_cloudwatch_key_policy.json
+  description = "KMS key for Critical CloudWatch SNS topics"
+  policy      = data.aws_iam_policy_document.sns_cloudwatch_key_policy.json
 }
 
 # Warning SNS topics KMS key
 resource "aws_kms_key" "warning_sns_cloudwatch_key" {
-  description             = "KMS key for Warning CloudWatch SNS topics"
-  policy = data.aws_iam_policy_document.sns_cloudwatch_key_policy.json
+  description = "KMS key for Warning CloudWatch SNS topics"
+  policy      = data.aws_iam_policy_document.sns_cloudwatch_key_policy.json
 }
 
 # Policy document for SNS KMS keys
