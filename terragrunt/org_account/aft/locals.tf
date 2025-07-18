@@ -1,5 +1,5 @@
 locals {
   aft_tags = {
-    "Data classification" = "Unclassified"
+    "Data classification" = "Protected A"
   }
 }
