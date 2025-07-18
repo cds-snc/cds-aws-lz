@@ -21,5 +21,6 @@ module "account_factory_for_terraform" {
   aft_feature_delete_default_vpcs_enabled = true
   aft_feature_enterprise_support          = true
   cloudwatch_log_group_retention          = 90
+  tags                                    = local.aft_tags
 
 }
