@@ -55,3 +55,22 @@ resource "aws_identitystore_group" "gc_signin_dev_read_only_billing" {
   description       = "Grants members read-only Billing and Cost Explorer access to the GC Signin Dev account."
   identity_store_id = local.sso_identity_store_id
 }
+
+# 
+# Test 
+#
+resource "aws_identitystore_group" "gc_signin_test_admin" {
+  display_name      = "GCSignIn-Test-Admin"
+  description       = "Grants members administrator access to the GC Signin Test account."
+  identity_store_id = local.sso_identity_store_id
+}
+resource "aws_identitystore_group" "gc_signin_test_read_only" {
+  display_name      = "GCSignIn-Test-ReadOnly"
+  description       = "Grants members read-only access to the GC Signin Test account."
+  identity_store_id = local.sso_identity_store_id
+}
+resource "aws_identitystore_group" "gc_signin_test_read_only_billing" {
+  display_name      = "GCSignIn-Test-Billing-ReadOnly"
+  description       = "Grants members read-only Billing and Cost Explorer access to the GC Signin Test account."
+  identity_store_id = local.sso_identity_store_id
+}
