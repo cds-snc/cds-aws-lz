@@ -75,7 +75,7 @@ resource "aws_iam_role_policy_attachment" "attach_list_accounts_in_sandbox" {
 }
 
 # Attach the policy document to the role local.org_account_list_all_name
-resource "aws_iam_role_policy_attachment" "attach_list_accounts_in_sandbox" {
+resource "aws_iam_role_policy_attachment" "attach_list_accounts_all" {
   role       = local.org_account_list_all_name
   policy_arn = aws_iam_policy.org_account_list_all.arn
 }
