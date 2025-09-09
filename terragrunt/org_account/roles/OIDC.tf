@@ -19,9 +19,9 @@ module "OIDC_Roles" {
       claim     = "ref:refs/heads/main"
     },
     {
-    name      = local.org_account_list_all_name
-    repo_name = "site-reliability-engineering"
-    claim     = "ref:refs/heads/main"
+      name      = local.org_account_list_all_name
+      repo_name = "site-reliability-engineering"
+      claim     = "ref:refs/heads/main"
     },
   ]
 
