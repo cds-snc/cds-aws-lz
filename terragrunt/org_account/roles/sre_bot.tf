@@ -65,6 +65,16 @@ data "aws_iam_policy_document" "sre_bot_policy" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    sid    = "ManageSSOAssignments"
+    effect = "Allow"
+    actions = [
+      "sso:ListAccountAssignmentsForPrincipal",
+      "sso:CreateAccountAssignment"
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_policy" "sre_bot_policy" {
