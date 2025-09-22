@@ -37,3 +37,20 @@ resource "aws_cloudwatch_metric_alarm" "pipeline_failed" {
   alarm_actions     = [aws_sns_topic.aft_cloudwatch_alarms.arn]
   ok_actions        = [aws_sns_topic.aft_cloudwatch_alarms.arn]
 }
+
+resource "aws_cloudwatch_event_rule" "new_account_created" {
+  name        = "new-account-created"
+  description = "Rule to capture new account creation events"
+  event_pattern = jsonencode({
+    "source": ["aws.controltower"],
+    "detail-type": ["AWS Service Event via CloudTrail"],
+    "detail": {
+      "eventName": ["CreateManagedAccount"]
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "send_to_sns" {
+  rule      = aws_cloudwatch_event_rule.new_account_created.name
+  arn       = data.aws_sns_topic.aft_notifications.arn
+}
