@@ -17,6 +17,10 @@ data "aws_sns_topic" "aft_failure_notifications" {
   name = "aft-failure-notifications"
 }
 
+data "aws_sns_topic" "aft_notifications" {
+  name = "aft-notifications"
+}
+
 resource "aws_sns_topic_subscription" "aft_failure_notifications" {
   topic_arn = data.aws_sns_topic.aft_failure_notifications.arn
   protocol  = "lambda"

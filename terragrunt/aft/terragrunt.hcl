@@ -15,7 +15,6 @@ inputs = {
   region                        = "ca-central-1"
   billing_code                  = local.cost_center_code
   org_account                   = "659087519042"
-  slack_notification_lambda_arn = dependency.aft_main.outputs.slack_notification_lambda_arn
 }
 
 generate "provider" {
