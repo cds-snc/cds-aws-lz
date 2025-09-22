@@ -9,12 +9,13 @@ locals {
 # DO NOT CHANGE ANYTHING BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING
 
 inputs = {
-  account_id   = local.account_id
-  env          = local.env
-  product_name = local.product_name
-  region       = "ca-central-1"
-  billing_code = local.cost_center_code
-  org_account  = "659087519042"
+  account_id                    = local.account_id
+  env                           = local.env
+  product_name                  = local.product_name
+  region                        = "ca-central-1"
+  billing_code                  = local.cost_center_code
+  org_account                   = "659087519042"
+  slack_notification_lambda_arn = module.aft_slack_notification.lambda_arn
 }
 
 generate "provider" {
