@@ -13,6 +13,18 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
   }
 
   statement {
+    sid    = "BlockBedrock"
+    effect = "Deny"
+    actions = [
+      "bedrock:*"
+    ]
+    resources = [
+      "*",
+    ]
+  }
+
+
+  statement {
     sid    = "BlockSageMaker"
     effect = "Deny"
     actions = [
