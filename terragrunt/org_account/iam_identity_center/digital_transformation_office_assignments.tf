@@ -43,6 +43,10 @@ locals {
       group          = aws_identitystore_group.cra_dashboard_staging_read_only,
       permission_set = data.aws_ssoadmin_permission_set.aws_read_only_access,
     },
+    {
+      group          = aws_identitystore_group.cra_dashboard_staging_read_only,
+      permission_set = aws_ssoadmin_permission_set.cra_bucket_get_object,
+    }
   ]
 }
 
