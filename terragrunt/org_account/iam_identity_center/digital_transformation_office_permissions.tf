@@ -3,9 +3,9 @@
 #
 
 resource "aws_ssoadmin_permission_set" "cra_bucket_get_object" {
-  name               = "CRABucket-GetObject"
-  description        = "Grants read-only access to the CRA S3 bucket."
-  instance_arn       = local.sso_instance_arn
+  name         = "CRABucket-GetObject"
+  description  = "Grants read-only access to the CRA S3 bucket."
+  instance_arn = local.sso_instance_arn
 }
 
 
