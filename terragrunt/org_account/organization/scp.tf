@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
   }
 
   statement {
-    sid    = "BlockBedrock"
+    sid    = "DenyBedrockOutsideWhitelistedAccounts"
     effect = "Deny"
     actions = [
       "bedrock:*"
@@ -21,6 +21,18 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
     resources = [
       "*",
     ]
+    condition {
+      test     = "StringNotEquals"
+      variable = "aws:PrincipalAccount"
+      values = [
+        "132761243856", # Guillaume Charest scratch
+        "571510889204", # Pat Heard scratch
+        "493890668711", # Wanpeng Yang scratch 
+        "009883649233", # Calvin Rodo scratch 
+        "412578375350"  # Sylvia McLaughlin scratch 
+
+      ]
+    }
   }
 
 
