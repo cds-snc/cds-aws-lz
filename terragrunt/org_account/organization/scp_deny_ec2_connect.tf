@@ -11,8 +11,18 @@ data "aws_iam_policy_document" "scp_deny_ec2_connect" {
       "*"
     ]
   }
-}
 
+  statement {
+    effect = "Deny"
+    actions = [
+      "ssm:StartSession"
+    ]
+    resources = [
+      "arn:aws:ec2:*:*:instance/*",
+      "arn:aws:ssm:*:*:managed-instance/*"
+    ]
+  }
+}
 
 resource "aws_organizations_policy" "scp_deny_ec2_connect" {
   name        = "Deny EC2 Instance Connect"
