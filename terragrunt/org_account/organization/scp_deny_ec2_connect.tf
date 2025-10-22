@@ -3,7 +3,6 @@ data "aws_iam_policy_document" "scp_deny_ec2_connect" {
     effect = "Deny"
     actions = [
       "ec2:CreateKeyPair",
-      "ec2:DescribeInstances",
       "ec2-instance-connect:OpenTunnel",
       "ec2-instance-connect:SendSSHPublicKey",
       "ec2-instance-connect:SendSerialConsoleSSHPublicKey"
