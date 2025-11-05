@@ -27,6 +27,10 @@ locals {
   root = aws_organizations_organization.org_config.roots[0].id
 }
 
+#
+# AFT OUs and Policy Attachments
+#
+
 resource "aws_organizations_organizational_unit" "AFT" {
   name      = "AFT"
   parent_id = local.root
@@ -38,6 +42,10 @@ resource "aws_organizations_policy_attachment" "AFT-cds_snc_universal_guardrails
 }
 
 
+#
+# QUARANTINE OU and Policy Attachments
+#
+
 resource "aws_organizations_organizational_unit" "DumpsterFire" {
   name      = "DumpsterFire"
   parent_id = local.root
@@ -47,6 +55,17 @@ resource "aws_organizations_policy_attachment" "DumpsterFire-cds_snc_universal_g
   policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
   target_id = aws_organizations_organizational_unit.DumpsterFire.id
 }
+
+
+resource "aws_organizations_policy_attachment" "DumpsterFire-quarantine_deny_all_policy" {
+  policy_id = aws_organizations_policy.quarantine_deny_all_policy.id
+  target_id = aws_organizations_organizational_unit.DumpsterFire.id
+}
+
+
+#
+# PRODUCTION OU and Policy Attachments
+#
 
 resource "aws_organizations_organizational_unit" "Production" {
   name      = "Production"
@@ -58,41 +77,9 @@ resource "aws_organizations_policy_attachment" "Production-cds_snc_universal_gua
   target_id = aws_organizations_organizational_unit.Production.id
 }
 
-resource "aws_organizations_organizational_unit" "Sandbox" {
-  name      = "Sandbox"
-  parent_id = local.root
-}
-
-resource "aws_organizations_policy_attachment" "Sandbox-cds_snc_universal_guardrails" {
-  policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
-  target_id = aws_organizations_organizational_unit.Sandbox.id
-}
-
-resource "aws_organizations_policy_attachment" "Sandbox-aws_nuke_guardrails" {
-  policy_id = aws_organizations_policy.aws_nuke_guardrails.id
-  target_id = aws_organizations_organizational_unit.Sandbox.id
-}
-
-
-resource "aws_organizations_organizational_unit" "Security" {
-  name      = "Security"
-  parent_id = local.root
-}
-
-resource "aws_organizations_policy_attachment" "Security-cds_snc_universal_guardrails" {
-  policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
-  target_id = aws_organizations_organizational_unit.Security.id
-}
-
-resource "aws_organizations_organizational_unit" "SRETools" {
-  name      = "SRETools"
-  parent_id = local.root
-}
-
-resource "aws_organizations_policy_attachment" "SRETools-cds_snc_universal_guardrails" {
-  policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
-  target_id = aws_organizations_organizational_unit.SRETools.id
-}
+#
+# STAGING OU and Policy Attachments
+#
 
 resource "aws_organizations_organizational_unit" "Staging" {
   name      = "Staging"
@@ -109,6 +96,59 @@ resource "aws_organizations_policy_attachment" "Staging-cds_snc_universal_guardr
   target_id = aws_organizations_organizational_unit.Staging.id
 }
 
+#
+# SANDBOX OU (aka Scratch accounts) and Policy Attachments
+#
+
+resource "aws_organizations_organizational_unit" "Sandbox" {
+  name      = "Sandbox"
+  parent_id = local.root
+}
+
+resource "aws_organizations_policy_attachment" "Sandbox-cds_snc_universal_guardrails" {
+  policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.Sandbox.id
+}
+
+resource "aws_organizations_policy_attachment" "Sandbox-aws_nuke_guardrails" {
+  policy_id = aws_organizations_policy.aws_nuke_guardrails.id
+  target_id = aws_organizations_organizational_unit.Sandbox.id
+}
+
+#
+# SECURITY OU and Policy Attachments
+#
+
+resource "aws_organizations_organizational_unit" "Security" {
+  name      = "Security"
+  parent_id = local.root
+}
+
+resource "aws_organizations_policy_attachment" "Security-cds_snc_universal_guardrails" {
+  policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.Security.id
+}
+
+
+#
+# SRE Tools OU and Policy Attachments
+#
+
+resource "aws_organizations_organizational_unit" "SRETools" {
+  name      = "SRETools"
+  parent_id = local.root
+}
+
+resource "aws_organizations_policy_attachment" "SRETools-cds_snc_universal_guardrails" {
+  policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.SRETools.id
+}
+
+#
+# TEST OU and Policy Attachments
+#  Used for testing policies and configurations only; no workloads
+#
+
 resource "aws_organizations_organizational_unit" "Test" {
   name      = "Test"
   parent_id = local.root
@@ -122,9 +162,4 @@ resource "aws_organizations_policy_attachment" "Test-cds_snc_universal_guardrail
 resource "aws_organizations_policy_attachment" "Test-aws_nuke_guardrails" {
   policy_id = aws_organizations_policy.aws_nuke_guardrails.id
   target_id = aws_organizations_organizational_unit.Test.id
-}
-
-resource "aws_organizations_policy_attachment" "DumpsterFire-qurantine_deny_all_policy" {
-  policy_id = aws_organizations_policy.qurantine_deny_all_policy.id
-  target_id = aws_organizations_organizational_unit.DumpsterFire.id
 }
