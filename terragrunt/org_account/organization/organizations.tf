@@ -41,6 +41,11 @@ resource "aws_organizations_policy_attachment" "AFT-cds_snc_universal_guardrails
   target_id = aws_organizations_organizational_unit.AFT.id
 }
 
+resource "aws_organizations_policy_attachment" "AFT-scp_deny_ec2_run" {
+  policy_id = aws_organizations_policy.scp_deny_ec2_run.id
+  target_id = aws_organizations_organizational_unit.AFT.id
+}
+
 
 #
 # QUARANTINE OU and Policy Attachments
@@ -77,6 +82,11 @@ resource "aws_organizations_policy_attachment" "Production-cds_snc_universal_gua
   target_id = aws_organizations_organizational_unit.Production.id
 }
 
+resource "aws_organizations_policy_attachment" "Production-scp_deny_ec2_connect" {
+  policy_id = aws_organizations_policy.scp_deny_ec2_connect.id
+  target_id = aws_organizations_organizational_unit.Production.id
+}
+
 #
 # STAGING OU and Policy Attachments
 #
@@ -93,6 +103,11 @@ module "Staging_SRC" {
 
 resource "aws_organizations_policy_attachment" "Staging-cds_snc_universal_guardrails" {
   policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.Staging.id
+}
+
+resource "aws_organizations_policy_attachment" "Staging-scp_deny_ec2_connect" {
+  policy_id = aws_organizations_policy.scp_deny_ec2_connect.id
   target_id = aws_organizations_organizational_unit.Staging.id
 }
 
@@ -115,6 +130,11 @@ resource "aws_organizations_policy_attachment" "Sandbox-aws_nuke_guardrails" {
   target_id = aws_organizations_organizational_unit.Sandbox.id
 }
 
+resource "aws_organizations_policy_attachment" "Sandbox-scp_deny_ec2_run" {
+  policy_id = aws_organizations_policy.scp_deny_ec2_run.id
+  target_id = aws_organizations_organizational_unit.Sandbox.id
+}
+
 #
 # SECURITY OU and Policy Attachments
 #
@@ -126,6 +146,11 @@ resource "aws_organizations_organizational_unit" "Security" {
 
 resource "aws_organizations_policy_attachment" "Security-cds_snc_universal_guardrails" {
   policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.Security.id
+}
+
+resource "aws_organizations_policy_attachment" "Security-scp_deny_ec2_run" {
+  policy_id = aws_organizations_policy.scp_deny_ec2_run.id
   target_id = aws_organizations_organizational_unit.Security.id
 }
 
@@ -141,6 +166,11 @@ resource "aws_organizations_organizational_unit" "SRETools" {
 
 resource "aws_organizations_policy_attachment" "SRETools-cds_snc_universal_guardrails" {
   policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.SRETools.id
+}
+
+resource "aws_organizations_policy_attachment" "SRETools-scp_deny_ec2_run" {
+  policy_id = aws_organizations_policy.scp_deny_ec2_run.id
   target_id = aws_organizations_organizational_unit.SRETools.id
 }
 
@@ -161,5 +191,10 @@ resource "aws_organizations_policy_attachment" "Test-cds_snc_universal_guardrail
 
 resource "aws_organizations_policy_attachment" "Test-aws_nuke_guardrails" {
   policy_id = aws_organizations_policy.aws_nuke_guardrails.id
+  target_id = aws_organizations_organizational_unit.Test.id
+}
+
+resource "aws_organizations_policy_attachment" "Test-scp_deny_ec2_run" {
+  policy_id = aws_organizations_policy.scp_deny_ec2_run.id
   target_id = aws_organizations_organizational_unit.Test.id
 }
