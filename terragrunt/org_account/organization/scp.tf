@@ -187,7 +187,7 @@ resource "aws_organizations_policy" "cds_snc_universal_guardrails" {
   content = data.aws_iam_policy_document.cds_snc_universal_guardrails.json
 }
 
-data "aws_iam_policy_document" "qurantine_deny_all_policy" {
+data "aws_iam_policy_document" "quarantine_deny_all_policy" {
   statement {
     sid    = "DenyAllActions"
     effect = "Deny"
@@ -204,10 +204,10 @@ data "aws_iam_policy_document" "qurantine_deny_all_policy" {
   }
 }
 
-resource "aws_organizations_policy" "qurantine_deny_all_policy" {
-  name    = "Qurantine account and Deny All Policy"
+resource "aws_organizations_policy" "quarantine_deny_all_policy" {
+  name    = "Quarantine account and Deny All Policy"
   type    = "SERVICE_CONTROL_POLICY"
-  content = data.aws_iam_policy_document.qurantine_deny_all_policy.json
+  content = data.aws_iam_policy_document.quarantine_deny_all_policy.json
 }
 
 
