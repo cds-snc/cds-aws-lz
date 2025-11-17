@@ -22,6 +22,7 @@ locals {
 
   digital_transformation_office_production_account_id = "730335533085"
   digital_transformation_office_staging_account_id    = "992382783569"
+  digital_transformation_office_ai_staging_account_id = "144414543732"
   cra_dashboard_staging_account_id                    = "211125499457"
 
   forms_production_account_id = "957818836222"
