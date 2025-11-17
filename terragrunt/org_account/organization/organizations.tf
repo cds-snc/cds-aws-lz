@@ -130,10 +130,10 @@ resource "aws_organizations_policy_attachment" "Sandbox-aws_nuke_guardrails" {
   target_id = aws_organizations_organizational_unit.Sandbox.id
 }
 
-resource "aws_organizations_policy_attachment" "Sandbox-scp_deny_ec2_run" {
-  policy_id = aws_organizations_policy.scp_deny_ec2_run.id
-  target_id = aws_organizations_organizational_unit.Sandbox.id
-}
+# resource "aws_organizations_policy_attachment" "Sandbox-scp_deny_ec2_run" {
+#   policy_id = aws_organizations_policy.scp_deny_ec2_run.id
+#   target_id = aws_organizations_organizational_unit.Sandbox.id
+# }
 
 #
 # SECURITY OU and Policy Attachments
@@ -194,7 +194,7 @@ resource "aws_organizations_policy_attachment" "Test-aws_nuke_guardrails" {
   target_id = aws_organizations_organizational_unit.Test.id
 }
 
-resource "aws_organizations_policy_attachment" "Test-scp_deny_ec2_run" {
-  policy_id = aws_organizations_policy.scp_deny_ec2_run.id
-  target_id = aws_organizations_organizational_unit.Test.id
-}
+# resource "aws_organizations_policy_attachment" "Test-scp_deny_ec2_run" {
+#   policy_id = aws_organizations_policy.scp_deny_ec2_run.id
+#   target_id = aws_organizations_organizational_unit.Test.id
+# }
