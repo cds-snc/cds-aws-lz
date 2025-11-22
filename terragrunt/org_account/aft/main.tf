@@ -10,7 +10,7 @@ module "account_factory_for_terraform" {
   global_customizations_repo_name               = "cds-snc/aft-global-customizations"
 
   ct_home_region              = var.region
-  tf_backend_secondary_region = "us-east-1"
+  tf_backend_secondary_region = "ca-west-1"
 
   aft_management_account_id = "137554749751"
   audit_account_id          = "886481071419"
