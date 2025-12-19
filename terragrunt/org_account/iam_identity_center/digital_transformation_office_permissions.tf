@@ -27,7 +27,9 @@ data "aws_iam_policy_document" "cra_bucket_get_object" {
     ]
     resources = [
       "arn:aws:s3:::cra-upd-dashboard-data-staging/*",
-      "arn:aws:s3:::cra-upd-dashboard-data-staging"
+      "arn:aws:s3:::cra-upd-dashboard-data-staging",
+      "arn:aws:s3:::cra-upd-dashboard-data-production/*",
+      "arn:aws:s3:::cra-upd-dashboard-data-production"
     ]
   }
 }
