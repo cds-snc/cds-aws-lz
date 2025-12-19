@@ -71,7 +71,8 @@ data "aws_iam_policy_document" "sre_bot_policy" {
     effect = "Allow"
     actions = [
       "sso:ListAccountAssignmentsForPrincipal",
-      "sso:CreateAccountAssignment"
+      "sso:CreateAccountAssignment",
+      "sso:ListPermissionSets"
     ]
     resources = ["*"]
   }
