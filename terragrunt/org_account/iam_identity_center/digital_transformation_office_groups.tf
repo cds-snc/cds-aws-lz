@@ -79,3 +79,23 @@ resource "aws_identitystore_group" "cra_dashboard_staging_billing_read_only" {
   description       = "Grants members read-only Billing and Cost Explorer access to the Digital Transformation office Staging account."
   identity_store_id = local.sso_identity_store_id
 }
+
+
+# 
+# CRA Dashboard Production 
+#
+resource "aws_identitystore_group" "cra_dashboard_production_admin" {
+  display_name      = "CRADashboard-Production-Admin"
+  description       = "Grants members administrator access to the CRA Dashboard Production account."
+  identity_store_id = local.sso_identity_store_id
+}
+resource "aws_identitystore_group" "cra_dashboard_production_read_only" {
+  display_name      = "CRADashboard-Production-ReadOnly"
+  description       = "Grants members read-only access to the CRA Dashboard Production account."
+  identity_store_id = local.sso_identity_store_id
+}
+resource "aws_identitystore_group" "cra_dashboard_production_billing_read_only" {
+  display_name      = "CRADashboard-Production-Billing-ReadOnly"
+  description       = "Grants members read-only Billing and Cost Explorer access to the CRA Dashboard Production account."
+  identity_store_id = local.sso_identity_store_id
+}

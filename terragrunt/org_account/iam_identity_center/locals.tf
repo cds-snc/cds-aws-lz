@@ -19,11 +19,13 @@ locals {
   gc_signin_production_account_id = "699475931199"
   gc_signin_staging_account_id    = "565393049229"
   gc_signin_test_account_id       = "768102297819"
+  gc_signin_dev2_account_id       = "780097021060"
 
   digital_transformation_office_production_account_id = "730335533085"
   digital_transformation_office_staging_account_id    = "992382783569"
   digital_transformation_office_ai_staging_account_id = "144414543732"
   cra_dashboard_staging_account_id                    = "211125499457"
+  cra_dashboard_production_account_id                 = "480754269604"
 
   forms_production_account_id = "957818836222"
   forms_staging_account_id    = "687401027353"
