@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
   }
 
   statement {
-    sid    = "DenyBedrockOutsideWhitelistedAccounts"
+    sid    = "DenyBedrock"
     effect = "Deny"
     actions = [
       "bedrock:*"
@@ -21,23 +21,6 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
     resources = [
       "*",
     ]
-    condition {
-      test     = "StringNotEquals"
-      variable = "aws:PrincipalAccount"
-      values = [
-        "132761243856", # Guillaume Charest scratch
-        "571510889204", # Pat Heard scratch
-        "493890668711", # Wanpeng Yang scratch 
-        "009883649233", # Calvin Rodo scratch 
-        "412578375350", # Sylvia McLaughlin scratch 
-        "144414543732"  # DTO Tools AI Staging account
-      ]
-    }
-    condition {
-      test     = "StringNotEquals"
-      variable = "aws:RequestedRegion"
-      values   = ["ca-central-1"]
-    }
   }
 
 
