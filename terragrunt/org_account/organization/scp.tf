@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
   }
 
   statement {
-    sid    = "DenyBedrockOutsideWhitelistedAccounts"
+    sid    = "DenyBedrock"
     effect = "Deny"
     actions = [
       "bedrock:*"
