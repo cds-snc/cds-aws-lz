@@ -40,9 +40,9 @@ data "aws_iam_policy_document" "read_only_billing" {
   }
 
   statement {
-    sid       = "SavingsPlansRead"
-    effect    = "Allow"
-    actions   = [
+    sid    = "SavingsPlansRead"
+    effect = "Allow"
+    actions = [
       "bcm-recommended-actions:ListRecommendedActions"
     ]
     resources = ["*"]
