@@ -38,6 +38,8 @@ locals {
   superset_production_account_id = "066023111852"
   superset_staging_account_id    = "257394494478"
 
+  strategic_data_reporting_production_account_id = "154541629452"
+
   sso_identity_store_id = "d-9d67173bdd"
   sso_instance_id       = "ssoins-8824c710b5ddb452"
   sso_instance_arn      = "arn:aws:sso:::instance/${local.sso_instance_id}"
