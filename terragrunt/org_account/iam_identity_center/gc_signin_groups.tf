@@ -95,7 +95,7 @@ resource "aws_identitystore_group" "gc_signin_test_read_only_billing" {
 }
 
 #
-# CanadaLogin-Data Production
+# CanadaLogin-Data Account 
 #
 resource "aws_identitystore_group" "canada_login_data_production_admin" {
   display_name      = "CanadaLoginData-Production-Admin"
