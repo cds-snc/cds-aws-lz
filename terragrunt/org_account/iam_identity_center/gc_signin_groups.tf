@@ -93,3 +93,22 @@ resource "aws_identitystore_group" "gc_signin_test_read_only_billing" {
   description       = "Grants members read-only Billing and Cost Explorer access to the GC Signin Test account."
   identity_store_id = local.sso_identity_store_id
 }
+
+#
+# CanadaLogin-Data Production
+#
+resource "aws_identitystore_group" "canada_login_data_production_admin" {
+  display_name      = "CanadaLoginData-Production-Admin"
+  description       = "Grants members administrator access to the CanadaLogin-Data Production account."
+  identity_store_id = local.sso_identity_store_id
+}
+resource "aws_identitystore_group" "canada_login_data_production_read_only" {
+  display_name      = "CanadaLoginData-Production-ReadOnly"
+  description       = "Grants members read-only access to the CanadaLogin-Data Production account."
+  identity_store_id = local.sso_identity_store_id
+}
+resource "aws_identitystore_group" "canada_login_data_production_read_only_billing" {
+  display_name      = "CanadaLoginData-Production-Billing-ReadOnly"
+  description       = "Grants members read-only Billing and Cost Explorer access to the CanadaLogin-Data Production account."
+  identity_store_id = local.sso_identity_store_id
+}
