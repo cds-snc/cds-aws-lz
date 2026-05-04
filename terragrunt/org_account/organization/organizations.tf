@@ -15,7 +15,8 @@ resource "aws_organizations_organization" "org_config" {
   ]
 
   enabled_policy_types = [
-    "SERVICE_CONTROL_POLICY"
+    "SERVICE_CONTROL_POLICY",
+    "TAG_POLICY"
   ]
 
   feature_set = "ALL"
