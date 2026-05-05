@@ -114,11 +114,6 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
     resources = [
       "*"
     ]
-    condition {
-      test     = "StringNotEquals"
-      variable = "aws:PrincipalAccount"
-      values   = ["957818836222"]
-    }
   }
 
   statement {
