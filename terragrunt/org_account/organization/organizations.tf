@@ -42,6 +42,11 @@ resource "aws_organizations_policy_attachment" "AFT-cds_snc_universal_guardrails
   target_id = aws_organizations_organizational_unit.AFT.id
 }
 
+resource "aws_organizations_policy_attachment" "AFT-ssc_cbrid_tag" {
+  policy_id = aws_organizations_policy.ssc_cbrid_tag.id
+  target_id = aws_organizations_organizational_unit.AFT.id
+}
+
 resource "aws_organizations_policy_attachment" "AFT-scp_deny_ec2_run" {
   policy_id = aws_organizations_policy.scp_deny_ec2_run.id
   target_id = aws_organizations_organizational_unit.AFT.id
@@ -59,6 +64,11 @@ resource "aws_organizations_organizational_unit" "DumpsterFire" {
 
 resource "aws_organizations_policy_attachment" "DumpsterFire-cds_snc_universal_guardrails" {
   policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.DumpsterFire.id
+}
+
+resource "aws_organizations_policy_attachment" "DumpsterFire-ssc_cbrid_tag" {
+  policy_id = aws_organizations_policy.ssc_cbrid_tag.id
   target_id = aws_organizations_organizational_unit.DumpsterFire.id
 }
 
@@ -80,6 +90,11 @@ resource "aws_organizations_organizational_unit" "Production" {
 
 resource "aws_organizations_policy_attachment" "Production-cds_snc_universal_guardrails" {
   policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.Production.id
+}
+
+resource "aws_organizations_policy_attachment" "Production-ssc_cbrid_tag" {
+  policy_id = aws_organizations_policy.ssc_cbrid_tag.id
   target_id = aws_organizations_organizational_unit.Production.id
 }
 
@@ -107,6 +122,11 @@ resource "aws_organizations_policy_attachment" "Staging-cds_snc_universal_guardr
   target_id = aws_organizations_organizational_unit.Staging.id
 }
 
+resource "aws_organizations_policy_attachment" "Staging-ssc_cbrid_tag" {
+  policy_id = aws_organizations_policy.ssc_cbrid_tag.id
+  target_id = aws_organizations_organizational_unit.Staging.id
+}
+
 resource "aws_organizations_policy_attachment" "Staging-scp_deny_ec2_connect" {
   policy_id = aws_organizations_policy.scp_deny_ec2_connect.id
   target_id = aws_organizations_organizational_unit.Staging.id
@@ -123,6 +143,11 @@ resource "aws_organizations_organizational_unit" "Sandbox" {
 
 resource "aws_organizations_policy_attachment" "Sandbox-cds_snc_universal_guardrails" {
   policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.Sandbox.id
+}
+
+resource "aws_organizations_policy_attachment" "Sandbox-ssc_cbrid_tag" {
+  policy_id = aws_organizations_policy.ssc_cbrid_tag.id
   target_id = aws_organizations_organizational_unit.Sandbox.id
 }
 
@@ -150,6 +175,11 @@ resource "aws_organizations_policy_attachment" "Security-cds_snc_universal_guard
   target_id = aws_organizations_organizational_unit.Security.id
 }
 
+resource "aws_organizations_policy_attachment" "Security-ssc_cbrid_tag" {
+  policy_id = aws_organizations_policy.ssc_cbrid_tag.id
+  target_id = aws_organizations_organizational_unit.Security.id
+}
+
 resource "aws_organizations_policy_attachment" "Security-scp_deny_ec2_run" {
   policy_id = aws_organizations_policy.scp_deny_ec2_run.id
   target_id = aws_organizations_organizational_unit.Security.id
@@ -170,6 +200,11 @@ resource "aws_organizations_policy_attachment" "SRETools-cds_snc_universal_guard
   target_id = aws_organizations_organizational_unit.SRETools.id
 }
 
+resource "aws_organizations_policy_attachment" "SRETools-ssc_cbrid_tag" {
+  policy_id = aws_organizations_policy.ssc_cbrid_tag.id
+  target_id = aws_organizations_organizational_unit.SRETools.id
+}
+
 resource "aws_organizations_policy_attachment" "SRETools-scp_deny_ec2_run" {
   policy_id = aws_organizations_policy.scp_deny_ec2_run.id
   target_id = aws_organizations_organizational_unit.SRETools.id
@@ -187,6 +222,11 @@ resource "aws_organizations_organizational_unit" "Test" {
 
 resource "aws_organizations_policy_attachment" "Test-cds_snc_universal_guardrails" {
   policy_id = aws_organizations_policy.cds_snc_universal_guardrails.id
+  target_id = aws_organizations_organizational_unit.Test.id
+}
+
+resource "aws_organizations_policy_attachment" "Test-ssc_cbrid_tag" {
+  policy_id = aws_organizations_policy.ssc_cbrid_tag.id
   target_id = aws_organizations_organizational_unit.Test.id
 }
 
