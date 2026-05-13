@@ -96,6 +96,11 @@ jobs:
             module: main
             account: 886481071419
             role: cds-aws-lz-apply
+          
+          - account_folder: audit
+            module: config
+            account: 886481071419
+            role: cds-aws-lz-apply
 
           - account_folder: audit
             module: sre_bot
