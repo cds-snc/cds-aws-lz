@@ -93,9 +93,10 @@ jobs:
             role: cds-aws-lz-plan
 
           - account_folder: audit
-            module: config 
+            module: config
             account: 886481071419
             role: cds-aws-lz-plan
+            slack_webhook_url: SPEND_NOTIFIER_HOOK
 
           - account_folder: audit
             module: sre_bot
@@ -141,6 +142,8 @@ jobs:
           TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
           TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
           TF_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
+          TF_VAR_slack_webhook_url: ${{ matrix.slack_webhook_url && secrets[matrix.slack_webhook_url] }}
+          
         uses: cds-snc/terraform-plan@v3
         with:
           comment-delete: true
