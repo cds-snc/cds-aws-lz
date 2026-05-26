@@ -136,6 +136,22 @@ jobs:
           role-session-name: ${{matrix.account}}-${{matrix.module}}-apply
           aws-region: ${{ env.AWS_REGION }}
 
+       -name: Login to Amazon ECR (config only)
+        if: matrix.module == 'config'
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+
+      - name: Build and push Lambda image (config only)
+        if: matrix.module == 'config'
+        working-directory: terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}/lambda
+        env:
+          ECR_REGISTRY: ${{ matrix.account }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          ECR_REPOSITORY: ssc-cbrid-compliance-report
+          IMAGE_TAG: latest
+        run: |
+          docker build --provenance=false --platform linux/amd64 \
+            -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" .
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
       - name: Terraform apply ${{matrix.account_folder}}/${{ matrix.module }}
         working-directory: terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}
         env:
