@@ -41,36 +41,10 @@ module "report_bucket" {
 }
 
 # ----------------------------------------------------------------------------
-# IAM role for the Lambda
+# IAM policy: AWS Config aggregate reads + Organizations list.
+# (S3 write is granted by the lambda_schedule module via s3_arn_write_path.)
 # ----------------------------------------------------------------------------
-resource "aws_iam_role" "report" {
-  name = "cbrid-compliance-report"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect    = "Allow"
-      Action    = "sts:AssumeRole"
-      Principal = { Service = "lambda.amazonaws.com" }
-    }]
-  })
-  tags = local.common_tags
-}
-
-data "aws_iam_policy_document" "report" {
-  statement {
-    sid       = "CreateLogGroup"
-    effect    = "Allow"
-    actions   = ["logs:CreateLogGroup"]
-    resources = ["arn:aws:logs:${var.region}:${var.account_id}:*"]
-  }
-
-  statement {
-    sid       = "WriteLogs"
-    effect    = "Allow"
-    actions   = ["logs:CreateLogStream", "logs:PutLogEvents"]
-    resources = ["${aws_cloudwatch_log_group.report.arn}:*"]
-  }
-
+data "aws_iam_policy_document" "report_extra" {
   statement {
     sid    = "ConfigAggregatorRead"
     effect = "Allow"
@@ -82,26 +56,12 @@ data "aws_iam_policy_document" "report" {
   }
 
   statement {
-    sid       = "WriteComplianceReport"
-    effect    = "Allow"
-    actions   = ["s3:PutObject"]
-    resources = ["${aws_s3_bucket.reports.arn}/${var.report_prefix}/*"]
-  }
-
-  statement {
     sid       = "ListAccounts"
     effect    = "Allow"
     actions   = ["organizations:ListAccounts"]
     resources = ["*"]
   }
 }
-
-resource "aws_iam_role_policy" "report" {
-  name   = "cbrid-compliance-report"
-  role   = aws_iam_role.report.id
-  policy = data.aws_iam_policy_document.report.json
-}
-
 
 # ----------------------------------------------------------------------------
 # Lambda (container image) + ECR repo + EventBridge schedule, all from the
