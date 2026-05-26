@@ -1,23 +1,12 @@
 """
 Lambda: Report non-compliant resources for a single AWS Config rule to Slack.
 
-Queries the 'cds-cbr-tags-aggregator' organization aggregator for ONE specific
+Queries the 'cds-cbr-tags-aggregator' organization aggregator for one specific
 rule, counts COMPLIANT and NON_COMPLIANT resources per account, and posts a
 compact summary (totals + per-account compliant/non-compliant counts) to a Slack
-channel via an incoming webhook.
-
-Environment variables:
-    CONFIG_AGGREGATOR_NAME  - aggregator name (default: cds-cbr-tags-aggregator)
-    CONFIG_RULE_NAME        - the rule to inspect
-                              (default: OrgConfigRule-require-ssc-cbrid-tag-wf6xls0p)
-    CONFIG_REGION           - region the resources live in (default: ca-central-1)
-    SLACK_WEBHOOK_URL       - Slack incoming webhook URL
-
-Required IAM permissions (Lambda execution role):
-    config:GetAggregateConfigRuleComplianceSummary
-    config:GetAggregateComplianceDetailsByConfigRule
-    s3:PutObject                  (on the report bucket/prefix; to upload the CSV)
-    organizations:ListAccounts    (optional, to resolve account names)
+channel via an incoming webhook. Additionally, a detailed CSV report with one line 
+per evaluated resource is uploaded to S3, and a link to the report is included in 
+the Slack message.
 """
 
 import json
@@ -83,9 +72,9 @@ def get_account_names():
 def get_accounts_for_rule():
     """Return the set of account IDs that have data for the target rule.
 
-    Uses get_aggregate_config_rule_compliance_summary, which does NOT require an
+    Uses get_aggregate_config_rule_compliance_summary, which does not require an
     AccountId and returns per-account compliance for the aggregator. We then
-    query resource details per account (that call requires an AccountId).
+    query resource details per account.
     """
     account_ids = set()
     next_token = None
@@ -216,7 +205,7 @@ def build_and_upload_csv(all_records, account_names):
     uri = f"s3://{S3_BUCKET}/{key}"
     print(f"Uploaded CSV ({len(all_records)} rows, {len(body)} bytes) to {uri}")
 
-    # Build an S3 console URL (NOT a presigned URL). This requires the clicker
+    # Build an S3 console URL. This requires the clicker/user clicking the link
     # to be authenticated in the AWS account with S3 read access to the object,
     # so only people with access to the account can download the report.
     console_url = (
@@ -234,7 +223,7 @@ def format_slack_message(counts, account_names, report=None):
     `counts` is {account_id: {"compliant": int, "non_compliant": int}}.
     The receiving bot rejects large request bodies, so this deliberately sends
     only totals and a small fixed-size list of the worst offenders rather than
-    one line per account (which fails for large orgs).
+    one line per account (which fails if many accounts exist in the org). 
     """
     if not counts:
         text = (
@@ -343,8 +332,6 @@ def post_to_slack(message):
     if not SLACK_WEBHOOK_URL:
         raise ValueError("SLACK_WEBHOOK_URL environment variable is not set")
 
-    # Diagnostic: reveal the shape of the configured URL without leaking the
-    # secret token. Catches stray quotes/whitespace and wrong host/path.
     url = SLACK_WEBHOOK_URL
     stripped = url.strip().strip('"').strip("'")
     print(
@@ -353,7 +340,6 @@ def post_to_slack(message):
         f"has_leading_trailing_ws={url != url.strip()} "
         f"prefix={stripped[:34]!r}"
     )
-    # Use the cleaned value in case the env var picked up quotes/whitespace.
     effective_url = stripped
 
     data = json.dumps(message).encode("utf-8")
@@ -363,8 +349,6 @@ def post_to_slack(message):
         data=data,
         headers={
             "Content-Type": "application/json",
-            # Slack's edge/CDN returns a generic HTML 403 for requests using the
-            # default 'Python-urllib/x.y' agent. Send an explicit User-Agent.
             "User-Agent": "config-compliance-report/1.0",
         },
         method="POST",
@@ -398,7 +382,7 @@ def lambda_handler(event, context):
     account_names = get_account_names()
 
     # Write the full per-resource detail to a CSV in S3 (if configured) and get
-    # a clickable presigned download link.
+    # a clickable download link.
     report = build_and_upload_csv(all_records, account_names)
 
     message = format_slack_message(counts, account_names, report=report)
