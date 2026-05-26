@@ -147,6 +147,6 @@ jobs:
         with:
           comment-delete: true
           comment-title: Plan for ${{matrix.account_folder}}/${{ matrix.module }}
-          dir ectory: ./terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}
+          directory: ./terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           terragrunt: true
