@@ -85,7 +85,7 @@ module "compliance_report" {
   lambda_schedule_expression = var.schedule_expression
 
   # Grant write access to the report prefix in the bucket.
-  s3_arn_write_path = "${local.report_bucket_arn}/${var.report_prefix}/*"
+  s3_arn_write_path = "${module.report_bucket.s3_bucket_arn}/${var.report_prefix}/*"
 
   # Extra IAM (Config reads + Organizations).
   lambda_policies = [data.aws_iam_policy_document.report_extra.json]
