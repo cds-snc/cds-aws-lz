@@ -96,6 +96,7 @@ jobs:
             module: config 
             account: 886481071419
             role: cds-aws-lz-plan
+            slack_webhook_url: SPEND_NOTIFIER_HOOK 
 
           - account_folder: audit
             module: sre_bot
