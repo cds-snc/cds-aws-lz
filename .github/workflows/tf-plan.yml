@@ -96,7 +96,7 @@ jobs:
             module: config
             account: 886481071419
             role: cds-aws-lz-plan
-            slack_webhook_url: SPEND_NOTIFIER_HOOK
+            slack_webhook_url: COMPLIANCE_REPORT_SLACK_URL
 
           - account_folder: audit
             module: sre_bot
@@ -130,6 +130,22 @@ jobs:
           role-to-assume: arn:aws:iam::${{ matrix.account }}:role/${{ matrix.role }}
           role-session-name: ${{matrix.module}}-plan
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR (config only)
+        if: matrix.module == 'config'
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+
+      - name: Build and push Lambda image (config only)
+        if: matrix.module == 'config'
+        working-directory: terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}/lambda
+        env:
+          ECR_REGISTRY: ${{ matrix.account }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          ECR_REPOSITORY: ssc-cbrid-compliance-report
+          IMAGE_TAG: latest
+        run: |
+          docker build --provenance=false --platform linux/amd64 \
+            -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" .
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Terraform Plan for ${{matrix.module }}/${{ matrix.module }}
         env:

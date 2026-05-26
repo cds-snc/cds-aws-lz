@@ -101,7 +101,7 @@ jobs:
             module: config
             account: 886481071419
             role: cds-aws-lz-apply
-            slack_webhook_url: SPEND_NOTIFIER_HOOK 
+            slack_webhook_url: COMPLIANCE_REPORT_SLACK_URL 
 
           - account_folder: audit
             module: sre_bot
@@ -149,5 +149,6 @@ jobs:
           TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
           TF_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
           TF_VAR_slack_webhook_url: ${{ matrix.slack_webhook_url && secrets[matrix.slack_webhook_url] }}
+          TF_VAR_slack_webhook_url: ${{ secrets[matrix.slack_webhook_url] }}
         run: |
           terragrunt apply --terragrunt-non-interactive -auto-approve
