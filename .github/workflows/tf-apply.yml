@@ -8,6 +8,7 @@ env:
   TERRAFORM_VERSION: 1.7.2
   TERRAGRUNT_VERSION: 0.55.1
   CONFTEST_VERSION: 0.49.0
+  AWS_ACCOUNT_ID: 886481071419 
 
 permissions:
   id-token: write
@@ -144,7 +145,7 @@ jobs:
         if: matrix.module == 'config'
         working-directory: terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}/lambda
         env:
-          ECR_REGISTRY: ${{ matrix.account }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          ECR_REGISTRY: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
           ECR_REPOSITORY: ssc-cbrid-compliance-report
           IMAGE_TAG: latest
         run: |
