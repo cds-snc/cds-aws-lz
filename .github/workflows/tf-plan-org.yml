@@ -32,7 +32,7 @@ jobs:
         uses: cds-snc/terraform-tools-setup@v1
 
       - name: Configure aws credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@master
+        uses: aws-actions/configure-aws-credentials@acca2b1b2070338fb9fd1ca27ecee81d687e58e5 # v6.1.2
         with:
           role-to-assume: arn:aws:iam::659087519042:role/cds-aws-lz-plan
           role-session-name: tf-plan-org
