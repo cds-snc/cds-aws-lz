@@ -30,6 +30,7 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
         "493890668711", # Wanpeng Yang scratch 
         "009883649233", # Calvin Rodo scratch 
         "412578375350", # Sylvia McLaughlin scratch 
+        "986843603702" # SRE AI Staging
       ]
     }
     condition {
