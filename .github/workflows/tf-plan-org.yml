@@ -39,7 +39,7 @@ jobs:
           aws-region: ca-central-1
 
       - name: Terraform Plan for org_account/aft
-        uses: cds-snc/terraform-plan@v5
+        uses: cds-snc/terraform-plan@v5.0.4
         with:
           comment-delete: true
           comment-title: Plan for org_account/organization
