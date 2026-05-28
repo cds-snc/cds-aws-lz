@@ -8,7 +8,7 @@ locals {
 
 # Plan Assume Role
 module "assume_plan_role" {
-  source                = "../../modules/assume_role"
+  source                = "../../../modules/assume_role"
   role_name             = "assume_plan"
   org_account           = var.org_account
   org_account_role_name = local.plan_name
@@ -30,7 +30,7 @@ module "attach_tf_plan_policy_assume" {
 # Apply Assume Role
 
 module "assume_apply_role" {
-  source                = "../../modules/assume_role"
+  source                = "../../../modules/assume_role"
   role_name             = "assume_apply"
   org_account           = var.org_account
   org_account_role_name = local.apply_name
