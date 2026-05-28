@@ -15,7 +15,7 @@ resource "aws_guardduty_organization_admin_account" "gd_admin_us_west_2" {
 }
 
 module "gd_org_detector" {
-  source = "../../../modules/guardduty_detectors"
+  source = "../../modules/guardduty_detectors"
   providers = {
     aws.ca_central_1 = aws
     aws.us_east_1    = aws.us-east-1
@@ -24,7 +24,7 @@ module "gd_org_detector" {
 }
 
 module "gd_log_archive_detector" {
-  source = "../../../modules/guardduty_detectors"
+  source = "../../modules/guardduty_detectors"
   providers = {
     aws.ca_central_1 = aws.log_archive
     aws.us_east_1    = aws.log_archive_us_east_1
@@ -33,7 +33,7 @@ module "gd_log_archive_detector" {
 }
 
 module "gd_audit_detector" {
-  source = "../../../modules/guardduty_detectors"
+  source = "../../modules/guardduty_detectors"
   providers = {
     aws.ca_central_1 = aws.audit_log
     aws.us_east_1    = aws.audit_log_us_east_1
@@ -42,7 +42,7 @@ module "gd_audit_detector" {
 }
 
 module "gd_aft_management_detector" {
-  source = "../../../modules/guardduty_detectors"
+  source = "../../modules/guardduty_detectors"
   providers = {
     aws.ca_central_1 = aws.aft_management
     aws.us_east_1    = aws.aft_management_us_east_1

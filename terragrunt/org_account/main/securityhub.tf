@@ -20,7 +20,7 @@ resource "aws_securityhub_standards_subscription" "cis_aws_foundations_benchmark
 }
 
 module "org" {
-  source = "../../../modules/existing_security_hub_member"
+  source = "../../modules/existing_security_hub_member"
   providers = {
     aws.admin  = aws.log_archive
     aws.member = aws
@@ -30,7 +30,7 @@ module "org" {
 }
 
 module "audit" {
-  source = "../../../modules/existing_security_hub_member"
+  source = "../../modules/existing_security_hub_member"
   providers = {
     aws.admin  = aws.log_archive
     aws.member = aws.audit_log
@@ -40,7 +40,7 @@ module "audit" {
 }
 
 module "aft_managment" {
-  source = "../../../modules/existing_security_hub_member"
+  source = "../../modules/existing_security_hub_member"
   providers = {
     aws.admin  = aws.log_archive
     aws.member = aws.aft_management
