@@ -69,4 +69,3 @@ module "AFT_management_apply" {
   ]
 }
 
-
