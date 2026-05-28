@@ -122,7 +122,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: setup terraform tools
-        uses: cds-snc/terraform-tools-setup@v1.3.0
+        uses: cds-snc/terraform-tools-setup@36df0d7572a15921998170395475093c183d720a # v1.3.0
 
       - name: Configure aws credentials using OIDC
         uses: aws-actions/configure-aws-credentials@acca2b1b2070338fb9fd1ca27ecee81d687e58e5 # v6.1.2
@@ -144,7 +144,7 @@ jobs:
           TF_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
           TF_VAR_slack_webhook_url: ${{ matrix.slack_webhook_url && secrets[matrix.slack_webhook_url] }}
           
-        uses: cds-snc/terraform-plan@v5.0.4
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           comment-delete: true
           comment-title: Plan for ${{matrix.account_folder}}/${{ matrix.module }}
