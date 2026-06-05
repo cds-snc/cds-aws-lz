@@ -1,41 +1,42 @@
-# locals {
-#   cartographyOrgListNamesname = "cartographyOrgListIds"
-# }
+locals {
+  cartography_account_id = "794722365809"
+}
 
-# # Plan Assume Role
-# module "assume_plan_role" {
-#   source                = "../../modules/assume_role"
-#   role_name             = "assumeCartographyOrg"
-#   org_account           = 794722365809        ## Not org account it's the account the role that is assuming this role sits in
-#   org_account_role_name = "ListAccountsInOrg" ## Not the org account role name but the name of the role assuming this role
-#   assume_policy_name    = "AssumePlanRole"
-#   billing_tag_value     = var.billing_code
-# }
+resource "aws_iam_role" "cartography_org_list" {
+  name = "secopsAssetInventoryOrgAccountListRole"
 
-# # An IAM policy document that allows you to query all the accounts in an org
-# data "aws_iam_policy_document" "org_account_list" {
-#   statement {
-#     sid = "ListAccountsInOrg"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { AWS = "arn:aws:iam::${local.cartography_account_id}:role/secopsAssetInventoryCartographyRole" }
+      Action    = "sts:AssumeRole"
+    }]
+  })
+}
 
-#     effect = "Allow"
+resource "aws_iam_role_policy_attachment" "cartography_org_list_security_audit" {
+  role       = aws_iam_role.cartography_org_list.name
+  policy_arn = "arn:aws:iam::aws:policy/SecurityAudit"
+}
 
-#     actions = [
-#       "organizations:ListAccounts",
-#     ]
+data "aws_iam_policy_document" "cartography_org_list" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "organizations:DescribeOrganization",
+      "organizations:ListAccounts",
+      "organizations:ListRoots",
+      "organizations:ListAccountsForParent",
+      "organizations:ListOrganizationalUnitsForParent",
+      "organizations:ListTagsForResource",
+    ]
+    resources = ["*"]
+  }
+}
 
-#     resources = [
-#       "*",
-#     ]
-#   }
-# }
-
-# resource "aws_iam_policy" "org_account_list" {
-#   name   = "ListAccountsInOrg"
-#   policy = data.aws_iam_policy_document.org_account_list.json
-# }
-
-# # Attach the policy document to the role loca.org_account_list_name
-# resource "aws_iam_role_policy_attachment" "attach_list_accounts" {
-#   role       = local.org_account_list_name
-#   policy_arn = aws_iam_policy.org_account_list.arn
-# }
+resource "aws_iam_role_policy" "cartography_org_list" {
+  name   = "CartographyOrgList"
+  role   = aws_iam_role.cartography_org_list.id
+  policy = data.aws_iam_policy_document.cartography_org_list.json
+}
