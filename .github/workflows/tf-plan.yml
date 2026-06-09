@@ -65,8 +65,6 @@ jobs:
             module: cbrid_tags_cost_report
             account: 659087519042
             cost_report_slack_webhook_url: COST_REPORT_SLACK_URL
-            cost_report_sender_email: COST_REPORT_SENDER_EMAIL
-            cost_report_recipient_emails: COST_REPORT_RECIPIENT_EMAILS
             cost_report_po_numbers: COST_REPORT_PO_NUMBERS
             role: cds-aws-lz-plan
 
@@ -151,8 +149,6 @@ jobs:
           TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
           TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
           TF_VAR_cost_report_slack_webhook_url: ${{ matrix.cost_report_slack_webhook_url && secrets[matrix.cost_report_slack_webhook_url] }}
-          TF_VAR_cost_report_sender_email: ${{ matrix.cost_report_sender_email && secrets[matrix.cost_report_sender_email] }}
-          TF_VAR_cost_report_recipient_emails: ${{ matrix.cost_report_recipient_emails && secrets[matrix.cost_report_recipient_emails] }}
           TF_VAR_cost_report_po_numbers: ${{ matrix.cost_report_po_numbers && secrets[matrix.cost_report_po_numbers] }}
           TF_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
           TF_VAR_slack_webhook_url: ${{ matrix.slack_webhook_url && secrets[matrix.slack_webhook_url] }}
