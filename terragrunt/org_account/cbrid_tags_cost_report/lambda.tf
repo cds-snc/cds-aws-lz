@@ -17,9 +17,9 @@ resource "aws_lambda_function" "cost_report" {
 
   environment {
     variables = {
-      TARGET_BUCKET               = module.cost_report_bucket.s3_bucket_id
+      TARGET_BUCKET                 = module.cost_report_bucket.s3_bucket_id
       COST_REPORT_SLACK_WEBHOOK_URL = var.cost_report_slack_webhook_url
-      COST_REPORT_PO_NUMBERS      = var.cost_report_po_numbers
+      COST_REPORT_PO_NUMBERS        = var.cost_report_po_numbers
     }
   }
 
