@@ -5,7 +5,7 @@ data "archive_file" "cost_report" {
 }
 
 resource "aws_lambda_function" "cost_report" {
-  function_name = "cost_report"
+  function_name = "cbrid_tags_cost_report"
   role          = aws_iam_role.cost_report.arn
   runtime       = "python3.11"
   handler       = "main.handler"
@@ -18,8 +18,8 @@ resource "aws_lambda_function" "cost_report" {
   environment {
     variables = {
       TARGET_BUCKET               = module.cost_report_bucket.s3_bucket_id
-      COMPLIANCE_REPORT_SLACK_URL = var.cost_report_slack_webhook_url
-      PO_NUMBERS                  = var.cost_report_po_numbers
+      COST_REPORT_SLACK_WEBHOOK_URL = var.cost_report_slack_webhook_url
+      COST_REPORT_PO_NUMBERS      = var.cost_report_po_numbers
     }
   }
 

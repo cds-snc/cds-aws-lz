@@ -31,7 +31,7 @@ ses = boto3.client("ses")
 
 TARGET_BUCKET = os.getenv("TARGET_BUCKET")
 REPORT_PREFIX = "monthly_reports"
-COMPLIANCE_REPORT_SLACK_URL = os.getenv("COMPLIANCE_REPORT_SLACK_URL")
+COST_REPORT_SLACK_WEBHOOK_URL = os.getenv("COST_REPORT_SLACK_WEBHOOK_URL")
 CONFIG_READER_ROLE_ARN = "arn:aws:iam::886481071419:role/cost-report-config-reader"
 CONFIG_AGGREGATOR_NAME = "cds-cbr-tags-aggregator"
 CONFIG_AGGREGATOR_REGION = "ca-central-1"
@@ -42,7 +42,7 @@ UNTAGGED_LABEL = "Not tagged"
 CAD_PER_USD = 1.3808
 TAX_RATE = 0.13  # HST/GST
 SAVINGS_PLAN_RATE = 0.1095  # Enterprise savings plan discount
-PO_NUMBERS = json.loads(os.getenv("PO_NUMBERS", "{}"))
+COST_REPORT_PO_NUMBERS = json.loads(os.getenv("COST_REPORT_PO_NUMBERS", "{}"))
 
 
 def lambda_handler(event, context):
@@ -159,9 +159,9 @@ def lambda_handler(event, context):
         except Exception as err:
             logger.warning("Failed to send email: %s", err)
 
-    if COMPLIANCE_REPORT_SLACK_URL:
+    if COST_REPORT_SLACK_WEBHOOK_URL:
         html_url = s3_console_url(TARGET_BUCKET, html_key)
-        post_to_slack(COMPLIANCE_REPORT_SLACK_URL, build_slack_message(report, html_url))
+        post_to_slack(COST_REPORT_SLACK_WEBHOOK_URL, build_slack_message(report, html_url))
 
     return {"statusCode": 200, "body": json.dumps({"report_key": report_key})}
 
@@ -403,7 +403,7 @@ def send_email_with_doc(report, doc_bytes, label):
     # Plain-text fallback
     breakdown_lines = []
     for entry in report["breakdown"]:
-        po = PO_NUMBERS.get(entry["ssc_cbrid"])
+        po = COST_REPORT_PO_NUMBERS.get(entry["ssc_cbrid"])
         po_str = f" (PO {po})" if po else ""
         cad = entry["total"] * CAD_PER_USD
         breakdown_lines.append(
@@ -435,7 +435,7 @@ def send_email_with_doc(report, doc_bytes, label):
     # HTML body
     breakdown_rows = ""
     for entry in report["breakdown"]:
-        po = PO_NUMBERS.get(entry["ssc_cbrid"])
+        po = COST_REPORT_PO_NUMBERS.get(entry["ssc_cbrid"])
         po_cell = f'<span style="font-size:0.85em;color:#666;">(PO {escape(po)})</span>' if po else ""
         cad = entry["total"] * CAD_PER_USD
         breakdown_rows += (
@@ -686,7 +686,7 @@ def build_html_section(entry, include_resources=True):
 """
 
     cbrid = entry["ssc_cbrid"]
-    po = PO_NUMBERS.get(cbrid)
+    po = COST_REPORT_PO_NUMBERS.get(cbrid)
     po_label = f' <span style="font-size:0.8em; color:#667; font-weight:normal;">(PO {escape(po)})</span>' if po else ""
 
     return f"""
