@@ -49,7 +49,7 @@ jobs:
           - account_folder: org_account
             module: cbrid_tags_cost_report
             account: 659087519042
-            cost_report_slack_webhook_url: COST_REPORT_SLACK_URL
+            cost_report_slack_webhook_url: COST_REPORT_SLACK_WEBHOOK_URL 
             cost_report_po_numbers: COST_REPORT_PO_NUMBERS
             role: cds-aws-lz-plan
 
