@@ -30,7 +30,7 @@ s3 = boto3.client("s3")
 ses = boto3.client("ses")
 
 TARGET_BUCKET = os.getenv("TARGET_BUCKET")
-REPORT_PREFIX = "monthly_reports"
+REPORT_PREFIX = "cost-reports"
 COST_REPORT_SLACK_WEBHOOK_URL = os.getenv("COST_REPORT_SLACK_WEBHOOK_URL")
 CONFIG_READER_ROLE_ARN = "arn:aws:iam::886481071419:role/cost-report-config-reader"
 CONFIG_AGGREGATOR_NAME = "cds-cbr-tags-aggregator"
@@ -45,7 +45,7 @@ SAVINGS_PLAN_RATE = 0.1095  # Enterprise savings plan discount
 COST_REPORT_PO_NUMBERS = json.loads(os.getenv("COST_REPORT_PO_NUMBERS", "{}"))
 
 
-def lambda_handler(event, context):
+def handler(event, context):
     start, end, label = previous_month_range()
 
     accounts = get_accounts_with_tags()
@@ -610,7 +610,7 @@ def build_html(report):
 </style>
 </head>
 <body>
-<h1>Monthly Cost Report</h1>
+<h1>AWS CBR Breakdown Monthly Cost Report</h1>
 <p class="meta">Period: <strong>{escape(report["period"])}</strong> &middot; Generated: {escape(report["generated"])}</p>
 
 {''.join(sections)}
