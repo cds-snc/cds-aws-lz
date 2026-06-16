@@ -63,10 +63,11 @@ def handler(event, context):
     untagged_per_account = {}
     resource_costs_by_tag = {}
     for (account_id, tag_value), cost in costs_by_account_tag.items():
+        pre_tax_cost = cost / (1 + TAX_RATE)
         if tag_value == "":
-            untagged_per_account[account_id] = untagged_per_account.get(account_id, 0.0) + cost
+            untagged_per_account[account_id] = untagged_per_account.get(account_id, 0.0) + pre_tax_cost
         else:
-            resource_costs_by_tag[tag_value] = resource_costs_by_tag.get(tag_value, 0.0) + cost
+            resource_costs_by_tag[tag_value] = resource_costs_by_tag.get(tag_value, 0.0) + pre_tax_cost
 
     grouped = {}
     for account_id, info in accounts.items():
@@ -381,7 +382,7 @@ th {{ background: #fafbfc; font-size: 0.85em; color: #666; }}
   <span>Grand Total</span>
   <span>{format_currency_with_cad(report["grand_total"])}</span>
 </div>
-<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {CAD_PER_USD} CAD &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}% &nbsp;&middot;&nbsp; Tax rate: {int(TAX_RATE*100)}% HST</p>
+<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {CAD_PER_USD} CAD &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
 </body>
 </html>
 """
@@ -619,7 +620,7 @@ def build_html(report):
   <span>Grand Total</span>
   <span>{format_currency_with_cad(report["grand_total"])}</span>
 </div>
-<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {CAD_PER_USD} CAD &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}% &nbsp;&middot;&nbsp; Tax rate: {int(TAX_RATE*100)}% HST</p>
+<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {CAD_PER_USD} CAD &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
 </body>
 </html>
 """
