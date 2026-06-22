@@ -154,11 +154,13 @@ jobs:
         env:
           ECR_REGISTRY: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
           ECR_REPOSITORY: ssc-cbrid-compliance-report
-          IMAGE_TAG: latest
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build --provenance=false --platform linux/amd64 \
-            -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" .
+            -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" \
+            -t "$ECR_REGISTRY/$ECR_REPOSITORY:latest" .
           docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
 
       - name: Terraform apply ${{matrix.account_folder}}/${{ matrix.module }}
         working-directory: terragrunt/${{ matrix.account_folder }}/${{ matrix.module }}
@@ -175,5 +177,6 @@ jobs:
           TF_VAR_cost_report_po_numbers: ${{ matrix.cost_report_po_numbers && secrets[matrix.cost_report_po_numbers] }}
           TF_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
           TF_VAR_slack_webhook_url: ${{ matrix.slack_webhook_url && secrets[matrix.slack_webhook_url] }}
+          TF_VAR_lambda_image_tag: ${{ github.sha }}
         run: |
           terragrunt --non-interactive apply -auto-approve
