@@ -33,9 +33,15 @@ variable "report_retention_days" {
 }
 
 variable "schedule_expression" {
-  description = "EventBridge schedule expression in UTC. Empty string disables scheduling."
+  description = "EventBridge schedule expression in UTC for weekly Slack alerts. Empty string disables scheduling."
   type        = string
   default     = "cron(0 6 ? * MON *)" # Mondays at 06:00 UTC (1:00am EST) 
+}
+
+variable "csv_schedule_expression" {
+  description = "EventBridge schedule expression in UTC for daily CSV generation (no Slack alert). Empty string disables scheduling."
+  type        = string
+  default     = "cron(0 2 * * ? *)" # Daily at 02:00 UTC
 }
 
 variable "lambda_image_tag" {

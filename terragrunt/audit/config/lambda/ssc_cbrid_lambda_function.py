@@ -31,6 +31,8 @@ SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", "")
 # is skipped and only the summary is posted.
 S3_BUCKET = os.environ.get("S3_BUCKET", "")
 S3_PREFIX = os.environ.get("S3_PREFIX", "config-compliance-reports")
+# Whether to send Slack alerts. Set to "false" for daily CSV-only runs.
+SEND_SLACK_ALERT = os.environ.get("SEND_SLACK_ALERT", "true").lower() == "true"
 
 # Explicit timeouts so a stuck call fails fast instead of eating the whole
 # Lambda timeout budget.
@@ -370,6 +372,11 @@ def post_to_slack(message):
 
 def lambda_handler(event, context):
     """Entry point."""
+    # Allow EventBridge to override SEND_SLACK_ALERT via the event payload
+    send_alert = SEND_SLACK_ALERT
+    if isinstance(event, dict) and "send_slack_alert" in event:
+        send_alert = event.get("send_slack_alert", "true").lower() == "true" if isinstance(event.get("send_slack_alert"), str) else bool(event.get("send_slack_alert"))
+    
     print(f"Querying rule '{CONFIG_RULE_NAME}' in aggregator "
           f"'{CONFIG_AGGREGATOR_NAME}' ({CONFIG_REGION})")
 
@@ -385,10 +392,13 @@ def lambda_handler(event, context):
     # a clickable download link.
     report = build_and_upload_csv(all_records, account_names)
 
-    message = format_slack_message(counts, account_names, report=report)
-
-    print("Posting to Slack")
-    status = post_to_slack(message)
+    slack_status = None
+    if send_alert:
+        message = format_slack_message(counts, account_names, report=report)
+        print("Posting to Slack")
+        slack_status = post_to_slack(message)
+    else:
+        print("Slack alert disabled (send_slack_alert=false); skipping Slack post")
 
     summary = {
         "rule": CONFIG_RULE_NAME,
@@ -396,7 +406,7 @@ def lambda_handler(event, context):
         "compliant_resources": total_c,
         "noncompliant_resources": total_nc,
         "csv_uri": report.get("uri"),
-        "slack_status": status,
+        "slack_status": slack_status,
     }
     print(json.dumps(summary))
     return {"statusCode": 200, "body": json.dumps(summary)}
