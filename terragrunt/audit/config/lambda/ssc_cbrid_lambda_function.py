@@ -152,6 +152,11 @@ def gather_all_resources():
     return all_records, counts
 
 
+CSV_EXCLUDED_RESOURCE_TYPES = frozenset([
+    "AWS::EC2::NetworkInterface",
+])
+
+
 def build_and_upload_csv(all_records, account_names):
     """Write all per-resource records to a CSV and upload to S3.
 
@@ -162,6 +167,12 @@ def build_and_upload_csv(all_records, account_names):
         print("S3_BUCKET not set \u2014 skipping CSV upload.")
         return {"uri": None, "url": None}
 
+    # Exclude resource types that add noise without actionable value.
+    csv_records = [r for r in all_records if r["resource_type"] not in CSV_EXCLUDED_RESOURCE_TYPES]
+    excluded_count = len(all_records) - len(csv_records)
+    if excluded_count:
+        print(f"CSV: excluded {excluded_count} records matching {sorted(CSV_EXCLUDED_RESOURCE_TYPES)}")
+
     # Build CSV in memory.
     buffer = io.StringIO()
     writer = csv.writer(buffer)
@@ -169,7 +180,7 @@ def build_and_upload_csv(all_records, account_names):
         ["account_id", "account_name", "compliance", "resource_type",
          "resource_id", "region", "rule"]
     )
-    for r in all_records:
+    for r in csv_records:
         writer.writerow(
             [
                 r["account_id"],
@@ -203,7 +214,7 @@ def build_and_upload_csv(all_records, account_names):
         return {"uri": None, "url": None}
 
     uri = f"s3://{S3_BUCKET}/{key}"
-    print(f"Uploaded CSV ({len(all_records)} rows, {len(body)} bytes) to {uri}")
+    print(f"Uploaded CSV ({len(csv_records)} rows, {len(body)} bytes) to {uri}")
 
     # Build an S3 console URL. This requires the clicker/user clicking the link
     # to be authenticated in the AWS account with S3 read access to the object,
