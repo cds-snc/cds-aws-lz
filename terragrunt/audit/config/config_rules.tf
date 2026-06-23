@@ -69,6 +69,13 @@ resource "aws_lambda_function" "ssc_cbrid_evaluator" {
   tags = local.common_tags
 }
 
+resource "aws_cloudwatch_log_group" "ssc_cbrid_evaluator" {
+  name              = "/aws/lambda/${aws_lambda_function.ssc_cbrid_evaluator.function_name}"
+  retention_in_days = 14
+
+  tags = local.common_tags
+}
+
 # Allow AWS Config to invoke the Lambda
 resource "aws_lambda_permission" "config_can_invoke_evaluator" {
   statement_id  = "AllowConfigToInvoke"
