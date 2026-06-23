@@ -41,9 +41,9 @@ resource "aws_iam_role_policy_attachment" "ssc_cbrid_evaluator_basic" {
 
 data "aws_iam_policy_document" "ssc_cbrid_evaluator" {
   statement {
-    sid     = "ConfigPutEvaluations"
-    effect  = "Allow"
-    actions = ["config:PutEvaluations"]
+    sid       = "ConfigPutEvaluations"
+    effect    = "Allow"
+    actions   = ["config:PutEvaluations"]
     resources = ["*"]
   }
 }
