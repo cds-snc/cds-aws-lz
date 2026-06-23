@@ -2,7 +2,7 @@
 Custom AWS Config rule evaluator: require-ssc-cbrid-tag
 
 Enforces the ssc_cbrid tag on every evaluated resource with split logic:
-  - Platform core/sharedresources  → tag value must be "22DH"
+  - Platform core/shared resources  → tag value must be "22DH"
   - All other resource types   → tag value must be one of "22DI", "21JC", "22DJ"
 
 Because "all other" is evaluated by exclusion rather than enumeration, new

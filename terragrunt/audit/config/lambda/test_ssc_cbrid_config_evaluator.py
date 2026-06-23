@@ -35,21 +35,21 @@ def _load_module():
 EVALUATOR = _load_module()
 
 
-class TestPlatformClassification(unittest.TestCase):
-    def test_classifies_exact_platform_type(self):
+class TestPlatformCoreClassification(unittest.TestCase):
+    def test_classifies_exact_platform_core_type(self):
         self.assertTrue(EVALUATOR.is_platform_resource_type("AWS::S3::Bucket"))
 
-    def test_classifies_prefix_platform_type(self):
+    def test_classifies_prefix_platform_core_type(self):
         self.assertTrue(
             EVALUATOR.is_platform_resource_type("AWS::SecurityHub::Hub")
         )
 
-    def test_non_platform_type_is_workload(self):
+    def test_non_platform_core_type_is_workload(self):
         self.assertFalse(EVALUATOR.is_platform_resource_type("AWS::Lambda::Function"))
 
 
 class TestComplianceOutcomes(unittest.TestCase):
-    def test_platform_type_compliant_with_22dh(self):
+    def test_platform_core_type_compliant_with_22dh(self):
         config_item = {
             "resourceType": "AWS::S3::Bucket",
             "tags": {"ssc_cbrid": "22DH"},
@@ -57,7 +57,7 @@ class TestComplianceOutcomes(unittest.TestCase):
         compliance, _ = EVALUATOR.evaluate_compliance(config_item)
         self.assertEqual(compliance, "COMPLIANT")
 
-    def test_platform_type_non_compliant_with_workload_tag(self):
+    def test_platform_core_type_non_compliant_with_workload_tag(self):
         config_item = {
             "resourceType": "AWS::S3::Bucket",
             "tags": {"ssc_cbrid": "22DI"},
