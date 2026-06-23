@@ -93,8 +93,8 @@ resource "aws_config_organization_custom_rule" "require_ssc_cbrid" {
   lambda_function_arn = aws_lambda_function.ssc_cbrid_evaluator.arn
 
   trigger_types = [
-    "CONFIGURATION_ITEM_CHANGE",
-    "OVERSIZED_CONFIGURATION_ITEM_CHANGE",
+    "ConfigurationItemChangeNotification",
+    "OversizedConfigurationItemChangeNotification",
   ]
 
   # Empty = all supported resource types; new AWS types are covered automatically.
