@@ -3,9 +3,10 @@
 #
 # Lambda that queries the org Config aggregator (created in aggregator.tf) for
 # the require-ssc-cbrid-tag rule, counts compliant/non-compliant resources per
-# account, writes a CSV report to a private S3 bucket, and posts a summary to
-# the SRE bot / Slack. The lambda is triggered Monday morning by an EventBridge
-# rule.
+# account, and writes a CSV report to a private S3 bucket. Additionally, a
+# summary is posted to the SRE bot / Slack once per week. The lambda is
+# triggered daily by an EventBridge rule (CSV only), and again on Monday with
+# Slack alert enabled.
 #
 # =============================================================================
 
@@ -98,5 +99,30 @@ module "compliance_report" {
     S3_BUCKET              = module.report_bucket.s3_bucket_id
     S3_PREFIX              = var.report_prefix
     TOP_N_ACCOUNTS         = tostring(var.top_n_accounts)
+    SEND_SLACK_ALERT       = "true"
   }
+}
+
+# ----------------------------------------------------------------------------
+# Additional daily EventBridge rule: CSV-only, no Slack alert
+# Runs before the weekly alert to ensure fresh CSV is available
+# ----------------------------------------------------------------------------
+resource "aws_cloudwatch_event_rule" "compliance_report_daily" {
+  count               = var.csv_schedule_expression != "" ? 1 : 0
+  name                = "ssc-cbrid-compliance-report-daily"
+  description         = "Trigger SSC CBRID compliance report Lambda daily (CSV only, no Slack)"
+  schedule_expression = var.csv_schedule_expression
+  tags                = local.common_tags
+}
+
+resource "aws_cloudwatch_event_target" "compliance_report_daily" {
+  count     = var.csv_schedule_expression != "" ? 1 : 0
+  rule      = aws_cloudwatch_event_rule.compliance_report_daily[0].name
+  target_id = "ssc-cbrid-compliance-report-lambda"
+  arn       = module.compliance_report.lambda_function_arn
+  role_arn  = module.compliance_report.lambda_function_role_arn
+
+  input = jsonencode({
+    "send_slack_alert" = false
+  })
 }
