@@ -1,8 +1,8 @@
 # Config rule auditing all resources to determine ssc_cbrid tag compliance.
 #
 # A single custom Lambda-backed rule handles the split logic:
-#   - Platform/shared resources (IAM, VPC, ELB, KMS, S3, EBS, etc.) → 22DH only
-#   - All other resource types                                        → 22DI, 21JC, or 22DJ
+#   - Platform core/shared resources (IAM, VPC, ELB, KMS, S3, EBS, etc.) → 22DH only
+#   - All other resource types → 22DI, 21JC, or 22DJ
 #
 # Using a custom rule means new AWS resource types are covered automatically
 # without any Terraform changes.
@@ -89,7 +89,7 @@ resource "aws_lambda_permission" "config_can_invoke_evaluator" {
 # ----------------------------------------------------------------------------
 resource "aws_config_organization_custom_rule" "require_ssc_cbrid" {
   name                = "require-ssc-cbrid-tag"
-  description         = "Platform resources must use ssc_cbrid=22DH; all other resources must use 22DI, 21JC, or 22DJ"
+  description         = "Platform core resources must use ssc_cbrid=22DH; all other resources must use 22DI, 21JC, or 22DJ"
   lambda_function_arn = aws_lambda_function.ssc_cbrid_evaluator.arn
 
   trigger_types = [
