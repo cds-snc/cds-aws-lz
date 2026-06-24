@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "terragrunt/audit/config/lambda/**"
+      - "terragrunt/audit/config/**"
       - ".github/workflows/lambda-deploy-config.yml"
 
 env:
