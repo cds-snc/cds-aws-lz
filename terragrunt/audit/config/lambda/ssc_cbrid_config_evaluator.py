@@ -11,9 +11,11 @@ AWS resource types are automatically covered without any code change.
 
 import json
 import datetime
+import logging
 import boto3
 
 config_client = boto3.client("config")
+logger = logging.getLogger(__name__)
 
 # Exact AWS Config resource types that belong to platform core/shared services.
 PLATFORM_CORE_RESOURCE_TYPES = frozenset([
@@ -189,42 +191,41 @@ def get_configuration_item(invoking_event):
 
 def lambda_handler(event, context):
     """Entry point invoked by AWS Config on every configuration change."""
-    invoking_event = json.loads(event["invokingEvent"])
-    result_token = event["resultToken"]
-
-    config_item = get_configuration_item(invoking_event)
-    if not config_item:
-        # Scheduled re-evaluation with no specific item — nothing to do.
-        config_client.put_evaluations(Evaluations=[], ResultToken=result_token)
-        return
-
-    if config_item.get("configurationItemStatus") in DELETED_STATUSES:
-        compliance = "NOT_APPLICABLE"
-        annotation = "Resource has been deleted."
-    else:
-        compliance, annotation = evaluate_compliance(config_item)
-
-    # Timestamps from Config are ISO-8601 strings; boto3 requires a datetime.
-    raw_ts = config_item.get("configurationItemCaptureTime", "")
     try:
-        ordering_ts = datetime.datetime.fromisoformat(raw_ts.replace("Z", "+00:00"))
-    except (ValueError, AttributeError):
-        ordering_ts = datetime.datetime.now(datetime.timezone.utc)
+        invoking_event = json.loads(event["invokingEvent"])
+        result_token = event["resultToken"]
 
-    print(
-        f"resource={config_item['resourceType']}/{config_item['resourceId']} "
-        f"compliance={compliance} annotation={annotation!r}"
-    )
+        config_item = get_configuration_item(invoking_event)
+        if not config_item:
+            # Scheduled re-evaluation with no specific item — nothing to do.
+            config_client.put_evaluations(Evaluations=[], ResultToken=result_token)
+            return
 
-    config_client.put_evaluations(
-        Evaluations=[
-            {
-                "ComplianceResourceType": config_item["resourceType"],
-                "ComplianceResourceId": config_item["resourceId"],
-                "ComplianceType": compliance,
-                "Annotation": annotation,
-                "OrderingTimestamp": ordering_ts,
-            }
-        ],
-        ResultToken=result_token,
-    )
+        if config_item.get("configurationItemStatus") in DELETED_STATUSES:
+            compliance = "NOT_APPLICABLE"
+            annotation = "Resource has been deleted."
+        else:
+            compliance, annotation = evaluate_compliance(config_item)
+
+        # Timestamps from Config are ISO-8601 strings; boto3 requires a datetime.
+        raw_ts = config_item.get("configurationItemCaptureTime", "")
+        try:
+            ordering_ts = datetime.datetime.fromisoformat(raw_ts.replace("Z", "+00:00"))
+        except (ValueError, AttributeError):
+            ordering_ts = datetime.datetime.now(datetime.timezone.utc)
+
+        config_client.put_evaluations(
+            Evaluations=[
+                {
+                    "ComplianceResourceType": config_item["resourceType"],
+                    "ComplianceResourceId": config_item["resourceId"],
+                    "ComplianceType": compliance,
+                    "Annotation": annotation,
+                    "OrderingTimestamp": ordering_ts,
+                }
+            ],
+            ResultToken=result_token,
+        )
+    except Exception:
+        logger.exception("Failed to evaluate Config resource for require-ssc-cbrid-tag")
+        raise
