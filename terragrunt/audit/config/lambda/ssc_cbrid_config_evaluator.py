@@ -13,9 +13,24 @@ import json
 import datetime
 import logging
 import boto3
+from botocore.exceptions import ClientError
 
 config_client = boto3.client("config")
 logger = logging.getLogger(__name__)
+
+
+def put_evaluations_safe(evaluations, result_token):
+    """Submit evaluations and gracefully handle stale Config rule invocations."""
+    try:
+        config_client.put_evaluations(Evaluations=evaluations, ResultToken=result_token)
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "NoSuchConfigRuleException":
+            logger.warning(
+                "Config rule has been deleted or replaced. Skipping PutEvaluations for stale token. "
+                "This is expected during rule replacement."
+            )
+            return
+        raise
 
 # Exact AWS Config resource types that belong to platform core/shared services.
 PLATFORM_CORE_RESOURCE_TYPES = frozenset([
@@ -198,7 +213,7 @@ def lambda_handler(event, context):
         config_item = get_configuration_item(invoking_event)
         if not config_item:
             # Scheduled re-evaluation with no specific item — nothing to do.
-            config_client.put_evaluations(Evaluations=[], ResultToken=result_token)
+            put_evaluations_safe(evaluations=[], result_token=result_token)
             return
 
         if config_item.get("configurationItemStatus") in DELETED_STATUSES:
@@ -214,8 +229,8 @@ def lambda_handler(event, context):
         except (ValueError, AttributeError):
             ordering_ts = datetime.datetime.now(datetime.timezone.utc)
 
-        config_client.put_evaluations(
-            Evaluations=[
+        put_evaluations_safe(
+            evaluations=[
                 {
                     "ComplianceResourceType": config_item["resourceType"],
                     "ComplianceResourceId": config_item["resourceId"],
@@ -224,7 +239,7 @@ def lambda_handler(event, context):
                     "OrderingTimestamp": ordering_ts,
                 }
             ],
-            ResultToken=result_token,
+            result_token=result_token,
         )
     except Exception:
         logger.exception("Failed to evaluate Config resource for require-ssc-cbrid-tag")
