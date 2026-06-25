@@ -11,7 +11,7 @@ variable "slack_webhook_url" {
 variable "config_rule_name" {
   description = "The Config rule to inspect (AWS appends a suffix to the rule name when deployed org-wide)."
   type        = string
-  default     = "OrgConfigRule-require-ssc-cbrid-tag"
+  default     = "OrgConfigRule-require-ssc-cbrid-tag-zwgttrr2"
 }
 
 variable "report_prefix" {

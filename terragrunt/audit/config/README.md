@@ -35,7 +35,7 @@
 |------|-------------|------|---------|:--------:|
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | (Required) The account ID to perform actions on. | `string` | n/a | yes |
 | <a name="input_billing_code"></a> [billing\_code](#input\_billing\_code) | The billing code to tag our resources with | `string` | n/a | yes |
-| <a name="input_config_rule_name"></a> [config\_rule\_name](#input\_config\_rule\_name) | The Config rule to inspect. | `string` | `"OrgConfigRule-require-ssc-cbrid-tag-wf6xls0p"` | no |
+| <a name="input_config_rule_name"></a> [config\_rule\_name](#input\_config\_rule\_name) | The Config rule to inspect. | `string` | `"OrgConfigRule-require-ssc-cbrid-tag-zwgttrr2"` | no |
 | <a name="input_env"></a> [env](#input\_env) | The current running environment | `string` | n/a | yes |
 | <a name="input_lambda_image_tag"></a> [lambda\_image\_tag](#input\_lambda\_image\_tag) | ECR image tag the Lambda runs. Bump when you push a new image. | `string` | `"latest"` | no |
 | <a name="input_org_account"></a> [org\_account](#input\_org\_account) | The account ID of the main organization account | `any` | n/a | yes |

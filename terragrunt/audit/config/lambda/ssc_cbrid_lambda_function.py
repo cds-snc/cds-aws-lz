@@ -23,7 +23,7 @@ from botocore.config import Config as BotoConfig
 
 CONFIG_AGGREGATOR_NAME = os.environ.get("CONFIG_AGGREGATOR_NAME", "cds-cbr-tags-aggregator")
 CONFIG_RULE_NAME = os.environ.get(
-    "CONFIG_RULE_NAME", "OrgConfigRule-require-ssc-cbrid-tag-wf6xls0p"
+    "CONFIG_RULE_NAME", "OrgConfigRule-require-ssc-cbrid-tag-zwgttrr2"
 )
 CONFIG_REGION = os.environ.get("CONFIG_REGION", "ca-central-1")
 SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", "")
