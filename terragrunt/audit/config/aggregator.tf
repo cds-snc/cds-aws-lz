@@ -79,9 +79,9 @@ let untaggable_types = [
 #
 let excluded_types = [
   "AWS::EC2::NetworkInterface",
-  "AWS::Cassandra",
+  "AWS::Cassandra::Keyspace",
   "AWS::CodeDeploy::DeploymentConfig",
-  "AWS::IoT",
+  "AWS::IoT::DomainConfiguration",
   "AWS::SecurityHub::Hub",
   "AWS::SecurityHub::Standard",
   "AWS::Scheduler::ScheduleGroup",
@@ -102,7 +102,8 @@ rule core_services_require_22DH
 {
     tags exists
     tags is_struct
-    tags[ keys == "ssc_cbrid" ] == "22DH"
+    tags.ssc_cbrid exists
+    tags.ssc_cbrid == "22DH"
 }
 
 #
@@ -116,7 +117,8 @@ rule workload_require_account_default
 {
     tags exists
     tags is_struct
-    tags[ keys == "ssc_cbrid" ] in %workload_allowed
+    tags.ssc_cbrid exists
+    tags.ssc_cbrid in %workload_allowed
 }
 EOF
 
