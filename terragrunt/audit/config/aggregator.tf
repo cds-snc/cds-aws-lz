@@ -28,6 +28,7 @@ resource "aws_iam_role_policy_attachment" "config_aggregator" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSConfigRoleForOrganizations"
 }
 
+# Config organization rule to evaluate ssc_cbrid tag compliancy in every member account
 resource "aws_config_organization_custom_policy_rule" "ssc_cbrid" {
   name           = "require-ssc-cbrid-tag"
   policy_runtime = "guard-2.x.x"
