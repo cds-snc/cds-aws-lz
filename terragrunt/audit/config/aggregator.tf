@@ -68,35 +68,55 @@ let untaggable_types = [
   "AWS::CloudWatch::Dashboard",
   "AWS::SNS::Subscription",
   "AWS::Config::ResourceCompliance",
-  "AWS::Config::ConformancePackCompliance"
+  "AWS::Config::ConformancePackCompliance",
+  "AWS::IAM::Policy"
+]
+
+#
+# Resource types explicitly excluded from this rule.
+# Add types here that should not be evaluated (e.g. noisy types with no
+# tagging requirement). These will be skipped entirely (NOT_APPLICABLE).
+#
+let excluded_types = [
+  "AWS::EC2::NetworkInterface",
+  "AWS::Cassandra",
+  "AWS::CodeDeploy::DeploymentConfig",
+  "AWS::IoT",
+  "AWS::SecurityHub::Hub",
+  "AWS::SecurityHub::Standard",
+  "AWS::Scheduler::ScheduleGroup",
+  "AWS::ServiceDiscovery",
+  "AWS::ResourceExplorer2"
 ]
 
 let workload_allowed = ["22DI","21JC","22DJ"]
 
 #
 # Rule 1: CORE -> ssc_cbrid must be 22DH
-#   Applies when type is in core_types AND not untaggable.
+#   Applies when type is in core_types AND not untaggable AND not excluded.
 #
 rule core_services_require_22DH
   when resourceType in %core_types
        resourceType not in %untaggable_types
+       resourceType not in %excluded_types
 {
     tags exists
-    tags.ssc_cbrid exists
-    tags.ssc_cbrid == "22DH"
+    tags is_struct
+    tags[ keys == "ssc_cbrid" ] == "22DH"
 }
 
 #
 # Rule 2: WORKLOAD (everything else) -> ssc_cbrid in [22DI,21JC,22DJ]
-#   Applies when type is NOT core AND NOT untaggable.
+#   Applies when type is NOT core AND NOT untaggable AND NOT excluded.
 #
 rule workload_require_account_default
   when resourceType not in %core_types
        resourceType not in %untaggable_types
+       resourceType not in %excluded_types
 {
     tags exists
-    tags.ssc_cbrid exists
-    tags.ssc_cbrid in %workload_allowed
+    tags is_struct
+    tags[ keys == "ssc_cbrid" ] in %workload_allowed
 }
 EOF
 
