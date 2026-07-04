@@ -14,7 +14,7 @@
 # S3 bucket for the CSV reports
 # ----------------------------------------------------------------------------
 module "report_bucket" {
-  source = "github.com/cds-snc/terraform-modules//S3?ref=v11.3.5"
+  source = "github.com/cds-snc/terraform-modules//S3?ref=v11.3.6"
 
   bucket_name = "cds-ssc-cbrid-compliance-reports"
 
@@ -69,7 +69,7 @@ data "aws_iam_policy_document" "report_extra" {
 # CDS lambda_schedule module.
 # ----------------------------------------------------------------------------
 module "compliance_report" {
-  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v11.3.5"
+  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v11.3.6"
 
   lambda_name       = "ssc-cbrid-compliance-report"
   billing_tag_value = var.billing_code
