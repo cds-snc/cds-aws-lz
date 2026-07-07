@@ -156,6 +156,85 @@ CSV_EXCLUDED_RESOURCE_TYPES = frozenset([
     "AWS::EC2::NetworkInterface",
 ])
 
+# Platform/infrastructure accounts whose resources are never actionable by teams.
+CSV_EXCLUDED_ACCOUNT_IDS = frozenset([
+    "886481071419",  # Audit
+    "659087519042",  # Org
+    "274536870005",  # Log Archive
+    "137554749751",  # AFT Management
+])
+
+# Resources tagged managed_by=AFT or Owner=CBS are platform-managed and are not
+# actionable by teams, so they are excluded from the CSV report.
+CSV_AFT_MANAGED_TAG_KEY = "managed_by"
+CSV_AFT_MANAGED_TAG_VALUE = "AFT"
+CSV_CBS_OWNER_TAG_KEY = "Owner"
+CSV_CBS_OWNER_TAG_VALUE = "CBS"
+
+
+def fetch_resource_tags(records):
+    """Enrich each record with a ``tags`` dict fetched from AWS Config.
+
+    Uses ``batch_get_aggregate_resource_config`` in batches of 100.  Records
+    whose configuration cannot be retrieved (deleted resources, permission
+    errors) get an empty dict so the caller's tag checks are safe.
+    Mutates records in-place and returns them.
+    """
+    BATCH_SIZE = 100
+    resource_keys = [
+        {
+            "SourceAccountId": r["account_id"],
+            "SourceRegion": r["region"],
+            "ResourceId": r["resource_id"],
+            "ResourceType": r["resource_type"],
+        }
+        for r in records
+    ]
+    tag_map = {}  # (account_id, resource_type, resource_id, region) -> tags dict
+    for i in range(0, len(resource_keys), BATCH_SIZE):
+        batch = resource_keys[i : i + BATCH_SIZE]
+        try:
+            response = config_client.batch_get_aggregate_resource_config(
+                ConfigurationAggregatorName=CONFIG_AGGREGATOR_NAME,
+                ResourceIdentifiers=batch,
+            )
+            for item in response.get("BaseConfigurationItems", []):
+                key = (
+                    item.get("accountId"),
+                    item.get("resourceType"),
+                    item.get("resourceId"),
+                    item.get("awsRegion"),
+                )
+                # The top-level `tags` field is often null in Config snapshots.
+                # Fall back to parsing tags out of the `configuration` JSON string.
+                tags = item.get("tags") or {}
+                if not tags and item.get("configuration"):
+                    try:
+                        cfg = json.loads(item["configuration"])
+                        raw = cfg.get("tags") or cfg.get("Tags") or []
+                        if isinstance(raw, list):
+                            # [{key: ..., value: ...}, ...] format
+                            tags = {
+                                t.get("key") or t.get("Key"): t.get("value") or t.get("Value")
+                                for t in raw
+                                if t.get("key") or t.get("Key")
+                            }
+                        elif isinstance(raw, dict):
+                            tags = raw
+                    except (json.JSONDecodeError, TypeError):
+                        pass
+                tag_map[key] = tags
+        except Exception as exc:  # noqa: BLE001 - non-fatal; missing tags -> not excluded
+            print(
+                f"batch_get_aggregate_resource_config failed for batch "
+                f"{i // BATCH_SIZE + 1}: {exc}"
+            )
+
+    for r in records:
+        key = (r["account_id"], r["resource_type"], r["resource_id"], r["region"])
+        r["tags"] = tag_map.get(key, {})
+    return records
+
 
 def build_and_upload_csv(all_records, account_names):
     """Write all per-resource records to a CSV and upload to S3.
@@ -172,6 +251,35 @@ def build_and_upload_csv(all_records, account_names):
     excluded_count = len(all_records) - len(csv_records)
     if excluded_count:
         print(f"CSV: excluded {excluded_count} records matching {sorted(CSV_EXCLUDED_RESOURCE_TYPES)}")
+
+    # Exclude platform/infrastructure accounts.
+    csv_records = [r for r in csv_records if r["account_id"] not in CSV_EXCLUDED_ACCOUNT_IDS]
+    excluded_acct_count = len(all_records) - excluded_count - len(csv_records)
+    if excluded_acct_count:
+        print(f"CSV: excluded {excluded_acct_count} records from platform accounts {sorted(CSV_EXCLUDED_ACCOUNT_IDS)}")
+
+    # Fetch tags only for NON_COMPLIANT records — AFT exclusion is only
+    # relevant for resources flagged as non-compliant.
+    nc_records = [r for r in csv_records if r["compliance"] == "NON_COMPLIANT"]
+    c_records = [r for r in csv_records if r["compliance"] != "NON_COMPLIANT"]
+    fetch_resource_tags(nc_records)
+
+    def _is_platform_managed(r):
+        tags = r.get("tags", {})
+        return (
+            tags.get(CSV_AFT_MANAGED_TAG_KEY) == CSV_AFT_MANAGED_TAG_VALUE
+            or tags.get(CSV_CBS_OWNER_TAG_KEY) == CSV_CBS_OWNER_TAG_VALUE
+        )
+
+    platform_excluded = [r for r in nc_records if _is_platform_managed(r)]
+    if platform_excluded:
+        aft_count = sum(1 for r in platform_excluded if r.get("tags", {}).get(CSV_AFT_MANAGED_TAG_KEY) == CSV_AFT_MANAGED_TAG_VALUE)
+        cbs_count = sum(1 for r in platform_excluded if r.get("tags", {}).get(CSV_CBS_OWNER_TAG_KEY) == CSV_CBS_OWNER_TAG_VALUE)
+        print(f"CSV: excluded {len(platform_excluded)} platform-managed records "
+              f"({CSV_AFT_MANAGED_TAG_KEY}={CSV_AFT_MANAGED_TAG_VALUE}: {aft_count}, "
+              f"{CSV_CBS_OWNER_TAG_KEY}={CSV_CBS_OWNER_TAG_VALUE}: {cbs_count})")
+    nc_records = [r for r in nc_records if not _is_platform_managed(r)]
+    csv_records = c_records + nc_records
 
     # Build CSV in memory.
     buffer = io.StringIO()
