@@ -22,7 +22,7 @@ from botocore.config import Config as BotoConfig
 
 
 CONFIG_AGGREGATOR_NAME = os.environ.get("CONFIG_AGGREGATOR_NAME", "cds-cbr-tags-aggregator")
-CONFIG_RULE_NAME = os.environ.get("CONFIG_RULE_NAME", "OrgConfigRule-require-ssc-cbrid-tag")
+CONFIG_RULE_NAME = os.environ.get("CONFIG_RULE_NAME", "OrgConfigRule-require-ssc-cbrid-tag-i3qwnqh0")
 CONFIG_REGION = os.environ.get("CONFIG_REGION", "ca-central-1")
 SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", "")
 # S3 destination for the full CSV report. If S3_BUCKET is unset, the CSV step
