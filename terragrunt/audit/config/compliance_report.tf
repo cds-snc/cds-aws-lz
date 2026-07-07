@@ -52,6 +52,7 @@ data "aws_iam_policy_document" "report_extra" {
     actions = [
       "config:GetAggregateConfigRuleComplianceSummary",
       "config:GetAggregateComplianceDetailsByConfigRule",
+      "config:BatchGetAggregateResourceConfig",
     ]
     resources = ["*"]
   }
