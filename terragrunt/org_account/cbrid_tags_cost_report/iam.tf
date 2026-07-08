@@ -41,6 +41,12 @@ data "aws_iam_policy_document" "cost_report" {
 
   statement {
     effect    = "Allow"
+    actions   = ["invoicing:ListInvoiceSummaries"]
+    resources = ["*"]
+  }
+
+  statement {
+    effect    = "Allow"
     actions   = ["s3:PutObject"]
     resources = ["${module.cost_report_bucket.s3_bucket_arn}/${local.report_prefix}/*"]
   }
