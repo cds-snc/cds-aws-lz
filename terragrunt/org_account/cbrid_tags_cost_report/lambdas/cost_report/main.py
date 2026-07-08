@@ -43,6 +43,7 @@ UNTAGGED_LABEL = "Not tagged"
 # Accounts whose names start with any of these prefixes are excluded from the report.
 EXCLUDED_ACCOUNT_PREFIXES = ("GCSignin", "DigitalCredentials", "CanadaLogin")
 SAVINGS_PLAN_RATE = 0.1095  # Enterprise savings plan discount
+TAX_RATE = 0.13  # HST included in the invoiced amounts
 COST_REPORT_PO_NUMBERS = json.loads(os.getenv("COST_REPORT_PO_NUMBERS", "{}"))
 
 DISPLAY_CURRENCY_CODE = "USD"
@@ -479,7 +480,7 @@ th {{ background: #fafbfc; font-size: 0.85em; color: #666; }}
   <span>Grand Total</span>
   <span>{format_currency_with_cad(report["grand_total"])}</span>
 </div>
-<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE} &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
+<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE} &nbsp;&middot;&nbsp; Pre-tax excludes {TAX_RATE*100:.0f}% HST &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
 </body>
 </html>
 """
@@ -497,6 +498,7 @@ def send_email_with_doc(report, doc_bytes, label):
     msg["To"] = ", ".join(recipients)
 
     grand_cad = report["grand_total"] * USD_TO_DISPLAY_RATE
+    grand_pre_tax = grand_cad / (1 + TAX_RATE)
 
     # Plain-text fallback
     breakdown_lines = []
@@ -504,9 +506,11 @@ def send_email_with_doc(report, doc_bytes, label):
         po = COST_REPORT_PO_NUMBERS.get(entry["ssc_cbrid"])
         po_str = f" (PO {po})" if po else ""
         cad = entry["total"] * USD_TO_DISPLAY_RATE
+        pre_tax = cad / (1 + TAX_RATE)
         breakdown_lines.append(
             f"  {entry['ssc_cbrid']}{po_str}: "
-            f"${cad:,.2f} {DISPLAY_CURRENCY_CODE} / {format_currency(entry['total'])}"
+            f"${pre_tax:,.2f} {DISPLAY_CURRENCY_CODE} pre-tax "
+            f"(incl. tax: ${cad:,.2f} {DISPLAY_CURRENCY_CODE} / {format_currency(entry['total'])})"
         )
     breakdown_text = "\n".join(breakdown_lines)
 
@@ -521,10 +525,12 @@ def send_email_with_doc(report, doc_bytes, label):
         f"{breakdown_text}\n"
         f"\n"
         f"{'='*50}\n"
-        f"GRAND TOTAL: ${grand_cad:,.2f} {DISPLAY_CURRENCY_CODE} / {format_currency(report['grand_total'])}\n"
+        f"GRAND TOTAL (pre-tax): ${grand_pre_tax:,.2f} {DISPLAY_CURRENCY_CODE}\n"
+        f"GRAND TOTAL (incl. tax): ${grand_cad:,.2f} {DISPLAY_CURRENCY_CODE} / {format_currency(report['grand_total'])}\n"
         f"{'='*50}\n"
         f"\n"
         f"Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE}\n"
+        f"Amounts include {TAX_RATE*100:.0f}% HST; pre-tax amounts shown separately.\n"
         f"\n"
         f"The full report is attached as a Word document."
     )
@@ -536,11 +542,14 @@ def send_email_with_doc(report, doc_bytes, label):
         po = COST_REPORT_PO_NUMBERS.get(entry["ssc_cbrid"])
         po_cell = f'<span style="font-size:0.85em;color:#666;">(PO {escape(po)})</span>' if po else ""
         cad = entry["total"] * USD_TO_DISPLAY_RATE
+        pre_tax = cad / (1 + TAX_RATE)
         breakdown_rows += (
             f'<tr>'
             f'<td style="padding:8px 12px;border-bottom:1px solid #eee;">'
             f'<strong>{escape(entry["ssc_cbrid"])}</strong> {po_cell}</td>'
-            f'<td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:bold;">'
+            f'<td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:bold;color:#1a3a5c;">'
+            f'${pre_tax:,.2f} {DISPLAY_CURRENCY_CODE}</td>'
+            f'<td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600;color:#555;font-size:0.9em;">'
             f'${cad:,.2f} {DISPLAY_CURRENCY_CODE}</td>'
             f'<td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;color:#666;font-size:0.9em;">'
             f'{format_currency(entry["total"])}</td>'
@@ -568,9 +577,9 @@ def send_email_with_doc(report, doc_bytes, label):
         <!-- Grand total banner -->
         <tr>
           <td style="background:#e8f0fe;padding:20px 32px;border-bottom:1px solid #d0ddf5;">
-            <p style="margin:0;font-size:0.85em;color:#555;text-transform:uppercase;letter-spacing:0.05em;">Grand Total</p>
-                        <p style="margin:4px 0 0;font-size:2em;font-weight:700;color:#1a3a5c;">${grand_cad:,.2f} {DISPLAY_CURRENCY_CODE}</p>
-            <p style="margin:2px 0 0;font-size:0.95em;color:#666;">{format_currency(report["grand_total"])}</p>
+            <p style="margin:0;font-size:0.85em;color:#555;text-transform:uppercase;letter-spacing:0.05em;">Grand Total (pre-tax)</p>
+                        <p style="margin:4px 0 0;font-size:2.4em;font-weight:800;color:#1a3a5c;">${grand_pre_tax:,.2f} {DISPLAY_CURRENCY_CODE}</p>
+            <p style="margin:2px 0 0;font-size:0.95em;color:#666;">Incl. tax: ${grand_cad:,.2f} {DISPLAY_CURRENCY_CODE} &middot; {format_currency(report["grand_total"])}</p>
           </td>
         </tr>
 
@@ -582,8 +591,9 @@ def send_email_with_doc(report, doc_bytes, label):
               <thead>
                 <tr style="background:#f4f6f9;">
                   <th style="padding:8px 12px;text-align:left;color:#666;font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid #e2e2e8;">CBR ID</th>
-                                    <th style="padding:8px 12px;text-align:right;color:#666;font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid #e2e2e8;">Amount ({DISPLAY_CURRENCY_CODE})</th>
-                  <th style="padding:8px 12px;text-align:right;color:#666;font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid #e2e2e8;">Amount (USD)</th>
+                  <th style="padding:8px 12px;text-align:right;color:#666;font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid #e2e2e8;">Pre-tax ({DISPLAY_CURRENCY_CODE})</th>
+                                    <th style="padding:8px 12px;text-align:right;color:#666;font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid #e2e2e8;">Incl. tax ({DISPLAY_CURRENCY_CODE})</th>
+                  <th style="padding:8px 12px;text-align:right;color:#666;font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid #e2e2e8;">Incl. tax (USD)</th>
                 </tr>
               </thead>
               <tbody>
@@ -600,7 +610,7 @@ def send_email_with_doc(report, doc_bytes, label):
               The full report with account-level details is attached as a Word document.
             </p>
             <p style="margin:8px 0 0;font-size:0.78em;color:#aaa;">
-                            Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE}
+                            Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE} &nbsp;&middot;&nbsp; Incl.-tax amounts contain {TAX_RATE*100:.0f}% HST
             </p>
           </td>
         </tr>
@@ -717,7 +727,7 @@ def build_html(report):
   <span>Grand Total</span>
   <span>{format_currency_with_cad(report["grand_total"])}</span>
 </div>
-<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE} &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
+<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE} &nbsp;&middot;&nbsp; Pre-tax excludes {TAX_RATE*100:.0f}% HST &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
 </body>
 </html>
 """
@@ -794,8 +804,8 @@ def build_html_section(entry, include_resources=True):
     <span class="total">{format_currency_with_cad(entry["total"])}</span>
   </div>
   <div class="totals">
-    <div>Account-tagged: <strong>{format_currency_with_cad(entry["account_costs"])}</strong></div>
-    <div>Resource-tagged: <strong>{format_currency_with_cad(entry["resource_costs"])}</strong></div>
+    <div>Account-tagged: <strong>{format_currency_with_cad(entry["account_costs"], show_pretax=False)}</strong></div>
+    <div>Resource-tagged: <strong>{format_currency_with_cad(entry["resource_costs"], show_pretax=False)}</strong></div>
   </div>
   {accounts_table}
   {resource_section}
@@ -877,11 +887,23 @@ def format_currency(amount):
     return f"${amount:,.2f} USD"
 
 
-def format_currency_with_cad(amount):
+def format_currency_with_cad(amount, show_pretax=True):
     cad = amount * USD_TO_DISPLAY_RATE
+    if not show_pretax:
+        return (
+            f'<span style="font-size:1.1em; font-weight:bold;">${cad:,.2f} {DISPLAY_CURRENCY_CODE}</span>'
+            f'&nbsp;<span style="font-size:0.75em; color:#777; font-weight:normal;">${amount:,.2f} USD</span>'
+        )
+    pre_tax = cad / (1 + TAX_RATE)
     return (
-        f'<span style="font-size:1.1em; font-weight:bold;">${cad:,.2f} {DISPLAY_CURRENCY_CODE}</span>'
-        f'&nbsp;<span style="font-size:0.75em; color:#777; font-weight:normal;">${amount:,.2f} USD</span>'
+        f'<span style="display:inline-block; text-align:right; line-height:1.3;">'
+        f'<span style="font-size:1.05em; font-weight:bold; display:block;">'
+        f'${pre_tax:,.2f} {DISPLAY_CURRENCY_CODE}'
+        f' <span style="font-size:0.75em; color:#777; font-weight:normal;">pre-tax</span></span>'
+        f'<span style="font-size:0.8em; color:#555; font-weight:normal;">'
+        f'${cad:,.2f} {DISPLAY_CURRENCY_CODE} &middot; ${amount:,.2f} USD'
+        f' <span style="color:#999;">incl. tax</span></span>'
+        f'</span>'
     )
 
 
