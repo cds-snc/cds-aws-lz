@@ -28,6 +28,7 @@ ce = boto3.client("ce", region_name="us-east-1")
 orgs = boto3.client("organizations")
 s3 = boto3.client("s3")
 ses = boto3.client("ses")
+invoicing = boto3.client("invoicing", region_name="us-east-1")
 
 TARGET_BUCKET = os.getenv("TARGET_BUCKET")
 REPORT_PREFIX = "cost-reports"
@@ -39,16 +40,35 @@ SENDER_EMAIL = "sre-ifs@cds-snc.ca"
 RECIPIENT_EMAILS = "billing@cds-snc.ca"
 TAG_KEY = "ssc_cbrid"
 UNTAGGED_LABEL = "Not tagged"
-CAD_PER_USD = 1.3808
-TAX_RATE = 0.13  # HST/GST
+# Accounts whose names start with any of these prefixes are excluded from the report.
+EXCLUDED_ACCOUNT_PREFIXES = ("GCSignin", "DigitalCredentials", "CanadaLogin")
 SAVINGS_PLAN_RATE = 0.1095  # Enterprise savings plan discount
 COST_REPORT_PO_NUMBERS = json.loads(os.getenv("COST_REPORT_PO_NUMBERS", "{}"))
 
+DISPLAY_CURRENCY_CODE = "USD"
+USD_TO_DISPLAY_RATE = 1.0
+
 
 def handler(event, context):
+    global DISPLAY_CURRENCY_CODE, USD_TO_DISPLAY_RATE
+
     start, end, label = previous_month_range()
+    # Use the report month itself for invoice currency context.
+    DISPLAY_CURRENCY_CODE, USD_TO_DISPLAY_RATE = get_invoice_currency_context(start)
 
     accounts = get_accounts_with_tags()
+
+    excluded_account_ids = {
+        account_id
+        for account_id, info in accounts.items()
+        if info["name"] and info["name"].startswith(EXCLUDED_ACCOUNT_PREFIXES)
+    }
+    if excluded_account_ids:
+        logger.info(
+            "Excluding %d account(s) from the report: %s",
+            len(excluded_account_ids),
+            ", ".join(sorted(accounts[aid]["name"] for aid in excluded_account_ids)),
+        )
 
     try:
         costs_by_account_tag = get_costs_by_account_and_tag(start, end)
@@ -63,14 +83,17 @@ def handler(event, context):
     untagged_per_account = {}
     resource_costs_by_tag = {}
     for (account_id, tag_value), cost in costs_by_account_tag.items():
-        pre_tax_cost = cost / (1 + TAX_RATE)
+        if account_id in excluded_account_ids:
+            continue
         if tag_value == "":
-            untagged_per_account[account_id] = untagged_per_account.get(account_id, 0.0) + pre_tax_cost
+            untagged_per_account[account_id] = untagged_per_account.get(account_id, 0.0) + cost
         else:
-            resource_costs_by_tag[tag_value] = resource_costs_by_tag.get(tag_value, 0.0) + pre_tax_cost
+            resource_costs_by_tag[tag_value] = resource_costs_by_tag.get(tag_value, 0.0) + cost
 
     grouped = {}
     for account_id, info in accounts.items():
+        if account_id in excluded_account_ids:
+            continue
         if not info["tag"]:
             continue
         account_tag = info["tag"]
@@ -181,6 +204,80 @@ def get_accounts_with_tags():
         cbrid = next((t["Value"] for t in tags if t["Key"] == TAG_KEY), None)
         results[account["Id"]] = {"name": account["Name"], "tag": cbrid}
     return results
+
+
+def get_invoice_currency_context(reference_date):
+    """
+    Resolve preferred invoice currency and USD conversion rate for the
+    billing month represented by `reference_date` (YYYY-MM-DD).
+    """
+    try:
+        year, month, _ = reference_date.split("-", 2)
+        payer_account_id = boto3.client("sts").get_caller_identity()["Account"]
+
+        response = invoicing.list_invoice_summaries(
+            Filter={"BillingPeriod": {"Year": int(year), "Month": int(month)}},
+            Selector={"ResourceType": "ACCOUNT_ID", "Value": payer_account_id},
+            MaxResults=100,
+        )
+
+        summaries = response.get("InvoiceSummaries", [])
+        for summary in summaries:
+            amount_obj = (
+                summary.get("PaymentCurrencyAmount")
+                or summary.get("TaxCurrencyAmount")
+                or summary.get("BaseCurrencyAmount")
+            )
+            if not amount_obj:
+                continue
+
+            currency_code = amount_obj.get("CurrencyCode") or "USD"
+            exchange = amount_obj.get("CurrencyExchangeDetails") or {}
+            source_currency = exchange.get("SourceCurrencyCode")
+            target_currency = exchange.get("TargetCurrencyCode")
+            raw_rate = exchange.get("Rate")
+
+            rate = None
+            if raw_rate not in (None, ""):
+                try:
+                    parsed_rate = float(raw_rate)
+                    if source_currency == "USD" and parsed_rate > 0:
+                        rate = parsed_rate
+                    elif target_currency == "USD" and parsed_rate > 0:
+                        rate = 1.0 / parsed_rate
+                    elif parsed_rate > 0:
+                        rate = parsed_rate
+                except (TypeError, ValueError):
+                    rate = None
+
+            if rate is None and currency_code == "USD":
+                rate = 1.0
+
+            if rate is not None:
+                logger.info(
+                    "Using invoicing currency context: code=%s usd_rate=%.6f",
+                    currency_code,
+                    rate,
+                )
+                return currency_code, rate
+
+            logger.warning(
+                "Invoice currency %s has no usable exchange rate; "
+                "amounts will be displayed unconverted in USD.",
+                currency_code,
+            )
+            break
+
+    except Exception as err:
+        logger.warning("Could not resolve currency from Invoicing API: %s", err)
+
+    logger.warning(
+        "Falling back to unconverted USD display (code=%s usd_rate=%.6f); "
+        "no exchange rate was obtained from the Invoicing API.",
+        DISPLAY_CURRENCY_CODE,
+        USD_TO_DISPLAY_RATE,
+    )
+    return DISPLAY_CURRENCY_CODE, USD_TO_DISPLAY_RATE
 
 
 def get_costs_by_account_and_tag(start, end):
@@ -382,7 +479,7 @@ th {{ background: #fafbfc; font-size: 0.85em; color: #666; }}
   <span>Grand Total</span>
   <span>{format_currency_with_cad(report["grand_total"])}</span>
 </div>
-<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {CAD_PER_USD} CAD &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
+<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE} &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
 </body>
 </html>
 """
@@ -399,17 +496,17 @@ def send_email_with_doc(report, doc_bytes, label):
     msg["From"] = SENDER_EMAIL
     msg["To"] = ", ".join(recipients)
 
-    grand_cad = report["grand_total"] * CAD_PER_USD
+    grand_cad = report["grand_total"] * USD_TO_DISPLAY_RATE
 
     # Plain-text fallback
     breakdown_lines = []
     for entry in report["breakdown"]:
         po = COST_REPORT_PO_NUMBERS.get(entry["ssc_cbrid"])
         po_str = f" (PO {po})" if po else ""
-        cad = entry["total"] * CAD_PER_USD
+        cad = entry["total"] * USD_TO_DISPLAY_RATE
         breakdown_lines.append(
             f"  {entry['ssc_cbrid']}{po_str}: "
-            f"${cad:,.2f} CAD / {format_currency(entry['total'])}"
+            f"${cad:,.2f} {DISPLAY_CURRENCY_CODE} / {format_currency(entry['total'])}"
         )
     breakdown_text = "\n".join(breakdown_lines)
 
@@ -424,10 +521,10 @@ def send_email_with_doc(report, doc_bytes, label):
         f"{breakdown_text}\n"
         f"\n"
         f"{'='*50}\n"
-        f"GRAND TOTAL: ${grand_cad:,.2f} CAD / {format_currency(report['grand_total'])}\n"
+        f"GRAND TOTAL: ${grand_cad:,.2f} {DISPLAY_CURRENCY_CODE} / {format_currency(report['grand_total'])}\n"
         f"{'='*50}\n"
         f"\n"
-        f"Exchange rate: 1 USD = {CAD_PER_USD} CAD\n"
+        f"Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE}\n"
         f"\n"
         f"The full report is attached as a Word document."
     )
@@ -438,13 +535,13 @@ def send_email_with_doc(report, doc_bytes, label):
     for entry in report["breakdown"]:
         po = COST_REPORT_PO_NUMBERS.get(entry["ssc_cbrid"])
         po_cell = f'<span style="font-size:0.85em;color:#666;">(PO {escape(po)})</span>' if po else ""
-        cad = entry["total"] * CAD_PER_USD
+        cad = entry["total"] * USD_TO_DISPLAY_RATE
         breakdown_rows += (
             f'<tr>'
             f'<td style="padding:8px 12px;border-bottom:1px solid #eee;">'
             f'<strong>{escape(entry["ssc_cbrid"])}</strong> {po_cell}</td>'
             f'<td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:bold;">'
-            f'${cad:,.2f} CAD</td>'
+            f'${cad:,.2f} {DISPLAY_CURRENCY_CODE}</td>'
             f'<td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;color:#666;font-size:0.9em;">'
             f'{format_currency(entry["total"])}</td>'
             f'</tr>'
@@ -472,7 +569,7 @@ def send_email_with_doc(report, doc_bytes, label):
         <tr>
           <td style="background:#e8f0fe;padding:20px 32px;border-bottom:1px solid #d0ddf5;">
             <p style="margin:0;font-size:0.85em;color:#555;text-transform:uppercase;letter-spacing:0.05em;">Grand Total</p>
-            <p style="margin:4px 0 0;font-size:2em;font-weight:700;color:#1a3a5c;">${grand_cad:,.2f} CAD</p>
+                        <p style="margin:4px 0 0;font-size:2em;font-weight:700;color:#1a3a5c;">${grand_cad:,.2f} {DISPLAY_CURRENCY_CODE}</p>
             <p style="margin:2px 0 0;font-size:0.95em;color:#666;">{format_currency(report["grand_total"])}</p>
           </td>
         </tr>
@@ -485,7 +582,7 @@ def send_email_with_doc(report, doc_bytes, label):
               <thead>
                 <tr style="background:#f4f6f9;">
                   <th style="padding:8px 12px;text-align:left;color:#666;font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid #e2e2e8;">CBR ID</th>
-                  <th style="padding:8px 12px;text-align:right;color:#666;font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid #e2e2e8;">Amount (CAD)</th>
+                                    <th style="padding:8px 12px;text-align:right;color:#666;font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid #e2e2e8;">Amount ({DISPLAY_CURRENCY_CODE})</th>
                   <th style="padding:8px 12px;text-align:right;color:#666;font-size:0.8em;text-transform:uppercase;letter-spacing:0.04em;border-bottom:2px solid #e2e2e8;">Amount (USD)</th>
                 </tr>
               </thead>
@@ -503,7 +600,7 @@ def send_email_with_doc(report, doc_bytes, label):
               The full report with account-level details is attached as a Word document.
             </p>
             <p style="margin:8px 0 0;font-size:0.78em;color:#aaa;">
-              Exchange rate: 1 USD = {CAD_PER_USD} CAD
+                            Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE}
             </p>
           </td>
         </tr>
@@ -620,7 +717,7 @@ def build_html(report):
   <span>Grand Total</span>
   <span>{format_currency_with_cad(report["grand_total"])}</span>
 </div>
-<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {CAD_PER_USD} CAD &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
+<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE} &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
 </body>
 </html>
 """
@@ -711,7 +808,7 @@ def short_resource_type(resource_type):
 
 
 def format_currency_cad(amount):
-    return f"${amount * CAD_PER_USD:,.2f} CAD"
+    return f"${amount * USD_TO_DISPLAY_RATE:,.2f} {DISPLAY_CURRENCY_CODE}"
 
 
 def build_slack_message(report, html_url=None):
@@ -781,9 +878,9 @@ def format_currency(amount):
 
 
 def format_currency_with_cad(amount):
-    cad = amount * CAD_PER_USD
+    cad = amount * USD_TO_DISPLAY_RATE
     return (
-        f'<span style="font-size:1.1em; font-weight:bold;">${cad:,.2f} CAD</span>'
+        f'<span style="font-size:1.1em; font-weight:bold;">${cad:,.2f} {DISPLAY_CURRENCY_CODE}</span>'
         f'&nbsp;<span style="font-size:0.75em; color:#777; font-weight:normal;">${amount:,.2f} USD</span>'
     )
 
