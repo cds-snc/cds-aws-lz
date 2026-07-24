@@ -13,7 +13,7 @@
 		},
 		"ghcr.io/devcontainers/features/python:1": {
 			"installTools": true,
-			"version": "3.12"
+			"version": "3.14"
 		},
 		"ghcr.io/devcontainers/features/terraform:1": {
 			"version": "1.7.2",
