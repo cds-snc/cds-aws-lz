@@ -169,11 +169,23 @@ resource "aws_iam_role" "azure_sentinel" {
   name               = "AzureSentinelRole"
   description        = "Azure Sentinel Integration"
   assume_role_policy = data.aws_iam_policy_document.azure_sentinel_assume_role.json
-  managed_policy_arns = [
+}
+
+# managed_policy_arns on the role above would be authoritative for the role's entire
+# set of managed policy attachments, so it would detach anything attached by an
+# aws_iam_role_policy_attachment resource (see azure_sentinel_guardduty_kms below) on
+# every apply. All attachments are therefore expressed as attachment resources.
+resource "aws_iam_role_policy_attachment" "azure_sentinel" {
+  provider = aws.log_archive
+
+  for_each = toset([
     "arn:aws:iam::aws:policy/AmazonSQSReadOnlyAccess",
     "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
     "arn:aws:iam::aws:policy/service-role/AWSLambdaSQSQueueExecutionRole"
-  ]
+  ])
+
+  role       = aws_iam_role.azure_sentinel.name
+  policy_arn = each.value
 }
 
 # GuardDuty findings in module.publishing_bucket are encrypted with a customer-managed
