@@ -47,6 +47,30 @@ data "aws_iam_policy_document" "read_only_billing" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    sid    = "CostOptimizationHubRead"
+    effect = "Allow"
+    actions = [
+      "cost-optimization-hub:ListEnrollmentStatuses",
+      "cost-optimization-hub:GetPreferences",
+      "cost-optimization-hub:GetRecommendation",
+      "cost-optimization-hub:ListRecommendations",
+      "cost-optimization-hub:ListRecommendationSummaries",
+      "cost-optimization-hub:ListEfficiencyMetrics"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "CostExplorerComparisons"
+    effect = "Allow"
+    actions = [
+      "ce:GetCostAndUsageComparisons",
+      "ce:GetCostComparisonDrivers"
+    ]
+    resources = ["*"]
+  }
 }
 
 #
