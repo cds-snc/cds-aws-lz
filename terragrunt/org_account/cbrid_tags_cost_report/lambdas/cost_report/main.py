@@ -46,16 +46,41 @@ SAVINGS_PLAN_RATE = 0.1095  # Enterprise savings plan discount
 TAX_RATE = 0.13  # HST included in the invoiced amounts
 COST_REPORT_PO_NUMBERS = json.loads(os.getenv("COST_REPORT_PO_NUMBERS", "{}"))
 
+# AWS returns several invoice summaries for one billing period -- the Amazon
+# Web Services Canada tax invoice (CAIN*), an AWS Inc. invoice (AWSI-INV-*),
+# and a payment record -- and they do not all carry the same exchange rate.
+# The CAIN* invoice is the HST tax invoice that is actually paid, so its rate
+# is the definitive one. Override via env var if AWS changes the numbering.
+TAX_INVOICE_ID_PREFIX = os.getenv("TAX_INVOICE_ID_PREFIX", "CAIN")
+
+# Cost Explorer returns unrounded amounts; the invoice rounds every service
+# line to the cent before summing, so the two totals drift by a few cents that
+# cannot be traced to any single line item. Park that residual on one CBR ID so
+# the report ties exactly to the invoice, and refuse to do so if the gap is
+# larger than rounding can explain (which would mean a real reporting error).
+RECONCILIATION_CBRID = os.getenv("RECONCILIATION_CBRID", "22DH")
+RECONCILIATION_TOLERANCE = float(os.getenv("RECONCILIATION_TOLERANCE", "5.00"))
+
 DISPLAY_CURRENCY_CODE = "USD"
 USD_TO_DISPLAY_RATE = 1.0
+# Exact rate string as printed on the invoice, plus its provenance, so every
+# report can be reconciled against the invoice PDF it was derived from.
+DISPLAY_RATE_TEXT = "1"
+RATE_SOURCE = "not resolved"
 
 
 def handler(event, context):
-    global DISPLAY_CURRENCY_CODE, USD_TO_DISPLAY_RATE
+    global DISPLAY_CURRENCY_CODE, USD_TO_DISPLAY_RATE, DISPLAY_RATE_TEXT, RATE_SOURCE
 
     start, end, label = previous_month_range()
     # Use the report month itself for invoice currency context.
-    DISPLAY_CURRENCY_CODE, USD_TO_DISPLAY_RATE = get_invoice_currency_context(start)
+    (
+        DISPLAY_CURRENCY_CODE,
+        USD_TO_DISPLAY_RATE,
+        DISPLAY_RATE_TEXT,
+        RATE_SOURCE,
+        invoice_totals,
+    ) = get_invoice_currency_context(start)
 
     accounts = get_accounts_with_tags()
 
@@ -124,6 +149,10 @@ def handler(event, context):
     breakdown.sort(key=lambda x: x["total"], reverse=True)
     grand_total = sum(b["total"] for b in breakdown)
 
+    reconciliation = reconcile_to_invoice(breakdown, grand_total, invoice_totals)
+    if reconciliation:
+        grand_total = sum(b["total"] for b in breakdown)
+
     tag_values = [b["ssc_cbrid"] for b in breakdown]
     try:
         resources_by_tag = get_resources_for_tags(tag_values)
@@ -139,6 +168,7 @@ def handler(event, context):
         "generated": date.today().isoformat(),
         "breakdown": breakdown,
         "grand_total": round(grand_total, 2),
+        "reconciliation": reconciliation,
     }
 
     report_key = f"{REPORT_PREFIX}/{label}.json"
@@ -209,76 +239,219 @@ def get_accounts_with_tags():
 
 def get_invoice_currency_context(reference_date):
     """
-    Resolve preferred invoice currency and USD conversion rate for the
+    Resolve the payer's invoice currency and USD conversion rate for the
     billing month represented by `reference_date` (YYYY-MM-DD).
-    """
-    try:
-        year, month, _ = reference_date.split("-", 2)
-        payer_account_id = boto3.client("sts").get_caller_identity()["Account"]
 
-        response = invoicing.list_invoice_summaries(
-            Filter={"BillingPeriod": {"Year": int(year), "Month": int(month)}},
-            Selector={"ResourceType": "ACCOUNT_ID", "Value": payer_account_id},
-            MaxResults=100,
+    AWS issues the invoice for a billing period on the 1st of the following
+    month, so the rate returned here is the one printed on that invoice --
+    the July report uses the rate from the invoice dated August 1.
+
+    Returns (currency_code, rate, exact_rate_text, provenance).
+
+    Raises RuntimeError when no unambiguous rate can be determined. Emailing a
+    report whose figures are silently unconverted is worse than not sending one.
+    """
+    year, month, _ = reference_date.split("-", 2)
+    payer_account_id = boto3.client("sts").get_caller_identity()["Account"]
+
+    response = invoicing.list_invoice_summaries(
+        Filter={"BillingPeriod": {"Year": int(year), "Month": int(month)}},
+        Selector={"ResourceType": "ACCOUNT_ID", "Value": payer_account_id},
+        MaxResults=100,
+    )
+    summaries = response.get("InvoiceSummaries", [])
+    if not summaries:
+        raise RuntimeError(
+            f"No invoice summaries for payer {payer_account_id} for billing period "
+            f"{year}-{month}. The invoice is issued on the 1st of the following "
+            f"month; if this run is too early, retry once it is available."
         )
 
-        summaries = response.get("InvoiceSummaries", [])
-        for summary in summaries:
-            amount_obj = (
-                summary.get("PaymentCurrencyAmount")
-                or summary.get("TaxCurrencyAmount")
-                or summary.get("BaseCurrencyAmount")
-            )
+    amount_fields = ("PaymentCurrencyAmount", "TaxCurrencyAmount", "BaseCurrencyAmount")
+    candidates = []
+    currency_codes = set()
+
+    # Log every rate on every summary: this is the audit trail that lets a
+    # report be tied back to the invoice PDF it came from.
+    for summary in summaries:
+        invoice_id = summary.get("InvoiceId") or "unknown"
+        issued = str(summary.get("IssuedDate") or "")[:10]
+        for field in amount_fields:
+            amount_obj = summary.get(field)
             if not amount_obj:
                 continue
-
-            currency_code = amount_obj.get("CurrencyCode") or "USD"
+            currency_codes.add(amount_obj.get("CurrencyCode"))
             exchange = amount_obj.get("CurrencyExchangeDetails") or {}
+            raw_rate = exchange.get("Rate")
             source_currency = exchange.get("SourceCurrencyCode")
             target_currency = exchange.get("TargetCurrencyCode")
-            raw_rate = exchange.get("Rate")
-
-            rate = None
-            if raw_rate not in (None, ""):
-                try:
-                    parsed_rate = float(raw_rate)
-                    if source_currency == "USD" and parsed_rate > 0:
-                        rate = parsed_rate
-                    elif target_currency == "USD" and parsed_rate > 0:
-                        rate = 1.0 / parsed_rate
-                    elif parsed_rate > 0:
-                        rate = parsed_rate
-                except (TypeError, ValueError):
-                    rate = None
-
-            if rate is None and currency_code == "USD":
-                rate = 1.0
-
-            if rate is not None:
-                logger.info(
-                    "Using invoicing currency context: code=%s usd_rate=%.6f",
-                    currency_code,
-                    rate,
-                )
-                return currency_code, rate
-
-            logger.warning(
-                "Invoice currency %s has no usable exchange rate; "
-                "amounts will be displayed unconverted in USD.",
-                currency_code,
+            logger.info(
+                "Invoice %s (issued %s) %s: currency=%s exchange=%s->%s rate=%s",
+                invoice_id, issued, field,
+                amount_obj.get("CurrencyCode"), source_currency, target_currency, raw_rate,
             )
-            break
+            if source_currency != "USD" or raw_rate in (None, ""):
+                continue
+            try:
+                rate = float(raw_rate)
+            except (TypeError, ValueError):
+                continue
+            if rate <= 0:
+                continue
+            try:
+                total = float(amount_obj["TotalAmount"])
+            except (KeyError, TypeError, ValueError):
+                total = None
+            candidates.append({
+                "invoice_id": invoice_id,
+                "issued": issued,
+                "currency": target_currency or amount_obj.get("CurrencyCode") or "USD",
+                "rate": rate,
+                "raw_rate": str(raw_rate),
+                "total": total,
+            })
 
-    except Exception as err:
-        logger.warning("Could not resolve currency from Invoicing API: %s", err)
+    if not candidates:
+        # A payer billed in USD has nothing to convert; that is not an error.
+        if currency_codes <= {"USD", None}:
+            logger.info("Payer %s is invoiced in USD; no conversion applied.", payer_account_id)
+            return "USD", 1.0, "1", f"invoiced in USD ({year}-{month})"
+        raise RuntimeError(
+            f"Payer {payer_account_id} is invoiced in {sorted(c for c in currency_codes if c)} "
+            f"for {year}-{month} but no USD exchange rate was present on any invoice summary."
+        )
 
-    logger.warning(
-        "Falling back to unconverted USD display (code=%s usd_rate=%.6f); "
-        "no exchange rate was obtained from the Invoicing API.",
-        DISPLAY_CURRENCY_CODE,
-        USD_TO_DISPLAY_RATE,
+    # Narrow to the tax invoice that is actually paid; the other summaries for
+    # the same period carry a different rate.
+    preferred = [
+        c for c in candidates if c["invoice_id"].startswith(TAX_INVOICE_ID_PREFIX)
+    ]
+    if preferred:
+        ignored = sorted({
+            c["invoice_id"] for c in candidates
+            if not c["invoice_id"].startswith(TAX_INVOICE_ID_PREFIX)
+        })
+        if ignored:
+            logger.info(
+                "Preferring %s* tax invoice(s); ignoring rate(s) from %s",
+                TAX_INVOICE_ID_PREFIX, ", ".join(ignored),
+            )
+        candidates = preferred
+    else:
+        logger.warning(
+            "No %s* tax invoice for %s-%s; falling back to all summaries.",
+            TAX_INVOICE_ID_PREFIX, year, month,
+        )
+
+    # Compare numerically: the same rate comes back at differing precision
+    # across summaries ("1.4152019" vs "1.415201900").
+    distinct_rates = {round(c["rate"], 10) for c in candidates}
+    if len(distinct_rates) > 1:
+        detail = "; ".join(
+            f"{inv} (issued {iss}) {raw} {ccy}"
+            for inv, iss, raw, ccy in sorted({
+                (c["invoice_id"], c["issued"], c["raw_rate"], c["currency"])
+                for c in candidates
+            })
+        )
+        raise RuntimeError(
+            f"Conflicting USD exchange rates for payer {payer_account_id} for "
+            f"{year}-{month}: {detail}. Refusing to guess which invoice to use."
+        )
+
+    # Keep the most precise spelling of the agreed rate for display.
+    chosen = max(candidates, key=lambda c: len(c["raw_rate"]))
+    provenance = f"invoice {chosen['invoice_id']}, issued {chosen['issued']}"
+    logger.info(
+        "Using exchange rate 1 USD = %s %s from %s",
+        chosen["raw_rate"], chosen["currency"], provenance,
     )
-    return DISPLAY_CURRENCY_CODE, USD_TO_DISPLAY_RATE
+
+    # Invoiced totals in the display currency, for the rounding reconciliation.
+    # More than one invoice can come back for a period, so keep them all and let
+    # the caller match on the one whose total is within rounding distance.
+    totals = {
+        c["invoice_id"]: {
+            "invoice_id": c["invoice_id"],
+            "issued": c["issued"],
+            "total": c["total"],
+        }
+        for c in candidates
+        if c["total"] is not None and c["currency"] == chosen["currency"]
+    }
+    if totals:
+        logger.info(
+            "Invoiced total(s) available for reconciliation: %s",
+            "; ".join(f"{t['invoice_id']} {t['total']:,.2f} {chosen['currency']}"
+                      for t in totals.values()),
+        )
+    else:
+        logger.warning(
+            "No TotalAmount on any invoice summary; rounding reconciliation skipped."
+        )
+
+    return (
+        chosen["currency"],
+        chosen["rate"],
+        chosen["raw_rate"],
+        provenance,
+        list(totals.values()),
+    )
+
+
+def reconcile_to_invoice(breakdown, grand_total_usd, invoice_totals):
+    """
+    Absorb the sub-cent drift between Cost Explorer and the invoice.
+
+    Cost Explorer reports unrounded amounts, while the invoice rounds every
+    service line to the cent before summing them, so the two totals differ by a
+    few cents spread across hundreds of line items -- there is no single line to
+    attribute it to. Park the residual on RECONCILIATION_CBRID so the report
+    ties exactly to the invoice.
+
+    Returns a short description of the adjustment, or None if none was made.
+    """
+    if not invoice_totals or USD_TO_DISPLAY_RATE <= 0:
+        return None
+
+    computed = grand_total_usd * USD_TO_DISPLAY_RATE
+    match = min(invoice_totals, key=lambda i: abs(i["total"] - computed))
+    delta = match["total"] - computed
+
+    if abs(delta) > RECONCILIATION_TOLERANCE:
+        logger.warning(
+            "Computed total %.2f %s is %.2f away from the nearest invoice (%s, %.2f), "
+            "beyond the %.2f tolerance. Leaving the figures unreconciled -- a gap this "
+            "large is a reporting error, not rounding.",
+            computed, DISPLAY_CURRENCY_CODE, delta, match["invoice_id"],
+            match["total"], RECONCILIATION_TOLERANCE,
+        )
+        return None
+
+    delta_usd = round(delta / USD_TO_DISPLAY_RATE, 2)
+    if not delta_usd:
+        return None
+
+    target = next(
+        (e for e in breakdown if e["ssc_cbrid"] == RECONCILIATION_CBRID), None
+    )
+    if target is None:
+        logger.warning(
+            "No %s entry in the breakdown to absorb the %.2f %s rounding residual.",
+            RECONCILIATION_CBRID, delta, DISPLAY_CURRENCY_CODE,
+        )
+        return None
+
+    target["total"] = round(target["total"] + delta_usd, 2)
+    # Keep account + resource costs summing to the row total.
+    target["account_costs"] = round(target["account_costs"] + delta_usd, 2)
+
+    note = (
+        f"{delta:+,.2f} {DISPLAY_CURRENCY_CODE} rounding residual applied to "
+        f"{RECONCILIATION_CBRID} to match {match['invoice_id']}"
+    )
+    logger.info("Reconciled to invoice: %s", note)
+    return note
 
 
 def get_costs_by_account_and_tag(start, end):
@@ -287,23 +460,44 @@ def get_costs_by_account_and_tag(start, end):
     and ssc_cbrid resource tag. Empty tag_value means the resource is not
     tagged with ssc_cbrid (or the cost has no resource, e.g. taxes/support).
     """
-    result = ce.get_cost_and_usage(
-        Granularity="MONTHLY",
-        TimePeriod={"Start": start, "End": end},
-        Metrics=["UnblendedCost"],
-        GroupBy=[
-            {"Type": "TAG", "Key": TAG_KEY},
-            {"Type": "DIMENSION", "Key": "LINKED_ACCOUNT"},
-        ],
-    )
     costs = {}
-    for period in result["ResultsByTime"]:
-        for group in period["Groups"]:
-            raw_tag, account_id = group["Keys"]
-            tag_value = raw_tag.split("$", 1)[1] if "$" in raw_tag else raw_tag
-            amount = float(group["Metrics"]["UnblendedCost"]["Amount"])
-            key = (account_id, tag_value)
-            costs[key] = costs.get(key, 0.0) + amount
+    groups_seen = 0
+    pages = 0
+    next_page_token = None
+
+    while True:
+        kwargs = {
+            "Granularity": "MONTHLY",
+            "TimePeriod": {"Start": start, "End": end},
+            "Metrics": ["UnblendedCost"],
+            "GroupBy": [
+                {"Type": "TAG", "Key": TAG_KEY},
+                {"Type": "DIMENSION", "Key": "LINKED_ACCOUNT"},
+            ],
+        }
+        if next_page_token:
+            kwargs["NextPageToken"] = next_page_token
+
+        result = ce.get_cost_and_usage(**kwargs)
+        pages += 1
+
+        for period in result["ResultsByTime"]:
+            for group in period["Groups"]:
+                groups_seen += 1
+                raw_tag, account_id = group["Keys"]
+                tag_value = raw_tag.split("$", 1)[1] if "$" in raw_tag else raw_tag
+                amount = float(group["Metrics"]["UnblendedCost"]["Amount"])
+                key = (account_id, tag_value)
+                costs[key] = costs.get(key, 0.0) + amount
+
+        next_page_token = result.get("NextPageToken")
+        if not next_page_token:
+            break
+
+    logger.info(
+        "Cost Explorer returned %d group(s) over %d page(s); %d account/tag combination(s)",
+        groups_seen, pages, len(costs),
+    )
     return costs
 
 
@@ -480,7 +674,7 @@ th {{ background: #fafbfc; font-size: 0.85em; color: #666; }}
   <span>Grand Total</span>
   <span>{format_currency_with_cad(report["grand_total"])}</span>
 </div>
-<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE} &nbsp;&middot;&nbsp; Pre-tax excludes {TAX_RATE*100:.0f}% HST &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
+<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {DISPLAY_RATE_TEXT} {DISPLAY_CURRENCY_CODE} ({RATE_SOURCE}) &nbsp;&middot;&nbsp; Pre-tax excludes {TAX_RATE*100:.0f}% HST{reconciliation_note(report)} &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
 </body>
 </html>
 """
@@ -529,7 +723,7 @@ def send_email_with_doc(report, doc_bytes, label):
         f"GRAND TOTAL (incl. tax): ${grand_cad:,.2f} {DISPLAY_CURRENCY_CODE} / {format_currency(report['grand_total'])}\n"
         f"{'='*50}\n"
         f"\n"
-        f"Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE}\n"
+        f"Exchange rate: 1 USD = {DISPLAY_RATE_TEXT} {DISPLAY_CURRENCY_CODE} ({RATE_SOURCE})\n"
         f"Amounts include {TAX_RATE*100:.0f}% HST; pre-tax amounts shown separately.\n"
         f"\n"
         f"The full report is attached as a Word document."
@@ -610,7 +804,7 @@ def send_email_with_doc(report, doc_bytes, label):
               The full report with account-level details is attached as a Word document.
             </p>
             <p style="margin:8px 0 0;font-size:0.78em;color:#aaa;">
-                            Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE} &nbsp;&middot;&nbsp; Incl.-tax amounts contain {TAX_RATE*100:.0f}% HST
+                            Exchange rate: 1 USD = {DISPLAY_RATE_TEXT} {DISPLAY_CURRENCY_CODE} ({RATE_SOURCE}) &nbsp;&middot;&nbsp; Incl.-tax amounts contain {TAX_RATE*100:.0f}% HST
             </p>
           </td>
         </tr>
@@ -727,7 +921,7 @@ def build_html(report):
   <span>Grand Total</span>
   <span>{format_currency_with_cad(report["grand_total"])}</span>
 </div>
-<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {USD_TO_DISPLAY_RATE:.4f} {DISPLAY_CURRENCY_CODE} &nbsp;&middot;&nbsp; Pre-tax excludes {TAX_RATE*100:.0f}% HST &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
+<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {DISPLAY_RATE_TEXT} {DISPLAY_CURRENCY_CODE} ({RATE_SOURCE}) &nbsp;&middot;&nbsp; Pre-tax excludes {TAX_RATE*100:.0f}% HST{reconciliation_note(report)} &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
 </body>
 </html>
 """
@@ -811,6 +1005,12 @@ def build_html_section(entry, include_resources=True):
   {resource_section}
 </section>
 """
+
+
+def reconciliation_note(report):
+    """Footer fragment naming the rounding residual, when one was applied."""
+    note = report.get("reconciliation")
+    return f" &nbsp;&middot;&nbsp; {escape(note)}" if note else ""
 
 
 def short_resource_type(resource_type):
