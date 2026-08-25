@@ -55,9 +55,7 @@ TAX_INVOICE_ID_PREFIX = os.getenv("TAX_INVOICE_ID_PREFIX", "CAIN")
 
 # Cost Explorer returns unrounded amounts; the invoice rounds every service
 # line to the cent before summing, so the two totals drift by a few cents that
-# cannot be traced to any single line item. Park that residual on one CBR ID so
-# the report ties exactly to the invoice, and refuse to do so if the gap is
-# larger than rounding can explain (which would mean a real reporting error).
+# cannot be traced to any single line item.
 RECONCILIATION_CBRID = os.getenv("RECONCILIATION_CBRID", "22DH")
 RECONCILIATION_TOLERANCE = float(os.getenv("RECONCILIATION_TOLERANCE", "5.00"))
 
