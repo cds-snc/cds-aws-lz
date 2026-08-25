@@ -6,6 +6,7 @@ Generates a monthly AWS cost report broken down by the `ssc_cbrid` cost allocati
 
 1. **EventBridge** triggers the Lambda on a monthly schedule (`cron(0 12 3 * ? *)` — 3rd of the month at 12:00 UTC).
 2. **Lambda** (`cost_report`) queries:
+   - **AWS Invoicing** — reads the exchange rate and total from the invoice for the reporting month (see [Currency and rates](#currency-and-rates))
    - **AWS Organizations** — lists all accounts and their `ssc_cbrid` tags
    - **AWS Cost Explorer** — gets unblended costs grouped by `ssc_cbrid` tag and linked account
    - **AWS Config aggregator** (`cds-cbr-tags-aggregator`) in the audit account, via cross-account role assumption, to list resources tagged with each CBR ID
@@ -17,6 +18,7 @@ Generates a monthly AWS cost report broken down by the `ssc_cbrid` cost allocati
 ```
 EventBridge (monthly)
     └── Lambda (org account, 659087519042)
+            ├── AWS Invoicing      (exchange rate + invoiced total)
             ├── AWS Organizations  (list accounts + tags)
             ├── AWS Cost Explorer  (cost data)
             ├── sts:AssumeRole ──► cost-report-config-reader (audit account, 886481071419)
