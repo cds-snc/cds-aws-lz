@@ -112,3 +112,23 @@ resource "aws_identitystore_group" "canada_login_data_production_read_only_billi
   description       = "Grants members read-only Billing and Cost Explorer access to the CanadaLogin-Data Production account."
   identity_store_id = local.sso_identity_store_id
 }
+
+
+#
+# CanadaLogin-Release-Pipeline-Integration-Tests Account 
+#
+resource "aws_identitystore_group" "canada_login_integration_tests_production_admin" {
+  display_name      = "CanadaLoginReleasePipelineIntegrationTests-Production-Admin"
+  description       = "Grants members administrator access to the CanadaLogin Release Pipeline Integration Tests Production account."
+  identity_store_id = local.sso_identity_store_id
+}
+resource "aws_identitystore_group" "canada_login_integration_tests_production_read_only" {
+  display_name      = "CanadaLoginReleasePipelineIntegrationTests-Production-ReadOnly"
+  description       = "Grants members read-only access to the CanadaLogin Release Pipeline Integration Tests Production account."
+  identity_store_id = local.sso_identity_store_id
+}
+resource "aws_identitystore_group" "canada_login_integration_tests_production_read_only_billing" {
+  display_name      = "CanadaLoginReleaseIntegrationTests-Production-Billing-ReadOnly"
+  description       = "Grants members read-only Billing and Cost Explorer access to the CanadaLogin Release Pipeline Integration Tests Production account."
+  identity_store_id = local.sso_identity_store_id
+}
