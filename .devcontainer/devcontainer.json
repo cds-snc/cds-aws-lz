@@ -3,7 +3,7 @@
 {
 	"name": "Debian",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/base:bullseye@sha256:c28379864b888ff21bbe8f715a059567db8de8bb65755ab265e03525839a9ed5",
+	"image": "mcr.microsoft.com/devcontainers/base:bullseye@sha256:6c9ed5e39f498694fcd2eb2ac4a28eeea16ab0e5f6c44393d692e6cbb2eef08b",
 	"features": {
 		"ghcr.io/devcontainers/features/aws-cli:1": {
 			"version": "latest"
