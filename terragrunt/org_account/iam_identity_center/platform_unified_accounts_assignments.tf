@@ -9,6 +9,10 @@ locals {
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
     },
     {
+      group          = aws_identitystore_group.platform_unified_accounts_production_athena_query_access,
+      permission_set = aws_ssoadmin_permission_set.platform_unified_accounts_athena_query_access,
+    },
+    {
       group          = aws_identitystore_group.platform_unified_accounts_production_read_only_billing,
       permission_set = aws_ssoadmin_permission_set.read_only_billing,
     },
@@ -22,6 +26,10 @@ locals {
     {
       group          = aws_identitystore_group.platform_unified_accounts_staging_admin,
       permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
+    },
+    {
+      group          = aws_identitystore_group.platform_unified_accounts_staging_athena_query_access,
+      permission_set = aws_ssoadmin_permission_set.platform_unified_accounts_athena_query_access,
     },
     {
       group          = aws_identitystore_group.platform_unified_accounts_staging_read_only_billing,
