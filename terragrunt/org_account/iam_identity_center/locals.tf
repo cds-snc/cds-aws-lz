@@ -44,6 +44,8 @@ locals {
   strategic_data_reporting_production_account_id = "154541629452"
 
   unified_accounts_staging_account_id = "915144821201"
+  platform_unified_accounts_production_account_id = "778127141858"
+  platform_unified_accounts_staging_account_id = "915144821201"
 
   sso_identity_store_id = "d-9d67173bdd"
   sso_instance_id       = "ssoins-8824c710b5ddb452"
