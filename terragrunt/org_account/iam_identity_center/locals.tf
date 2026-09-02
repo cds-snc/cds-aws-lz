@@ -43,7 +43,6 @@ locals {
 
   strategic_data_reporting_production_account_id = "154541629452"
 
-  unified_accounts_staging_account_id             = "915144821201"
   platform_unified_accounts_production_account_id = "778127141858"
   platform_unified_accounts_staging_account_id    = "915144821201"
 
