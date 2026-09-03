@@ -1,4 +1,5 @@
 .terraform
+.terragrunt-cache
 
 # Prevent the auto generated files from being synced except for the ones we want.
 backend.tf
