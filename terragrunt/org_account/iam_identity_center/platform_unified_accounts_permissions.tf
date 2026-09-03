@@ -2,8 +2,8 @@
 # Athena query access
 #
 resource "aws_ssoadmin_permission_set" "platform_unified_accounts_athena_query_access" {
-  name         = "PlatformUnifiedAccounts-Athena" # There is a 32 character limit on permission set names, so this is shortened and it will bother me every time I look at it
-  description  = "Grants access to the Athena query editor."
+  name         = "Athena-Query-Access-PUA"
+  description  = "Grants access to the Athena query editor in Platform Unified Accounts."
   instance_arn = local.sso_instance_arn
 }
 
