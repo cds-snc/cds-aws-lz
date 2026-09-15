@@ -10,19 +10,6 @@ locals {
   # Common resource naming
   name_prefix = "guardrails-cac"
 
-  # Account and region information
-  account_id = data.aws_caller_identity.current.account_id
-  region     = data.aws_region.current.name
-
-  # Common tags applied to all resources
-  common_tags = {
-    Project     = "aws-guardrails-cac-solution"
-    Environment = var.environment
-    ManagedBy   = "terraform"
-    Owner       = "sre-team"
-    CostCenter  = var.billing_code
-  }
-
   # Lambda function configuration
   lambda_config = {
     name        = "${local.name_prefix}-s3-csv-to-slack"
