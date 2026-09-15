@@ -13,7 +13,6 @@ locals {
   # Common tags applied to all resources
   common_tags = {
     Project     = "aws-guardrails-cac-solution"
-    Environment = var.environment
     ManagedBy   = "terraform"
     Owner       = "sre-team"
     CostCenter  = var.billing_code
