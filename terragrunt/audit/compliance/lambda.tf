@@ -5,7 +5,7 @@
 # Archive the Lambda function code
 data "archive_file" "s3_csv_to_slack_zip" {
   type        = "zip"
-  source_dir  = "${path.module}/lambdas/aws_s3_csv_to_slack"
+  source_dir  = "${path.module}/lambda"
   output_path = "${path.module}/s3_csv_to_slack.zip"
   excludes    = ["README.md", "iam-policy.json"]
 }
