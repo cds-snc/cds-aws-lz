@@ -11,6 +11,7 @@ variable "aws_region" {
 variable "s3_bucket_name" {
   description = "Name of the S3 bucket containing the CSV files"
   type        = string
+  default     = "gc-fedclient-886481071419-ca-central-1"
 }
 
 variable "s3_kms_key_arn" {
