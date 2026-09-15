@@ -7,12 +7,6 @@ variable "aws_region" {
   default     = "ca-central-1"
 }
 
-variable "aws_account_id" {
-  description = "AWS Account ID for security validation"
-  type        = string
-  default     = "886481071419"
-}
-
 # S3 and Lambda Configuration
 variable "s3_bucket_name" {
   description = "Name of the S3 bucket containing the CSV files"
@@ -35,18 +29,6 @@ variable "slack_webhook_url" {
   description = "Slack webhook URL for sending notifications"
   type        = string
   sensitive   = true
-}
-
-variable "environment" {
-  description = "Environment name (e.g., dev, staging, prod)"
-  type        = string
-  default     = "prod"
-}
-
-variable "billing_code" {
-  description = "Billing code for cost tracking and resource tagging"
-  type        = string
-  default     = "guardrails"
 }
 
 # Monitoring Configuration
