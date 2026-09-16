@@ -177,6 +177,7 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
       "arn:aws:route53:::hostedzone/Z33C47YI9EN8XL",
       "arn:aws:route53:::hostedzone/Z1XG153PQF3VV5",
       "arn:aws:route53:::hostedzone/Z35N8HLYUZDWBH",
+      "arn:aws:route53:::hostedzone/Z0089505EYRWTLOO204V",
     ]
   }
 }
