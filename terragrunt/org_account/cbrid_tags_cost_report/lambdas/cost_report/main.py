@@ -42,7 +42,7 @@ TAG_KEY = "ssc_cbrid"
 UNTAGGED_LABEL = "Not tagged"
 # Accounts whose names start with any of these prefixes are excluded from the report.
 EXCLUDED_ACCOUNT_PREFIXES = ("GCSignin", "DigitalCredentials", "CanadaLogin")
-SAVINGS_PLAN_RATE = 0.1095  # Enterprise savings plan discount
+SAVINGS_PLAN_RATE = 0.11  # Enterprise savings plan discount
 TAX_RATE = 0.13  # HST included in the invoiced amounts
 COST_REPORT_PO_NUMBERS = json.loads(os.getenv("COST_REPORT_PO_NUMBERS", "{}"))
 
@@ -235,6 +235,30 @@ def get_accounts_with_tags():
     return results
 
 
+def invoice_pretax_total(amount_obj):
+    """
+    Pre-tax invoice total (charges net of discounts, before HST), matching the
+    UnblendedCost basis the report sums. Prefer TotalAmountBeforeTax; fall back
+    to TotalAmount minus the tax breakdown. Return None when neither is
+    resolvable, so reconciliation is skipped rather than run against a
+    tax-inclusive figure.
+    """
+    pretax = amount_obj.get("TotalAmountBeforeTax")
+    if pretax not in (None, ""):
+        try:
+            return float(pretax)
+        except (TypeError, ValueError):
+            pass
+    gross = amount_obj.get("TotalAmount")
+    taxes = ((amount_obj.get("AmountBreakdown") or {}).get("Taxes") or {}).get("TotalAmount")
+    if gross not in (None, "") and taxes not in (None, ""):
+        try:
+            return float(gross) - float(taxes)
+        except (TypeError, ValueError):
+            pass
+    return None
+
+
 def get_invoice_currency_context(reference_date):
     """
     Resolve the payer's invoice currency and USD conversion rate for the
@@ -296,10 +320,9 @@ def get_invoice_currency_context(reference_date):
                 continue
             if rate <= 0:
                 continue
-            try:
-                total = float(amount_obj["TotalAmount"])
-            except (KeyError, TypeError, ValueError):
-                total = None
+            # Reconcile against the pre-tax total; the report sums UnblendedCost,
+            # which excludes the HST carried by TotalAmount.
+            total = invoice_pretax_total(amount_obj)
             candidates.append({
                 "invoice_id": invoice_id,
                 "issued": issued,
@@ -365,9 +388,9 @@ def get_invoice_currency_context(reference_date):
         chosen["raw_rate"], chosen["currency"], provenance,
     )
 
-    # Invoiced totals in the display currency, for the rounding reconciliation.
-    # More than one invoice can come back for a period, so keep them all and let
-    # the caller match on the one whose total is within rounding distance.
+    # Pre-tax invoiced totals in the display currency, for the rounding
+    # reconciliation. More than one invoice can come back for a period, so keep
+    # them all and let the caller match on the one within rounding distance.
     totals = {
         c["invoice_id"]: {
             "invoice_id": c["invoice_id"],
@@ -385,7 +408,7 @@ def get_invoice_currency_context(reference_date):
         )
     else:
         logger.warning(
-            "No TotalAmount on any invoice summary; rounding reconciliation skipped."
+            "No pre-tax invoice total on any summary; rounding reconciliation skipped."
         )
 
     return (
@@ -412,6 +435,8 @@ def reconcile_to_invoice(breakdown, grand_total_usd, invoice_totals):
     if not invoice_totals or USD_TO_DISPLAY_RATE <= 0:
         return None
 
+    # Both sides are pre-tax: grand_total_usd is the UnblendedCost sum, and
+    # invoice_totals carry the invoice's pre-tax total.
     computed = grand_total_usd * USD_TO_DISPLAY_RATE
     match = min(invoice_totals, key=lambda i: abs(i["total"] - computed))
     delta = match["total"] - computed
