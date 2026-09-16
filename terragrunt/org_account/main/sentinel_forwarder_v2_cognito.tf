@@ -32,27 +32,20 @@ resource "aws_cognito_identity_pool" "sentinel_forwarder_v2" {
   }
 }
 
-# Granted as its own role policy rather than folded into the module's. The
-# module attaches its base policy with aws_iam_role_policy_attachment and sets
-# no managed_policy_arns, so this cannot strip that and that cannot strip this
-# — the failure mode cds-aws-lz#449 had to fix on the KMS-decrypt policy.
+# The GetOpenIdTokenForDeveloperIdentity grant now comes from the module, which
+# builds the same policy on the same role under the same name once
+# cognito_identity_pool_id is set (terraform-modules v12.0.0). Keeping this copy
+# would put two Terraform resources on one AWS role policy name and let them
+# overwrite each other every apply.
 #
-# Only the Security Hub forwarder is granted. The GuardDuty forwarder in
-# sentinel_forwarders.tf has no trigger at all and #449 records that it is dead
-# code awaiting removal, so giving it a credential would be new reach for
-# nothing.
-resource "aws_iam_role_policy" "securityhub_forwarder_cognito" {
-  provider = aws.log_archive
-
-  name   = "SentinelForwarderCognito-${module.securityhub_forwarder.lambda_name}"
-  role   = "SentinelForwarderLambda-${module.securityhub_forwarder.lambda_name}"
-  policy = data.aws_iam_policy_document.sentinel_forwarder_v2_cognito.json
-}
-
-data "aws_iam_policy_document" "sentinel_forwarder_v2_cognito" {
-  statement {
-    effect    = "Allow"
-    actions   = ["cognito-identity:GetOpenIdTokenForDeveloperIdentity"]
-    resources = [aws_cognito_identity_pool.sentinel_forwarder_v2.arn]
-  }
+# Moved rather than removed: the names collide, so a plain destroy-and-create has
+# no ordering that guarantees the grant survives — Terraform is free to create
+# the module's copy first and then delete this one, which is the same PutRolePolicy
+# followed by DeleteRolePolicy. The move is a state edit and touches nothing in AWS.
+#
+# The GuardDuty forwarder is still not granted: it stays on the Data Collector
+# API and sets no cognito_identity_pool_id, so its count is 0.
+moved {
+  from = aws_iam_role_policy.securityhub_forwarder_cognito
+  to   = module.securityhub_forwarder.aws_iam_role_policy.sentinel_forwarder_cognito[0]
 }
