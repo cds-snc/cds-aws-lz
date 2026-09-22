@@ -59,7 +59,13 @@ module "securityhub_forwarder" {
   function_name     = "sentinel-securityhub-forwarder"
   billing_tag_value = var.billing_code
 
-  layer_arn = "arn:aws:lambda:ca-central-1:283582579564:layer:aws-sentinel-connector-layer:266"
+  # 270, not 266: every version up to 269 was built for CPython 3.12 while this
+  # module runs the Lambda on python3.13, so the v2 Azure import raised
+  # `No module named '_cffi_backend'` on every invocation. The wrapper catches
+  # it and returns normally, so the Errors metric stayed at 0 while ~49,000
+  # findings were dropped between 2026-09-17 and 2026-09-22.
+  # Fixed in aws-sentinel-connector-layer#302.
+  layer_arn = "arn:aws:lambda:ca-central-1:283582579564:layer:aws-sentinel-connector-layer:270"
 
   # Kept deliberately. The layer picks v2 whenever DCE_ENDPOINT and DCR_CONFIG
   # are both set and never reads these in that case, so leaving them in place
