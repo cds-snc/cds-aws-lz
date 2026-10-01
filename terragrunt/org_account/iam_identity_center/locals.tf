@@ -22,6 +22,7 @@ locals {
   gc_signin_dev2_account_id       = "780097021060"
 
   canada_login_data_production_account_id                   = "029422952198"
+  canada_login_devops_agent_account_id                      = "392852904014"
   canadalogin_release_pipeline_integration_tests_account_id = "429694360874"
 
   digital_transformation_office_production_account_id = "730335533085"
