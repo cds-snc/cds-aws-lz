@@ -91,6 +91,21 @@ locals {
       permission_set = data.aws_ssoadmin_permission_set.aws_read_only_access,
     }
   ]
+  # CanadaLogin-DevOpsAgent
+  canada_login_devops_agent_permission_sets = [
+    {
+      group          = aws_identitystore_group.canada_login_devops_agent_admin,
+      permission_set = data.aws_ssoadmin_permission_set.aws_administrator_access,
+    },
+    {
+      group          = aws_identitystore_group.canada_login_devops_agent_read_only_billing,
+      permission_set = aws_ssoadmin_permission_set.read_only_billing,
+    },
+    {
+      group          = aws_identitystore_group.canada_login_devops_agent_read_only,
+      permission_set = data.aws_ssoadmin_permission_set.aws_read_only_access,
+    }
+  ]
   # CanadaLogin Release Pipeline Integration Tests Production
   canadalogin_release_pipeline_integration_tests_permission_sets = [
     {
@@ -183,6 +198,19 @@ resource "aws_ssoadmin_account_assignment" "canada_login_data_production" {
   principal_type = "GROUP"
 
   target_id   = local.canada_login_data_production_account_id
+  target_type = "AWS_ACCOUNT"
+}
+
+resource "aws_ssoadmin_account_assignment" "canada_login_devops_agent" {
+  for_each = { for perm in local.canada_login_devops_agent_permission_sets : "${perm.group.display_name}-${perm.permission_set.name}" => perm }
+
+  instance_arn       = local.sso_instance_arn
+  permission_set_arn = each.value.permission_set.arn
+
+  principal_id   = each.value.group.group_id
+  principal_type = "GROUP"
+
+  target_id   = local.canada_login_devops_agent_account_id
   target_type = "AWS_ACCOUNT"
 }
 

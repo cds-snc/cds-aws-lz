@@ -115,6 +115,26 @@ resource "aws_identitystore_group" "canada_login_data_production_read_only_billi
 
 
 #
+# CanadaLogin-DevOpsAgent Account 
+#
+resource "aws_identitystore_group" "canada_login_devops_agent_admin" {
+  display_name      = "CanadaLogin-DevOpsAgent-Admin"
+  description       = "Grants members administrator access to the CanadaLogin-DevOpsAgent account."
+  identity_store_id = local.sso_identity_store_id
+}
+resource "aws_identitystore_group" "canada_login_devops_agent_read_only" {
+  display_name      = "CanadaLogin-DevOpsAgent-ReadOnly"
+  description       = "Grants members read-only access to the CanadaLogin-DevOpsAgent account."
+  identity_store_id = local.sso_identity_store_id
+}
+resource "aws_identitystore_group" "canada_login_devops_agent_read_only_billing" {
+  display_name      = "CanadaLogin-DevOpsAgent-Billing-ReadOnly"
+  description       = "Grants members read-only Billing and Cost Explorer access to the CanadaLogin-DevOpsAgent account."
+  identity_store_id = local.sso_identity_store_id
+}
+
+
+#
 # CanadaLogin-Release-Pipeline-Integration-Tests Account 
 #
 resource "aws_identitystore_group" "canada_login_integration_tests_production_admin" {
