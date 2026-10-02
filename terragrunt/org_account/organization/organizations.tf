@@ -11,7 +11,8 @@ resource "aws_organizations_organization" "org_config" {
     "account.amazonaws.com",                             # https://docs.aws.amazon.com/accounts/latest/reference/using-orgs-trusted-access.html
     "member.org.stacksets.cloudformation.amazonaws.com", # Enabling to allow CT to re-register OUs
     "auditmanager.amazonaws.com",                        # Required for Audit Manager to work with Organizations and for SSC's CaC soltuion 
-    "config-multiaccountsetup.amazonaws.com"             # Required for Config Multi Account Setup to work with Organizations and for SSC's CaC solution
+    "config-multiaccountsetup.amazonaws.com",            # Required for Config Multi Account Setup to work with Organizations and for SSC's CaC solution
+    "private-marketplace.marketplace.amazonaws.com"
   ]
 
   enabled_policy_types = [
