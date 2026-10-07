@@ -3,7 +3,7 @@
 #
 
 resource "aws_ssoadmin_application_assignment" "sre_devops_agent" {
-  application_arn = var.application_arn # TBD The Agent Space's idc_application_arn
+  application_arn = "arn:aws:sso::659087519042:application/ssoins-8824c710b5ddb452/apl-88240246b5deb44b" #The Agent Space's idc_application_arn
   principal_id    = aws_identitystore_group.sre_devops_agent.group_id
   principal_type  = "GROUP"
 }
