@@ -2,8 +2,14 @@
 
 data "aws_iam_policy_document" "ct_list_controls" {
   statement {
-    effect    = "Allow"
-    actions   = ["controltower:ListEnabledControls"]
+    effect = "Allow"
+    # AWS provider 6 reads aws_controltower_control with GetEnabledControl; the
+    # 4.67 provider that org_account/organization is locked to today only needs
+    # ListEnabledControls. Keep both while the provider upgrade is in progress.
+    actions = [
+      "controltower:GetEnabledControl",
+      "controltower:ListEnabledControls",
+    ]
     resources = ["*"]
   }
 }
