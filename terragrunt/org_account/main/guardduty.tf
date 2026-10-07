@@ -53,9 +53,9 @@ module "gd_aft_management_detector" {
 # Organization GuardDuty configuration in the Delegated admin account
 resource "aws_guardduty_organization_configuration" "config" {
 
-  provider    = aws.log_archive
-  auto_enable = true
-  detector_id = module.gd_log_archive_detector.ca_central_1_detector_id
+  provider                         = aws.log_archive
+  auto_enable_organization_members = "NEW"
+  detector_id                      = module.gd_log_archive_detector.ca_central_1_detector_id
 
   # Additional setting to turn on S3 Protection
   datasources {
@@ -70,8 +70,8 @@ resource "aws_guardduty_organization_configuration" "config_us_east_1" {
 
   provider = aws.log_archive_us_east_1
 
-  auto_enable = true
-  detector_id = module.gd_log_archive_detector.us_east_1_detector_id
+  auto_enable_organization_members = "NEW"
+  detector_id                      = module.gd_log_archive_detector.us_east_1_detector_id
 
   # Additional setting to turn on S3 Protection
   datasources {
@@ -86,8 +86,8 @@ resource "aws_guardduty_organization_configuration" "config_us_west_2" {
 
   provider = aws.log_archive_us_west_2
 
-  auto_enable = true
-  detector_id = module.gd_log_archive_detector.us_west_2_detector_id
+  auto_enable_organization_members = "NEW"
+  detector_id                      = module.gd_log_archive_detector.us_west_2_detector_id
 
   # Additional setting to turn on S3 Protection
   datasources {
