@@ -1,9 +1,9 @@
 locals {
   # Phase 2 — the Logs Ingestion API (DCE/DCR) half of the forwarder config.
   #
-  # These are bootstrap constants, the same kind as the Cognito IdentityId: they
-  # name Azure resources built in cds-snc/sentinel and cds-snc/cds-azure-resources,
-  # which this account cannot read. Source of truth for the first three is the
+  # These are bootstrap constants: they name Azure resources built in
+  # cds-snc/sentinel and cds-snc/cds-azure-resources, which this account cannot
+  # read. Source of truth for the first three is the
   # `forwarder_v2_dce_endpoint` / `forwarder_v2_aws_dcr_config` outputs on
   # terraform-cds-snc-la.
   sentinel_v2_dce_endpoint = "https://dce-sentinel-forwarder-v2-153n.canadacentral-1.ingest.monitor.azure.com"
@@ -19,9 +19,11 @@ locals {
     }
   }
 
-  # The user-assigned managed identity sentinel-forwarder-v2-aws-cognito, in the
-  # CDS tenant. Not an app registration — see cds-azure-resources#98.
-  sentinel_v2_azure_client_id = "9fd2a8dc-1698-4291-a71f-19ddc3cef71f"
+  # The user-assigned managed identity sentinel-forwarder-v2-aws-hub, in the CDS
+  # tenant, which trusts tokens minted by the hub role in
+  # sentinel_forwarder_hub.tf. Not an app registration — see
+  # cds-azure-resources#102.
+  sentinel_v2_azure_client_id = "97057b1c-9b09-4dd3-a4f9-d9df6d181949"
   sentinel_v2_azure_tenant_id = "221ca1d3-b3f2-4346-8abc-88f802495c7d"
 }
 
@@ -55,7 +57,7 @@ module "securityhub_forwarder" {
     aws = aws.log_archive
   }
 
-  source            = "github.com/cds-snc/terraform-modules//sentinel_forwarder?ref=v12.0.0"
+  source            = "github.com/cds-snc/terraform-modules//sentinel_forwarder?ref=v13.1.0"
   function_name     = "sentinel-securityhub-forwarder"
   billing_tag_value = var.billing_code
 
@@ -64,8 +66,9 @@ module "securityhub_forwarder" {
   # `No module named '_cffi_backend'` on every invocation. The wrapper catches
   # it and returns normally, so the Errors metric stayed at 0 while ~49,000
   # findings were dropped between 2026-09-17 and 2026-09-22.
-  # Fixed in aws-sentinel-connector-layer#302.
-  layer_arn = "arn:aws:lambda:ca-central-1:283582579564:layer:aws-sentinel-connector-layer:270"
+  # Fixed in aws-sentinel-connector-layer#302. 273 is the first version that
+  # reads SENTINEL_HUB_ROLE_ARN (aws-sentinel-connector-layer#306).
+  layer_arn = "arn:aws:lambda:ca-central-1:283582579564:layer:aws-sentinel-connector-layer:273"
 
   # Kept deliberately. The layer picks v2 whenever DCE_ENDPOINT and DCR_CONFIG
   # are both set and never reads these in that case, so leaving them in place
@@ -74,15 +77,16 @@ module "securityhub_forwarder" {
   customer_id = var.lw_customer_id
   shared_key  = var.lw_shared_key
 
-  # v2: no secret is stored at any point. The Lambda's IAM role mints a Cognito
-  # OIDC token, which is presented to Entra as a client assertion for the managed
-  # identity above, which holds Monitoring Metrics Publisher on the DCRs.
-  dce_endpoint                    = local.sentinel_v2_dce_endpoint
-  dcr_config                      = local.sentinel_v2_dcr_config
-  azure_client_id                 = local.sentinel_v2_azure_client_id
-  azure_tenant_id                 = local.sentinel_v2_azure_tenant_id
-  cognito_identity_pool_id        = aws_cognito_identity_pool.sentinel_forwarder_v2.id
-  cognito_developer_provider_name = local.sentinel_forwarder_cognito_developer_provider_name
+  # v2: no secret is stored at any point. The Lambda's IAM role assumes the
+  # Sentinel forwarder hub role (sentinel_forwarder_hub.tf, same account), which
+  # mints a token with IAM outbound identity federation. Entra accepts it as a
+  # client assertion for the managed identity above, which holds Monitoring
+  # Metrics Publisher on the DCRs.
+  dce_endpoint    = local.sentinel_v2_dce_endpoint
+  dcr_config      = local.sentinel_v2_dcr_config
+  azure_client_id = local.sentinel_v2_azure_client_id
+  azure_tenant_id = local.sentinel_v2_azure_tenant_id
+  hub_role_arn    = aws_iam_role.sentinel_forwarder_hub.arn
 
   event_rule_names = [aws_cloudwatch_event_rule.cds_sentinel_securityhub_rule.name]
 
