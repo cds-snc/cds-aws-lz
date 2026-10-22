@@ -27,29 +27,6 @@ locals {
   sentinel_v2_azure_tenant_id = "221ca1d3-b3f2-4346-8abc-88f802495c7d"
 }
 
-# Guardduty
-#
-# Stays on the Data Collector API. It has no trigger — cds-aws-lz#449 records it
-# as dead code awaiting removal — so giving it a v2 credential would be new reach
-# for nothing. It takes v12.0.0 anyway, as the v1 control: v11.4.7 and v12.0.0
-# are byte-identical outside #923, so anything this one plans is C and only C.
-module "guardduty_forwarder" {
-  providers = {
-    aws = aws.log_archive
-  }
-
-  source            = "github.com/cds-snc/terraform-modules//sentinel_forwarder?ref=v12.0.0"
-  function_name     = "sentinel-guard-duty-forwarder"
-  billing_tag_value = var.billing_code
-
-  layer_arn = "arn:aws:lambda:ca-central-1:283582579564:layer:aws-sentinel-connector-layer:266"
-
-  customer_id = var.lw_customer_id
-  shared_key  = var.lw_shared_key
-}
-
-
-
 # Security Hub
 
 module "securityhub_forwarder" {
