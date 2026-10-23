@@ -32,7 +32,8 @@ data "aws_iam_policy_document" "cds_snc_universal_guardrails" {
         "412578375350", # Sylvia McLaughlin scratch 
         "986843603702", # SRE AI Staging
         "639515743091", # Jumana B Scratch Account - Coding Agent Research
-        "014097726303"  # Nathanial Woodthorpe Scratch Account - Coding Agent Research
+        "014097726303", # Nathanial Woodthorpe Scratch Account - Coding Agent Research
+        "000789386679"  # SRE Agentic Dev Environment - Coding Agent Proof of concept
       ]
     }
     condition {
