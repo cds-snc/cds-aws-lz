@@ -124,7 +124,7 @@ done
 account:
 
 ```json
-{ "include": [ { "type": "accounts", "target_value": ["493890668711"] } ] }
+{ "include": [ { "type": "accounts", "target_value": ["<scratch account id>"] } ] }
 ```
 
 Then check that `<account id>-customizations-pipeline` succeeds, including
