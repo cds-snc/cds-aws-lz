@@ -29,6 +29,9 @@ These were checked against every step, in the four repos AFT runs:
 - **Provider versions in our repos.** None of the four repos has a lock file, and
   their AWS provider constraints are open (`>= 3.15` or none), so their pipeline
   runs already use the newest AWS provider, whatever AFT version is deployed.
+  The global and account customization builds on 2026-10-19 and the
+  account-request build on 2026-10-21 all installed `hashicorp/aws v6.69.1`
+  with Terraform 1.7.2.
 - **Customization pipelines do not start on their own.** In each account's
   `<account id>-customizations-pipeline`, both sources have
   `DetectChanges = false`. Merging to `aft-global-customizations` or
