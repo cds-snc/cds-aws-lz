@@ -119,7 +119,7 @@ for g in $(aws logs describe-log-groups --log-group-name-prefix /aws/lambda/aft-
 done
 ```
 
-**E. A customizations run for one account** (steps 3 and 5). Start the
+**E. A customizations run for one account** (steps 1, 3 and 5). Start the
 `aft-invoke-customizations` state machine with this input, using a scratch
 account:
 
@@ -132,19 +132,32 @@ the global and account customization stages.
 
 ## Step 1: 1.17.1 to 1.18.1 (#493)
 
-**Changes:** the AWS provider moves from 5.100.0 to 6.67.0. 1.18.x makes few
-other changes (Azure DevOps support, which we don't use, and dependency
-updates). The lock file drops `hashicorp/tls`, which 1.18.1 does not use.
+**Changes:**
 
-**In the plan, expect:** the Lambda layer replaced (`aft-common-1-17-1` to
-`aft-common-1-18-1`) and Lambdas updated to use it. Check that nothing is
-replaced or destroyed apart from the layer, since provider 6 changed some
-resource schemas.
+- The AWS provider moves from 5.100.0 to 6.67.0.
+- The customization build scripts stop the build when a pre or post API
+  helper script fails (`|| exit 1`). Before, a failing helper script was
+  ignored. Ours only print a line. Most are not executable in git, but AFT
+  runs `chmod +x` on them first.
+- Azure DevOps support, which we don't use, and dependency updates.
+- The lock file drops `hashicorp/tls`, which 1.18.1 does not use.
 
-**Test:** checks A, B, C and D. Check D also runs `aft-create-pipeline` for
-the scratch account under provider 6. Confirm the
-`aft-account-provisioning-framework` run passes the
-`aft_account_provisioning_framework_create_pipeline` state.
+**In the plan, expect:** 1 to add, 21 to change, 1 to destroy.
+
+- The Lambda layer is replaced (`aft-common-1-17-1` to `aft-common-1-18-1`).
+  Nothing else is replaced or destroyed.
+- 16 Lambdas change only their `layers`.
+- The `aft_version` and `aft_framework_repo_git_ref` SSM parameters change.
+- The two customization CodeBuild projects get the `|| exit 1` change.
+- The AFT logging bucket's lifecycle rule gets an empty `filter {}` back.
+  Provider 5.100 removed it in #492; the rule still covers the whole bucket.
+
+**Test:** checks A, B, C, D and E.
+
+- Check D also runs `aft-create-pipeline` for the scratch account under
+  provider 6. Confirm the `aft-account-provisioning-framework` run passes the
+  `aft_account_provisioning_framework_create_pipeline` state.
+- Check E runs the changed build scripts for one account before step 2.
 
 **Rollback:** the apply writes Terraform state in provider 6 format, which
 provider 5 cannot read. Rolling back means restoring the previous version of
