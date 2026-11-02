@@ -28,6 +28,6 @@ resource "aws_ssoadmin_account_assignment" "canadalogin_sandbox_apps" {
   principal_id   = each.value.group.group_id
   principal_type = "GROUP"
 
-  target_id   = "934240164991"
+  target_id   = local.canadalogin_sandbox_apps_account_id
   target_type = "AWS_ACCOUNT"
 }
