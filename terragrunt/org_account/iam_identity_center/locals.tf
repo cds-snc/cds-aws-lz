@@ -24,6 +24,7 @@ locals {
   canada_login_data_production_account_id                   = "029422952198"
   canada_login_devops_agent_account_id                      = "392852904014"
   canadalogin_release_pipeline_integration_tests_account_id = "429694360874"
+  canadalogin_sandbox_apps_account_id = "934240164991"
 
   digital_transformation_office_production_account_id = "730335533085"
   digital_transformation_office_staging_account_id    = "992382783569"
