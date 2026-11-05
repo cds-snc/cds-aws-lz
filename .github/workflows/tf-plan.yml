@@ -140,18 +140,19 @@ jobs:
 
       - name: Terraform Plan for ${{matrix.module }}/${{ matrix.module }}
         env:
-          TF_VAR_aft_slack_webhook: ${{ secrets[matrix.lz_webhook_key] }}
+          # PR code is untrusted; plans must not receive repository secrets.
+          TF_VAR_aft_slack_webhook: "https://example.invalid/plan-placeholder"
           TF_VAR_assume_role_name: ${{ matrix.assume_role_name }}
-          TF_VAR_lw_customer_id: ${{ secrets[matrix.la_customer_id] }}
-          TF_VAR_lw_shared_key: ${{ secrets[matrix.la_shared_key] }}
-          TF_VAR_lw_customer_ids: ${{ secrets[matrix.la_customer_ids] }}
-          TF_VAR_daily_spend_notifier_hook: ${{ secrets[matrix.spend_notifier_hook] }}
-          TF_VAR_weekly_spend_notifier_hook: ${{ secrets[matrix.weekly_spend_notifier_hook]}}
-          TF_VAR_aft_notifications_hook: ${{ secrets[matrix.aft_notifications_hook]}}
-          TF_VAR_cost_report_slack_webhook_url: ${{ matrix.cost_report_slack_webhook_url && secrets[matrix.cost_report_slack_webhook_url] }}
-          TF_VAR_cost_report_po_numbers: ${{ matrix.cost_report_po_numbers && secrets[matrix.cost_report_po_numbers] }}
-          TF_VAR_admin_sso_role_arn: ${{ secrets[matrix.admin_sso_role_arn] }}
-          TF_VAR_slack_webhook_url: ${{ matrix.slack_webhook_url && secrets[matrix.slack_webhook_url] }}
+          TF_VAR_lw_customer_id: "plan-placeholder"
+          TF_VAR_lw_shared_key: "plan-placeholder"
+          TF_VAR_lw_customer_ids: '["plan-placeholder"]'
+          TF_VAR_daily_spend_notifier_hook: "https://example.invalid/plan-placeholder"
+          TF_VAR_weekly_spend_notifier_hook: "https://example.invalid/plan-placeholder"
+          TF_VAR_aft_notifications_hook: "https://example.invalid/plan-placeholder"
+          TF_VAR_cost_report_slack_webhook_url: "https://example.invalid/plan-placeholder"
+          TF_VAR_cost_report_po_numbers: "{}"
+          TF_VAR_admin_sso_role_arn: "arn:aws:iam::000000000000:role/plan-placeholder"
+          TF_VAR_slack_webhook_url: "https://example.invalid/plan-placeholder"
           
         uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
