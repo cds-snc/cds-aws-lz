@@ -24,3 +24,12 @@ resource "aws_identitystore_group" "canada_login_devops_agent" {
   description       = "Grants members access to the CanadaLogin AWS Devops Agent space."
   identity_store_id = local.sso_identity_store_id
 }
+
+#
+# Notify groups 
+#
+resource "aws_identitystore_group" "notify_devops_agent" {
+  display_name      = "Notify-DevOps-Agent"
+  description       = "Grants members access to the Notify AWS Devops Agent space."
+  identity_store_id = local.sso_identity_store_id
+}
