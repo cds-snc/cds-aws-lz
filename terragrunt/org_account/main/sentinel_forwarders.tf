@@ -47,13 +47,6 @@ module "securityhub_forwarder" {
   # reads SENTINEL_HUB_ROLE_ARN (aws-sentinel-connector-layer#306).
   layer_arn = "arn:aws:lambda:ca-central-1:283582579564:layer:aws-sentinel-connector-layer:273"
 
-  # Kept deliberately. The layer picks v2 whenever DCE_ENDPOINT and DCR_CONFIG
-  # are both set and never reads these in that case, so leaving them in place
-  # makes the rollback a config change rather than a state change. They come out
-  # in workstream E, with the v1 code path.
-  customer_id = var.lw_customer_id
-  shared_key  = var.lw_shared_key
-
   # v2: no secret is stored at any point. The Lambda's IAM role assumes the
   # Sentinel forwarder hub role (sentinel_forwarder_hub.tf, same account), which
   # mints a token with IAM outbound identity federation. Entra accepts it as a
