@@ -97,9 +97,7 @@
 | <a name="input_assume_role_name"></a> [assume\_role\_name](#input\_assume\_role\_name) | The name of the role to assume | `string` | n/a | yes |
 | <a name="input_billing_code"></a> [billing\_code](#input\_billing\_code) | The billing code to tag our resources with | `string` | n/a | yes |
 | <a name="input_env"></a> [env](#input\_env) | The current running environment | `string` | n/a | yes |
-| <a name="input_lw_customer_id"></a> [lw\_customer\_id](#input\_lw\_customer\_id) | The log workspace customer id for the sentinel forwarder | `string` | n/a | yes |
 | <a name="input_lw_customer_ids"></a> [lw\_customer\_ids](#input\_lw\_customer\_ids) | The log workspace customer ids for the Azure Sentinel role. This allows us to pass in multiple workspaces | `list(string)` | n/a | yes |
-| <a name="input_lw_shared_key"></a> [lw\_shared\_key](#input\_lw\_shared\_key) | The log workspace shared key for the sentinel forwarder | `string` | n/a | yes |
 | <a name="input_org_account"></a> [org\_account](#input\_org\_account) | The account ID of the main organization account | `any` | n/a | yes |
 | <a name="input_product_name"></a> [product\_name](#input\_product\_name) | (Required) The name of the product you are deploying. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The current AWS region | `string` | n/a | yes |
