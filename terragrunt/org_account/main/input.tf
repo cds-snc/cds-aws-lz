@@ -16,4 +16,5 @@ variable "lw_customer_ids" {
 variable "lw_shared_key" {
   type        = string
   description = "The log workspace shared key for the sentinel forwarder"
+  sensitive   = true
 }
