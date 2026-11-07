@@ -40,7 +40,7 @@ jobs:
 
       - name: Terraform Plan for org_account/aft
         # I have no idea if this will work.
-        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
+        uses: cds-snc/terraform-plan@e08baaf605af7604ca7a138b6115be6dbd2882e8 # v5.0.5
         with:
           comment-delete: true
           comment-title: Plan for org_account/aft
