@@ -21,4 +21,5 @@ data "aws_sns_topic" "aft_notifications" {
 
 variable "aft_slack_webhook" {
   description = "The slack webhook URL to be used by Account Factory for Terraform"
+  sensitive   = true
 }
