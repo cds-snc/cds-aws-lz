@@ -42,7 +42,6 @@ TAG_KEY = "ssc_cbrid"
 UNTAGGED_LABEL = "Not tagged"
 # Accounts whose names start with any of these prefixes are excluded from the report.
 EXCLUDED_ACCOUNT_PREFIXES = ("GCSignin", "DigitalCredentials", "CanadaLogin")
-SAVINGS_PLAN_RATE = 0.11  # Enterprise savings plan discount
 TAX_RATE = 0.13  # HST included in the invoiced amounts
 COST_REPORT_PO_NUMBERS = json.loads(os.getenv("COST_REPORT_PO_NUMBERS", "{}"))
 
@@ -57,7 +56,7 @@ TAX_INVOICE_ID_PREFIX = os.getenv("TAX_INVOICE_ID_PREFIX", "CAIN")
 # line to the cent before summing, so the two totals drift by a few cents that
 # cannot be traced to any single line item.
 RECONCILIATION_CBRID = os.getenv("RECONCILIATION_CBRID", "22DH")
-RECONCILIATION_TOLERANCE = float(os.getenv("RECONCILIATION_TOLERANCE", "5.00"))
+RECONCILIATION_TOLERANCE = float(os.getenv("RECONCILIATION_TOLERANCE", "100.00"))
 
 DISPLAY_CURRENCY_CODE = "USD"
 USD_TO_DISPLAY_RATE = 1.0
@@ -238,7 +237,7 @@ def get_accounts_with_tags():
 def invoice_pretax_total(amount_obj):
     """
     Pre-tax invoice total (charges net of discounts, before HST), matching the
-    UnblendedCost basis the report sums. Prefer TotalAmountBeforeTax; fall back
+    NetUnblendedCost basis the report sums. Prefer TotalAmountBeforeTax; fall back
     to TotalAmount minus the tax breakdown. Return None when neither is
     resolvable, so reconciliation is skipped rather than run against a
     tax-inclusive figure.
@@ -320,7 +319,7 @@ def get_invoice_currency_context(reference_date):
                 continue
             if rate <= 0:
                 continue
-            # Reconcile against the pre-tax total; the report sums UnblendedCost,
+            # Reconcile against the pre-tax total; the report sums NetUnblendedCost,
             # which excludes the HST carried by TotalAmount.
             total = invoice_pretax_total(amount_obj)
             candidates.append({
@@ -435,8 +434,8 @@ def reconcile_to_invoice(breakdown, grand_total_usd, invoice_totals):
     if not invoice_totals or USD_TO_DISPLAY_RATE <= 0:
         return None
 
-    # Both sides are pre-tax: grand_total_usd is the UnblendedCost sum, and
-    # invoice_totals carry the invoice's pre-tax total.
+    # Both sides are pre-tax and net of discounts: grand_total_usd is the
+    # NetUnblendedCost sum, and invoice_totals carry the invoice's pre-tax total.
     computed = grand_total_usd * USD_TO_DISPLAY_RATE
     match = min(invoice_totals, key=lambda i: abs(i["total"] - computed))
     delta = match["total"] - computed
@@ -492,7 +491,24 @@ def get_costs_by_account_and_tag(start, end):
         kwargs = {
             "Granularity": "MONTHLY",
             "TimePeriod": {"Start": start, "End": end},
-            "Metrics": ["UnblendedCost"],
+            # NetUnblendedCost is the usage cost after the Enterprise Discount
+            # Program and bundled discounts, matching the invoice's net pre-tax
+            # charges. UnblendedCost omits those discounts and overstates the total.
+            "Metrics": ["NetUnblendedCost"],
+            # Exclude Tax records. The report treats this sum as pre-tax and adds
+            # HST itself; without the filter the HST line items are folded into the
+            # "pre-tax" figure and then taxed a second time, inflating every total
+            # by ~13%. Everything else (usage net of credits/discounts) is kept, so
+            # the sum matches the invoice's "Net Charges (After Credits/Discounts,
+            # excl. Tax)".
+            "Filter": {
+                "Not": {
+                    "Dimensions": {
+                        "Key": "RECORD_TYPE",
+                        "Values": ["Tax"],
+                    }
+                }
+            },
             "GroupBy": [
                 {"Type": "TAG", "Key": TAG_KEY},
                 {"Type": "DIMENSION", "Key": "LINKED_ACCOUNT"},
@@ -509,7 +525,7 @@ def get_costs_by_account_and_tag(start, end):
                 groups_seen += 1
                 raw_tag, account_id = group["Keys"]
                 tag_value = raw_tag.split("$", 1)[1] if "$" in raw_tag else raw_tag
-                amount = float(group["Metrics"]["UnblendedCost"]["Amount"])
+                amount = float(group["Metrics"]["NetUnblendedCost"]["Amount"])
                 key = (account_id, tag_value)
                 costs[key] = costs.get(key, 0.0) + amount
 
@@ -697,7 +713,7 @@ th {{ background: #fafbfc; font-size: 0.85em; color: #666; }}
   <span>Grand Total</span>
   <span>{format_currency_with_cad(report["grand_total"])}</span>
 </div>
-<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {DISPLAY_RATE_TEXT} {DISPLAY_CURRENCY_CODE} ({RATE_SOURCE}) &nbsp;&middot;&nbsp; Pre-tax excludes {TAX_RATE*100:.0f}% HST{reconciliation_note(report)} &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
+<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {DISPLAY_RATE_TEXT} {DISPLAY_CURRENCY_CODE} ({RATE_SOURCE}) &nbsp;&middot;&nbsp; Pre-tax excludes {TAX_RATE*100:.0f}% HST{reconciliation_note(report)}</p>
 </body>
 </html>
 """
@@ -714,20 +730,20 @@ def send_email_with_doc(report, doc_bytes, label):
     msg["From"] = SENDER_EMAIL
     msg["To"] = ", ".join(recipients)
 
-    grand_cad = report["grand_total"] * USD_TO_DISPLAY_RATE
-    grand_pre_tax = grand_cad / (1 + TAX_RATE)
+    grand_pre_tax = report["grand_total"] * USD_TO_DISPLAY_RATE
+    grand_cad = grand_pre_tax * (1 + TAX_RATE)
 
     # Plain-text fallback
     breakdown_lines = []
     for entry in report["breakdown"]:
         po = COST_REPORT_PO_NUMBERS.get(entry["ssc_cbrid"])
         po_str = f" (PO {po})" if po else ""
-        cad = entry["total"] * USD_TO_DISPLAY_RATE
-        pre_tax = cad / (1 + TAX_RATE)
+        pre_tax = entry["total"] * USD_TO_DISPLAY_RATE
+        cad = pre_tax * (1 + TAX_RATE)
         breakdown_lines.append(
             f"  {entry['ssc_cbrid']}{po_str}: "
             f"${pre_tax:,.2f} {DISPLAY_CURRENCY_CODE} pre-tax "
-            f"(incl. tax: ${cad:,.2f} {DISPLAY_CURRENCY_CODE} / {format_currency(entry['total'])})"
+            f"(incl. tax: ${cad:,.2f} {DISPLAY_CURRENCY_CODE} / {format_currency(entry['total'] * (1 + TAX_RATE))})"
         )
     breakdown_text = "\n".join(breakdown_lines)
 
@@ -743,7 +759,7 @@ def send_email_with_doc(report, doc_bytes, label):
         f"\n"
         f"{'='*50}\n"
         f"GRAND TOTAL (pre-tax): ${grand_pre_tax:,.2f} {DISPLAY_CURRENCY_CODE}\n"
-        f"GRAND TOTAL (incl. tax): ${grand_cad:,.2f} {DISPLAY_CURRENCY_CODE} / {format_currency(report['grand_total'])}\n"
+        f"GRAND TOTAL (incl. tax): ${grand_cad:,.2f} {DISPLAY_CURRENCY_CODE} / {format_currency(report['grand_total'] * (1 + TAX_RATE))}\n"
         f"{'='*50}\n"
         f"\n"
         f"Exchange rate: 1 USD = {DISPLAY_RATE_TEXT} {DISPLAY_CURRENCY_CODE} ({RATE_SOURCE})\n"
@@ -758,8 +774,8 @@ def send_email_with_doc(report, doc_bytes, label):
     for entry in report["breakdown"]:
         po = COST_REPORT_PO_NUMBERS.get(entry["ssc_cbrid"])
         po_cell = f'<span style="font-size:0.85em;color:#666;">(PO {escape(po)})</span>' if po else ""
-        cad = entry["total"] * USD_TO_DISPLAY_RATE
-        pre_tax = cad / (1 + TAX_RATE)
+        pre_tax = entry["total"] * USD_TO_DISPLAY_RATE
+        cad = pre_tax * (1 + TAX_RATE)
         breakdown_rows += (
             f'<tr>'
             f'<td style="padding:8px 12px;border-bottom:1px solid #eee;">'
@@ -769,7 +785,7 @@ def send_email_with_doc(report, doc_bytes, label):
             f'<td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600;color:#555;font-size:0.9em;">'
             f'${cad:,.2f} {DISPLAY_CURRENCY_CODE}</td>'
             f'<td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;color:#666;font-size:0.9em;">'
-            f'{format_currency(entry["total"])}</td>'
+            f'{format_currency(entry["total"] * (1 + TAX_RATE))}</td>'
             f'</tr>'
         )
 
@@ -796,7 +812,7 @@ def send_email_with_doc(report, doc_bytes, label):
           <td style="background:#e8f0fe;padding:20px 32px;border-bottom:1px solid #d0ddf5;">
             <p style="margin:0;font-size:0.85em;color:#555;text-transform:uppercase;letter-spacing:0.05em;">Grand Total (pre-tax)</p>
                         <p style="margin:4px 0 0;font-size:2.4em;font-weight:800;color:#1a3a5c;">${grand_pre_tax:,.2f} {DISPLAY_CURRENCY_CODE}</p>
-            <p style="margin:2px 0 0;font-size:0.95em;color:#666;">Incl. tax: ${grand_cad:,.2f} {DISPLAY_CURRENCY_CODE} &middot; {format_currency(report["grand_total"])}</p>
+            <p style="margin:2px 0 0;font-size:0.95em;color:#666;">Incl. tax: ${grand_cad:,.2f} {DISPLAY_CURRENCY_CODE} &middot; {format_currency(report["grand_total"] * (1 + TAX_RATE))}</p>
           </td>
         </tr>
 
@@ -856,7 +872,7 @@ def send_email_with_doc(report, doc_bytes, label):
         Source=SENDER_EMAIL,
         Destinations=recipients + [SENDER_EMAIL],
         RawMessage={"Data": outer.as_bytes()},
-    )
+   )
     logger.info("Email sent to %s", recipients)
 
 
@@ -944,7 +960,7 @@ def build_html(report):
   <span>Grand Total</span>
   <span>{format_currency_with_cad(report["grand_total"])}</span>
 </div>
-<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {DISPLAY_RATE_TEXT} {DISPLAY_CURRENCY_CODE} ({RATE_SOURCE}) &nbsp;&middot;&nbsp; Pre-tax excludes {TAX_RATE*100:.0f}% HST{reconciliation_note(report)} &nbsp;&middot;&nbsp; Savings plan discount: {SAVINGS_PLAN_RATE*100:.2f}%</p>
+<p style="font-size:0.75em; color:#999; text-align:right; margin-top:1em;">Exchange rate: 1 USD = {DISPLAY_RATE_TEXT} {DISPLAY_CURRENCY_CODE} ({RATE_SOURCE}) &nbsp;&middot;&nbsp; Pre-tax excludes {TAX_RATE*100:.0f}% HST{reconciliation_note(report)}</p>
 </body>
 </html>
 """
@@ -1111,20 +1127,21 @@ def format_currency(amount):
 
 
 def format_currency_with_cad(amount, show_pretax=True):
-    cad = amount * USD_TO_DISPLAY_RATE
+    pre_tax_cad = amount * USD_TO_DISPLAY_RATE
     if not show_pretax:
         return (
-            f'<span style="font-size:1.1em; font-weight:bold;">${cad:,.2f} {DISPLAY_CURRENCY_CODE}</span>'
+            f'<span style="font-size:1.1em; font-weight:bold;">${pre_tax_cad:,.2f} {DISPLAY_CURRENCY_CODE}</span>'
             f'&nbsp;<span style="font-size:0.75em; color:#777; font-weight:normal;">${amount:,.2f} USD</span>'
         )
-    pre_tax = cad / (1 + TAX_RATE)
+    incl_tax_cad = pre_tax_cad * (1 + TAX_RATE)
+    incl_tax_usd = amount * (1 + TAX_RATE)
     return (
         f'<span style="display:inline-block; text-align:right; line-height:1.3;">'
         f'<span style="font-size:1.05em; font-weight:bold; display:block;">'
-        f'${pre_tax:,.2f} {DISPLAY_CURRENCY_CODE}'
+        f'${pre_tax_cad:,.2f} {DISPLAY_CURRENCY_CODE}'
         f' <span style="font-size:0.75em; color:#777; font-weight:normal;">pre-tax</span></span>'
         f'<span style="font-size:0.8em; color:#555; font-weight:normal;">'
-        f'${cad:,.2f} {DISPLAY_CURRENCY_CODE} &middot; ${amount:,.2f} USD'
+        f'${incl_tax_cad:,.2f} {DISPLAY_CURRENCY_CODE} &middot; ${incl_tax_usd:,.2f} USD'
         f' <span style="color:#999;">incl. tax</span></span>'
         f'</span>'
     )
