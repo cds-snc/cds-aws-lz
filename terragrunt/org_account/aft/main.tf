@@ -22,4 +22,6 @@ module "account_factory_for_terraform" {
   aft_feature_enterprise_support          = true
   cloudwatch_log_group_retention          = 90
 
+  # delete backup recovery points older than 10 days
+  backup_recovery_point_retention = 10
 }
